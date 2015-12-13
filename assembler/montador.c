@@ -149,10 +149,10 @@ void criaLabels() {
 
                     aux += 1;
                     if (ignoraLabelsEComents(aux) != NULL) {
-                        count += 4;
+                        count++;
                     }
                 } else {
-                    count += 4;
+                    count++;
                 }
             }
 	    }
@@ -376,7 +376,7 @@ int traduzir(char instrucao[]) {
     } else {
         printf("ERRO: instrucao inexistente");
     }
-    posAtual += 4;
+    posAtual++;
 }
 
 void escreveArquivo(FILE *arq, int bin) {
@@ -439,7 +439,7 @@ int main() {
                         word[i] = '\0';
 
                         escreveArquivo(arqW, atoi(word));
-                        posAtual += 4;
+                        posAtual++;
                     }
                 }
             } else if (instrucao != NULL && module && pseg) {
