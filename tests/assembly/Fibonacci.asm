@@ -1,5 +1,6 @@
 .module fibonacci
 .pseg
+		;Algoritmo da Sequência Fibonacci iterativo
 MAIN:
 		lcl r0, LOWBYTE ARR1
 		lch r0, HIGHBYTE ARR1
@@ -13,10 +14,10 @@ LOOP:
 		add r3, r14, r15 ;se i for menor que n, adiciona os dois numeros correspondentes ao fibonacci de i-1 e i-2 e coloca em r3
 		passa r14, r15 ;f(i-2) = f(i-1)
 		passa r15, r3 ;f(i-1) = soma em r3
-		inca r1
+		inca r1 ;i++
 		j LOOP
 FIM:
-		j FIM
+		j FIM ;ao final do processamento o resultado estará armazenado no registrador r15
 .dseg
 ARR1:
 	.word 4
