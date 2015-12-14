@@ -25,7 +25,7 @@ void addRegist(char key[], int valor) {
     struct hash *s;
     s = malloc(sizeof(struct hash));
     s->key = key;
-    strcpy(s->valor, valor);
+    s->valor = valor;
     HASH_ADD_STR(registradores, key, s);
 }
 
@@ -37,17 +37,17 @@ void addLabel(char key[], int valor) {
       s->key = key;
       HASH_ADD_STR(labels, key, s);
     }
-    strcpy(s->valor, valor);
+    s->valor = valor;
 }
 
-int findRegist(int key) {
+int findRegist(char key[]) {
     struct hash *s;
 
     HASH_FIND_STR(registradores, &key, s);
     return s->valor;
 }
 
-int findLabel(int key) {
+int findLabel(char key[]) {
     struct hash *s;
 
     HASH_FIND_STR(labels, &key, s);
@@ -75,7 +75,7 @@ char* tiraEspacos(char s[]) {
             novo[j] = c;
             i++;
             j++;
-        } while(c != '\0' && b == false);
+        } while(c != '\0');
     }
 
     return novo;
@@ -102,10 +102,18 @@ char* ignoraLabelsEComents(char instrucao[100]) {
     return instrucao;
 }
 
+char* tiraUltimo(char aux[100]) {
+    aux = strrev(aux);
+    if (aux[0] == '\n')
+        aux++;
+    return strrev(aux);
+}
+
 void criaLabels() {
 	char *linha;
 	FILE *arq;
 	int count = 0;
+	char aux[100];
 
 	arq = fopen(nomeArq, "r");
 	if(arq == NULL)
@@ -114,7 +122,8 @@ void criaLabels() {
         bool pseg = false;
         bool dseg = false;
         bool module = false;
-	    while(fgets(linha, sizeof(linha), arq) != NULL) {
+	    while(fgets(aux, sizeof(aux), arq) != NULL) {
+	        linha = tiraUltimo(aux);
 	        linha = tiraEspacos(linha);
             if (linha != NULL && linha[0] == '.' && linha[0] != ';') {
                 char diretiva[100];
@@ -122,21 +131,21 @@ void criaLabels() {
                 do {
                     diretiva[i] = linha[i];
                     i++;
-                } while(linha[i] != ' ' || linha[i] != '\n' || linha[i] != '\t' || linha[i] != ';');
+                } while(linha[i] != ' ' && linha[i] != '\0' && linha[i] != '\t' && linha[i] != ';');
                 diretiva[i] = '\0';
-                if (strcmp(diretiva, ".module")) {
+                if (!strcmp(diretiva, ".module")) {
                     module = true;
-                } else if (strcmp(diretiva, ".end")) {
+                } else if (!strcmp(diretiva, ".end")) {
                     module = false;
-                } else if (strcmp(diretiva, ".pseg")) {
+                } else if (!strcmp(diretiva, ".pseg")) {
                     pseg = true;
                     dseg = false;
-                } else if (strcmp(diretiva, ".dseg")) {
+                } else if (!strcmp(diretiva, ".dseg")) {
                     pseg = false;
                     dseg = true;
-                } else if (strcmp(diretiva, ".word")) {
+                } else if (!strcmp(diretiva, ".word")) {
                     if (dseg && module) {
-                        count += 4;
+                        count++;
                     }
                 }
             } else if (linha != NULL && linha[0] != ';' && linha[0] != '.' && module && pseg) {
@@ -166,7 +175,7 @@ char* getMneumonico(char instrucao[]) {
     do {
         mneumonico[i] = instrucao[i];
         i++;
-    } while(instrucao[i] != ' ' || instrucao[i] != '\n' || instrucao[i] != '\t' || instrucao[i] != ';');
+    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
     mneumonico[i] = '\0';
 
     return mneumonico;
@@ -215,7 +224,7 @@ int getLabel(char instrucao[]) {
     do {
         label[i] = instrucao[i];
         i++;
-    } while(instrucao[i] != ' ' || instrucao[i] != '\n' || instrucao[i] != '\t' || instrucao[i] != ';');
+    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
     label[i] = '\0';
 
     return findLabel(label);
@@ -230,14 +239,14 @@ int getConst(char instrucao[]) {
     do {
         constante[i] = instrucao[i];
         i++;
-    } while(instrucao[i] != ' ' || instrucao[i] != '\n' || instrucao[i] != '\t' || instrucao[i] != ';');
+    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
     constante[i] = '\0';
 
     if (constante[0] <= 9 && constante[0] >= 0)
         return atoi(constante);
-    else if (strcmp(constante, "LOWBYTE")) {
+    else if (!strcmp(constante, "LOWBYTE")) {
         return (getLabel(instrucao) & 0x00001111);
-    } else if (strcmp(constante, "HIBYTE")) {
+    } else if (!strcmp(constante, "HIBYTE")) {
         return (getLabel(instrucao) >> 16);
     } else {
         return (findLabel(constante) & 0x00001111);
@@ -254,17 +263,17 @@ int getCondicao(char instrucao[]) {
     } while(instrucao[i] != ' ');
     condicao[i] = '\0';
 
-    if (strcmp(condicao, "overflow"))
+    if (!strcmp(condicao, "overflow"))
         return 1;
-    else if (strcmp(condicao, "zero"))
+    else if (!strcmp(condicao, "zero"))
         return 2;
-    else if (strcmp(condicao, "neg"))
+    else if (!strcmp(condicao, "neg"))
         return 3;
-    else if (strcmp(condicao, "negzero"))
+    else if (!strcmp(condicao, "negzero"))
         return 4;
-    else if (strcmp(condicao, "true"))
+    else if (!strcmp(condicao, "true"))
         return 5;
-    else if (strcmp(condicao, "carry"))
+    else if (!strcmp(condicao, "carry"))
         return 6;
     else
         return 0;
@@ -285,93 +294,93 @@ int getDestino(char instrucao[]) {
 int traduzir(char instrucao[]) {
     int resp = 0;
     char *mneumonico = getMneumonico(instrucao);
-    if (strcmp(mneumonico, "add")) {
+    if (!strcmp(mneumonico, "add")) {
         resp = (0x00000 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "addu")) {
+    } else if (!strcmp(mneumonico, "addu")) {
         resp = (0x00001 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "addinc")) {
+    } else if (!strcmp(mneumonico, "addinc")) {
         resp = (0x00002 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "inca")) {
+    } else if (!strcmp(mneumonico, "inca")) {
         resp = (0x00003 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "sub")) {
+    } else if (!strcmp(mneumonico, "sub")) {
         resp = (0x00004 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "subdec")) {
+    } else if (!strcmp(mneumonico, "subdec")) {
         resp = (0x00005 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "deca")) {
+    } else if (!strcmp(mneumonico, "deca")) {
         resp = (0x00006 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "mult")) {
+    } else if (!strcmp(mneumonico, "mult")) {
         resp = (0x00007 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "multu")) {
+    } else if (!strcmp(mneumonico, "multu")) {
         resp = (0x00008 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "mfh")) {
+    } else if (!strcmp(mneumonico, "mfh")) {
         resp = (0x00009 << 12) + getR1(instrucao);
-    } else if (strcmp(mneumonico, "mfl")) {
+    } else if (!strcmp(mneumonico, "mfl")) {
         resp = (0x0000A << 12) + getR1(instrucao);
-    } else if (strcmp(mneumonico, "div")) {
+    } else if (!strcmp(mneumonico, "div")) {
         resp = (0x0000B << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "divu")) {
+    } else if (!strcmp(mneumonico, "divu")) {
         resp = (0x0000C << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "asl")) {
+    } else if (!strcmp(mneumonico, "asl")) {
         resp = (0x0000D << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "asr")) {
+    } else if (!strcmp(mneumonico, "asr")) {
         resp = (0x0000E << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "zaros")) {
+    } else if (!strcmp(mneumonico, "zaros")) {
         resp = (0x0000F << 12) + getR1(instrucao);
-    } else if (strcmp(mneumonico, "ones")) {
+    } else if (!strcmp(mneumonico, "ones")) {
         resp = (0x00010 << 12) + getR1(instrucao);
-    } else if (strcmp(mneumonico, "passa")) {
+    } else if (!strcmp(mneumonico, "passa")) {
         resp = (0x00011 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "passnota")) {
+    } else if (!strcmp(mneumonico, "passnota")) {
         resp = (0x00012 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "and")) {
+    } else if (!strcmp(mneumonico, "and")) {
         resp = (0x00013 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "andnota")) {
+    } else if (!strcmp(mneumonico, "andnota")) {
         resp = (0x00014 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "nand")) {
+    } else if (!strcmp(mneumonico, "nand")) {
         resp = (0x00015 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "or")) {
+    } else if (!strcmp(mneumonico, "or")) {
         resp = (0x00016 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "ornotb")) {
+    } else if (!strcmp(mneumonico, "ornotb")) {
         resp = (0x00017 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "nor")) {
+    } else if (!strcmp(mneumonico, "nor")) {
         resp = (0x00018 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "xor")) {
+    } else if (!strcmp(mneumonico, "xor")) {
         resp = (0x00019 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "xornota")) {
+    } else if (!strcmp(mneumonico, "xornota")) {
         resp = (0x0001A << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "xnor")) {
+    } else if (!strcmp(mneumonico, "xnor")) {
         resp = (0x0001B << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "lsl")) {
+    } else if (!strcmp(mneumonico, "lsl")) {
         resp = (0x0001C << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "lsr")) {
+    } else if (!strcmp(mneumonico, "lsr")) {
         resp = (0x0001D << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "slt")) {
+    } else if (!strcmp(mneumonico, "slt")) {
         resp = (0x0001E << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "sltu")) {
+    } else if (!strcmp(mneumonico, "sltu")) {
         resp = (0x0001F << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (strcmp(mneumonico, "loadlit")) {
+    } else if (!strcmp(mneumonico, "loadlit")) {
         resp = (0x400 << 20) + (getR1(instrucao) << 8) + getConst(instrucao);
-    } else if (strcmp(mneumonico, "lcl")) {
+    } else if (!strcmp(mneumonico, "lcl")) {
         resp = (0x401 << 20) + (getR1(instrucao) << 8) + getConst(instrucao);
-    } else if (strcmp(mneumonico, "lch")) {
+    } else if (!strcmp(mneumonico, "lch")) {
         resp = (0x402 << 20) + (getR1(instrucao) << 8) + getConst(instrucao);
-    } else if (strcmp(mneumonico, "load")) {
+    } else if (!strcmp(mneumonico, "load")) {
         resp = (0x80000 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "store")) {
+    } else if (!strcmp(mneumonico, "store")) {
         resp = (0x80001 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (strcmp(mneumonico, "j")) {
+    } else if (!strcmp(mneumonico, "j")) {
         resp = (0xC00 << 20) + getDestino(instrucao);
         if (getDestino(instrucao) == posAtual)
             resp = 0x40000000;
-    } else if (strcmp(mneumonico, "jt")) {
+    } else if (!strcmp(mneumonico, "jt")) {
         resp = (0xC01 << 20) + getCondicao(instrucao); + getDestino(instrucao);
-    } else if (strcmp(mneumonico, "jf")) {
+    } else if (!strcmp(mneumonico, "jf")) {
         resp = (0xC02 << 20) + getCondicao(instrucao); + getDestino(instrucao);
-    } else if (strcmp(mneumonico, "jal")) {
+    } else if (!strcmp(mneumonico, "jal")) {
         resp = (0xC03 << 20) + (getR1(instrucao) << 4);
-    } else if (strcmp(mneumonico, "jr")) {
+    } else if (!strcmp(mneumonico, "jr")) {
         resp = (0xC04 << 20) + (getR1(instrucao) << 4);
-    } else if (strcmp(mneumonico, "nop")) {
+    } else if (!strcmp(mneumonico, "nop")) {
         resp = 0x20000000;
     } else {
         printf("ERRO: instrucao inexistente");
@@ -395,6 +404,7 @@ int main() {
     criaLabels();
 
     char *instrucao;
+    char linha[100];
 	FILE *arqR;
 	FILE *arqW;
 	arqR = fopen(nomeArq, "r");
@@ -406,7 +416,8 @@ int main() {
         bool pseg = false;
         bool dseg = false;
         bool module = false;
-	    while(fgets(instrucao, sizeof(instrucao), arqR) != NULL) {
+	    while(fgets(linha, sizeof(linha), arqR) != NULL) {
+            instrucao = tiraUltimo(linha);
 	        instrucao = ignoraLabelsEComents(instrucao);
             if (instrucao != NULL && instrucao[0] == '.') {
                 char diretiva[100];
@@ -414,19 +425,19 @@ int main() {
                 do {
                     diretiva[i] = instrucao[i];
                     i++;
-                } while(instrucao[i] != ' ' || instrucao[i] != '\n' || instrucao[i] != '\t' || instrucao[i] != ';');
+                } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
                 diretiva[i] = '\0';
-                if (strcmp(diretiva, ".module")) {
+                if (!strcmp(diretiva, ".module")) {
                     module = true;
-                } else if (strcmp(diretiva, ".end")) {
+                } else if (!strcmp(diretiva, ".end")) {
                     module = false;
-                } else if (strcmp(diretiva, ".pseg")) {
+                } else if (!strcmp(diretiva, ".pseg")) {
                     pseg = true;
                     dseg = false;
-                } else if (strcmp(diretiva, ".dseg")) {
+                } else if (!strcmp(diretiva, ".dseg")) {
                     pseg = false;
                     dseg = true;
-                } else if (strcmp(diretiva, ".word")) {
+                } else if (!strcmp(diretiva, ".word")) {
                     if (dseg && module) {
                         instrucao += 5;
                         instrucao = tiraEspacos(instrucao);
@@ -435,7 +446,7 @@ int main() {
                         do {
                             word[i] = instrucao[i];
                             i++;
-                        } while(instrucao[i] != ' ' || instrucao[i] != '\n' || instrucao[i] != '\t' || instrucao[i] != ';');
+                        } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
                         word[i] = '\0';
 
                         escreveArquivo(arqW, atoi(word));
