@@ -8,248 +8,282 @@ typedef int bool;
 #define true 1
 #define false 0
 
-char *nomeArq;
-
-struct hash {
-    char key[100];                /* key */
-    int valor;
-    UT_hash_handle hh;        /* faz dessa struct uma hashtable */
+struct hash {                   // Hashtable
+    char key[100];              // Chave
+    int value;                  // Valor
+    UT_hash_handle hh;          // Faz dessa struct uma hashtable
 };
 
-struct hash *registradores = NULL;
-struct hash *labels = NULL;
+struct hash *registers = NULL;  // Hashtable de registradores
+struct hash *labels = NULL;     // Hashtable de labels
 
-void addRegist(char key[], int valor) {
+/* Adiciona registrador (nome, codigo) na hashmap */
+void addRegist(char key[], int value) {
     struct hash *s;
-    HASH_FIND_STR(registradores, key, s);
-    if (s==NULL) {
+    HASH_FIND_STR(registers, key, s);
+    if (s==NULL) {                                      // Se nao existir na hash nenhum registrador com esse nome
       s = (struct hash*)malloc(sizeof(struct hash));
       strncpy(s->key, key, 100);
-      s->valor = valor;
-      HASH_ADD_STR(registradores, key, s);
-      //printf("Criando registrador: %s - %d\n", s->key, s->valor);
+      s->value = value;
+      HASH_ADD_STR(registers, key, s);                  // Adiciona registrador
     }
 }
 
-void addLabel(char key[], int valor) {
+/* Adiciona label (nome, endereco) na hashmap */
+void addLabel(char key[], int value) {
     struct hash *s;
     HASH_FIND_STR(labels, key, s);
-    if (s==NULL) {
+    if (s==NULL) {                                      // Se nao existir na hash nenhum label com esse nome
       s = (struct hash*)malloc(sizeof(struct hash));
       strncpy(s->key, key, 100);
-      s->valor = valor;
-      HASH_ADD_STR(labels, key, s);
-      //printf("Criando label: %s - %d\n", s->key, s->valor);
+      s->value = value;
+      HASH_ADD_STR(labels, key, s);                     // Adiciona label
     }
 }
 
+/* Procura registrador pelo nome na hashmap e retorna seu codigo */
 int findRegist(char key[]) {
     struct hash *s;
-    HASH_FIND_STR(registradores, key, s);
-    return s->valor;
+    HASH_FIND_STR(registers, key, s);
+    return s->value;
 }
 
+/* Procura label pelo nome na hashmap e retorna seu endereco */
 int findLabel(char key[]) {
     struct hash *s;
     HASH_FIND_STR(labels, key, s);
-    return s->valor;
+    return s->value;
 }
 
-char* tiraEspacos(char *s) {
+/* Tira todos os espacos e tabs a esquerda de string */
+char* leftClean(char *s) {
     int i = 0;
-    while(s[i] != '\0' && (s[i] == ' ' || s[i] == '\t')) {
+    while(s[i] != '\0' && (s[i] == ' ' || s[i] == '\t')) {  // Pula todos os espacos e tabs a esquerda
         i++;
     }
-    if (s[i] == '\0') {
-        return NULL;
-    }
-    return strchr(s, s[i]);
+    if (s[i] == '\0' || s[i] == ';')    // Se não sobrou nada ou somente um comentário
+        return NULL;                    // Retorna null
+
+    return strchr(s, s[i]);             // Se não, retorna a string sem os espacos iniciais
 }
 
-void criaRegistradores() {
+/* Armazena na hashtable os registradores (nome, codigo) r0 a r15 */
+void createRegisters() {
     char key[100];
     int i;
     for (i = 0; i < 16; i++) {
-        sprintf(key, "r%d", i);
-        addRegist(key, i);
+        sprintf(key, "r%d", i);     // Chave (nome)
+        addRegist(key, i);          // Adiciona registrador
     }
 }
 
-char* ignoraLabelsEComents(char *instrucao) {
-    char *aux = strchr(instrucao, ':');
-    if (aux != NULL)
-        instrucao = ++aux;
-    instrucao = tiraEspacos(instrucao);
-    if(instrucao == NULL || instrucao[0] == ';')
+/* Ignora o comentario da linha, se tiver */
+char* ignoreComents (char *s) {
+    if (s[0] == ';')            // Se a linha ja comecar com comentario
         return NULL;
-    instrucao = strrev(instrucao);
-    aux = strchr(instrucao, ';');
-    if (aux != NULL)
-        instrucao = ++aux;
-    instrucao = tiraEspacos(instrucao);
-    instrucao = strrev(instrucao);
 
-    return instrucao;
+    s = strrev(s);              // Inverte a string
+    char *aux = strchr(s, ';'); // Pega a posicao do "ponto e virgula" na string, se tiver
+    while (aux != NULL) {       // Verifica se a linha contem comentario (ponto e virgula)
+        s = ++aux;              // Tira tudo que tem antes do ponto e virgula (lembrando que a string esta invertida)
+        aux = strchr(s, ';');
+    }
+    s = leftClean(s);           // Tira os espacos a esquerda da string, se tiver
+    if (s != NULL)
+        s = strrev(s);          // Desinverte a string
+
+    return s;
 }
 
-char* tiraUltimo(char aux[100]) {
+/* Ignora o label e o comentario da linha, se tiver */
+char* ignoraLabelsEComents(char *instruction) {
+    instruction = ignoreComents(instruction);   // Ignora o comentario da linha, se tiver
+    if(instruction == NULL)
+        return NULL;
+
+    char *aux = strchr(instruction, ':');       // Pega a posicao do "dois pontos" na string, se tiver
+    if (aux != NULL) {
+        if (aux[1] == '\0')
+            return NULL;
+        instruction = ++aux;    // Ignora label (tudo antes do "dois pontos")
+    }
+    instruction = leftClean(instruction);       // Tira todos os espacos e tabs a esquerda da string, se tiver
+    if(instruction == NULL)
+        return NULL;
+
+    return instruction;
+}
+
+/* o caractere '\n' do final da string */
+char* removeLast(char aux[100]) {
     aux = strrev(aux);
     if (aux[0] == '\n')
         aux++;
     return strrev(aux);
 }
 
-void criaLabels() {
-	char *linha;
-	FILE *arq;
-	int count = 0;
+/* Percorre o arquivo de entrada procurando labels e salvando-os na hashmap */
+void createLabels(char *fileName) {
+	char *line;
+	FILE *file;
+	int actualPosition = 0;
 	char aux[300];
 
-	arq = fopen(nomeArq, "r");
-	if(arq == NULL)
+	file = fopen(fileName, "r");  // Abre o arquivo
+	if(file == NULL) {
 	    printf("Erro, nao foi possivel abrir o arquivo\n");
-	else {
+	} else {
         bool pseg = false;
         bool dseg = false;
         bool module = false;
-	    while(fgets(aux, sizeof(aux), arq) != NULL) {
-	        linha = tiraUltimo(aux);
-	        linha = tiraEspacos(linha);
-            if (linha != NULL && linha[0] == '.' && linha[0] != ';') {
-                char diretiva[100];
+	    while(fgets(aux, sizeof(aux), file) != NULL) {   // Le as lines do arquivo
+	        line = removeLast(aux);                    // Tira o caractere '\n' da string
+	        line = leftClean(line);                   // Tira os espacos e tabs a esquerda de string
+	        if (line != NULL)
+                line = ignoreComents(line);           // Ignora o comentario da linha, se tiver
+
+            if (line != NULL && line[0] == '.') {     // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
+                char directive[100];
                 int i = 0;
                 do {
-                    diretiva[i] = linha[i];
+                    directive[i] = line[i];            // Salva a primeira palavra da string na variavel "deretiva"
                     i++;
-                } while(linha[i] != ' ' && linha[i] != '\0' && linha[i] != '\t' && linha[i] != ';');
-                diretiva[i] = '\0';
-                if (!strcmp(diretiva, ".module")) {
-                    module = true;
-                } else if (!strcmp(diretiva, ".end")) {
-                    module = false;
-                } else if (!strcmp(diretiva, ".pseg")) {
-                    pseg = true;
-                    dseg = false;
-                } else if (!strcmp(diretiva, ".dseg")) {
-                    pseg = false;
-                    dseg = true;
-                } else if (!strcmp(diretiva, ".word")) {
-                    if (dseg && module) {
-                        count += 1;
+                } while(line[i] != ' ' && line[i] != '\0' && line[i] != '\t');
+                directive[i] = '\0';
+                if (!strcmp(directive, ".module")) {        // Se a diretiva for "module"
+                    module = true;                              // Ativa o module (programa comecou)
+                } else if (!strcmp(directive, ".end")) {    // Se a diretiva for ".end"
+                    module = false;                             // Desativa o module (programa terminou)
+                } else if (!strcmp(directive, ".pseg")) {   // Se a diretiva for "pseg"
+                    pseg = true;                                // Ativa o pseg (trecho de instrucoes comecou)
+                    dseg = false;                               // Desativa o deseg (trecho de dados terminou)
+                } else if (!strcmp(directive, ".dseg")) {   // Se a diretiva for "dseg"
+                    pseg = false;                               // Desativa o pseg (trecho de instrucoes terminou)
+                    dseg = true;                                // Ativa o deseg (trecho de dados comecou)
+                } else if (!strcmp(directive, ".word")) {   // Se a diretiva for "word"
+                    if (dseg && module) {       // Se tiver em um trecho de dados dentro do module
+                        actualPosition += 1;    // Incrementa a posicao atual da memoria
                     }
                 }
-            } else if (linha != NULL && linha[0] != ';' && linha[0] != '.' && module) {
-                char *aux = strchr(linha, ':');
+            } else if (line != NULL && line[0] != '.' && module) {      // Se a linha nao for uma diretiva
+                char *aux = strchr(line, ':');      // Pega a posicao do "dois pontos" na string, se tiver
                 if (aux != NULL) {
                     aux += 1;
-                    if (ignoraLabelsEComents(aux) != NULL &&  pseg) {
-                        count++;
+                    if (ignoraLabelsEComents(aux) != NULL &&  pseg) {   // Se a linha tiver uma instrucao
+                        actualPosition++;                   // Incrementa a posicao atual da memoria
                     }
-                    linha = strrev(linha);
-                    char *label = strchr(linha, ':') + 1;
-                    label = strrev(label);
-                    addLabel(label, count);
+                    line = strrev(line);                    // Inverte a string
+                    char *label = strchr(line, ':') + 1;    // Pega tudo que esta depois do "dois pontos"
+                    label = strrev(label);                  // Desinverte a string
+                    addLabel(label, actualPosition);        // Adiciona label na hashmap
                 } else {
-                    if (pseg)
-                        count++;
+                    if (pseg) {
+                        actualPosition++;   // Incrementa a posicao atual da memoria
+                    }
                 }
             }
 	    }
     }
-	fclose(arq);
+	fclose(file);    // Fecha o arquivo
 }
 
-char* getMneumonico(char instrucao[]) {
-    char mneumonico[100];
+/* Identifica e retorna o mnemonico da instrucao */
+char* (char instruction[]) {
+    char mnemonic[100];
     int i = 0;
     do {
-        mneumonico[i] = instrucao[i];
+        mnemonic[i] = instruction[i];   // Pega a primeira palavra (o mnemonico) da instrucao
         i++;
-    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';' && instrucao[i] != '.');
-    mneumonico[i] = '\0';
+    } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t' && instruction[i] != '.');
+    mnemonic[i] = '\0';
 
-    return mneumonico;
+    return mnemonic;
 }
 
-int getR1(char instrucao[]) {
-    instrucao = strchr(instrucao, ' ');
-    instrucao = tiraEspacos(instrucao);
+/* Identifica e retorna o primeiro registrador da instrucao */
+int getR1(char instruction[]) {
+    instruction = strchr(instruction, ' ');     // Ignora a primeira palavra da instrucao
+    instruction = leftClean(instruction);       // Limpaos os espacos a esquerda da string
     char reg[100];
-    reg[0] = instrucao[0];
-    reg[1] = instrucao[1];
-    if (instrucao[2] >= '0' && instrucao[2] <= '9') {
-        reg[2] = instrucao[2];
+    reg[0] = instruction[0];        // Pega os dois primeiros caracteres da string e, se precisar, o terceiro
+    reg[1] = instruction[1];
+    if (instruction[2] >= '0' && instruction[2] <= '9') {
+        reg[2] = instruction[2];
         reg[3] = '\0';
     } else {
         reg[2] = '\0';
     }
-    return (findRegist(reg) << 8);
+    return (findRegist(reg) << 8);      // Procura o registrador na hashmap e retorna seu codigo deslocado 8 bits a esquerda
 }
 
-int getR2(char instrucao[]) {
-    instrucao = strchr(instrucao, ',') + 1;
-    instrucao = tiraEspacos(instrucao);
+/* Identifica e retorna o segundo registrador da instrucao */
+int getR2(char instruction[]) {
+    instruction = strchr(instruction, ',') + 1; // Ignora tudo antes da virgula
+    instruction = leftClean(instruction);       // Limpaos os espacos a esquerda da string
     char reg[100];
-    reg[0] = instrucao[0];
-    reg[1] = instrucao[1];
-    if (instrucao[2] >= '0' && instrucao[2] <= '9') {
-        reg[2] = instrucao[2];
+    reg[0] = instruction[0];        // Pega os dois primeiros caracteres da string e, se precisar, o terceiro
+    reg[1] = instruction[1];
+    if (instruction[2] >= '0' && instruction[2] <= '9') {
+        reg[2] = instruction[2];
         reg[3] = '\0';
     } else {
         reg[2] = '\0';
     }
-    return (findRegist(reg) << 4);
+    return (findRegist(reg) << 4);      // Procura o registrador na hashmap e retorna seu codigo deslocado 4 bits a esquerda
 }
 
-int getR3(char instrucao[]) {
-    instrucao = strchr(instrucao, ',') + 1;
-    instrucao = strchr(instrucao, ',') + 1;
-    instrucao = tiraEspacos(instrucao);
+/* Identifica e retorna o terceiro registrador na instrucao */
+int getR3(char instruction[]) {
+    instruction = strchr(instruction, ',') + 1;
+    instruction = strchr(instruction, ',') + 1; // Ignora tudo antes da segunda virgula
+    instruction = leftClean(instruction);       // Limpaos os espacos a esquerda da string
     char reg[100];
-    reg[0] = instrucao[0];
-    reg[1] = instrucao[1];
-    if (instrucao[2] >= '0' && instrucao[2] <= '9') {
-        reg[2] = instrucao[2];
+    reg[0] = instruction[0];        // Pega os dois primeiros caracteres da string e, se precisar, o terceiro
+    reg[1] = instruction[1];
+    if (instruction[2] >= '0' && instruction[2] <= '9') {
+        reg[2] = instruction[2];
         reg[3] = '\0';
     } else {
         reg[2] = '\0';
     }
-    return findRegist(reg);
+    return findRegist(reg);     // Procura o registrador na hashmap e retorna seu codigo
 }
 
-int getConst(char instrucao[]) {
-    instrucao = strchr(instrucao, ',') + 1;
-    instrucao = tiraEspacos(instrucao);
+/* Identifica e retorna a constante na instrucao */
+int getConst(char instruction[]) {
+    instruction = strchr(instruction, ',') + 1; // Ignora tudo antes da virgula
+    instruction = leftClean(instruction);       // Limpaos os espacos a esquerda da string
 
     char constante[100];
     int i = 0;
     do {
-        constante[i] = instrucao[i];
+        constante[i] = instruction[i];      // Pega a primeira palavra da string
         i++;
-    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
+    } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
     constante[i] = '\0';
-    if (constante[0] <= '9' && constante[0] >= '0') {
-        return atoi(constante);
-    } else if (!strcmp(constante, "LOWBYTE")) {
-        return (getDestino(instrucao) & 0x0000ffff);
-    } else if (!strcmp(constante, "HIGHBYTE")) {
-        return (getDestino(instrucao) >> 16);
-    } else {
-        return (findLabel(constante) & 0x0000ffff);
+    if (constante[0] <= '9' && constante[0] >= '0') {       // Se for um numero
+        return atoi(constante);                             // Transforma em inteiro e retorna
+    } else if (!strcmp(constante, "LOWBYTE")) {             // Se for "LOWBYTE
+        return (getDestination(instruction) & 0x0000ffff);  // Pega o byte menos significativo do codigo do label a seguir
+    } else if (!strcmp(constante, "HIGHBYTE")) {            // Se for "HIGHBYTE"
+        return (getDestination(instruction) >> 16);         // Pega o byte mais significativo do codigo do label a seguir
+    } else {                                                // Se for somente um label
+        return (findLabel(constante) & 0x0000ffff);         // Pega o byte menos significativo do codigo do label
     }
 }
 
-int getCondicao(char instrucao[]) {
-    instrucao = strchr(instrucao, '.') + 1;
+/* Identifica e retorna condicao na instrucao */
+int getCondicao(char instruction[]) {
+    instruction = strchr(instruction, '.') + 1; // Ignora tudo antes do ponto
     char condicao[100];
     int i = 0;
-    while(instrucao[i] != ' ') {
-        condicao[i] = instrucao[i];
+    while(instruction[i] != ' ') {
+        condicao[i] = instruction[i];       // Pega a primeira palavra da string
         i++;
     }
     condicao[i] = '\0';
 
-    if (!strcmp(condicao, "overflow"))
+    if (!strcmp(condicao, "overflow"))      // Verifica qual flag esta na condicao e retorna seu respectivo codigo deslocado 16 bits a esquerda
         return (1 << 16);
     else if (!strcmp(condicao, "zero"))
         return (2 << 16);
@@ -265,190 +299,213 @@ int getCondicao(char instrucao[]) {
         return 0;
 }
 
-int getDestino(char instrucao[]) {
-    instrucao = strchr(instrucao, ' ') + 1;
-    instrucao = tiraEspacos(instrucao);
+/* Identifica e retorna o destino na instrucao */
+int getDestination(char instruction[]) {
+    instruction = strchr(instruction, ' ') + 1; // Ignora tudo antes do primeiro espaco
+    instruction = leftClean(instruction);       // Limpaos os espacos a esquerda da string
 
     char label[100];
     int i = 0;
     do {
-        label[i] = instrucao[i];
+        label[i] = instruction[i];      // Pega a primeira palavra da string
         i++;
-    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
+    } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
     label[i] = '\0';
 
-    return findLabel(label);
+    return findLabel(label);        // Procura o label na hashmap e retorna seu respectivo codigo
 }
 
-int traduzir(char instrucao[]) {
-    int resp = 0;
-    char *mneumonico = getMneumonico(instrucao);
-    if (!strcmp(mneumonico, "add")) {
-        resp = (0x00000 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "addu")) {
-        resp = (0x00001 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "addinc")) {
-        resp = (0x00002 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "inca")) {
-        resp = (0x00003 << 12) + getR1(instrucao);
-    } else if (!strcmp(mneumonico, "sub")) {
-        resp = (0x00004 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "subdec")) {
-        resp = (0x00005 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "deca")) {
-        resp = (0x00006 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "mult")) {
-        resp = (0x00007 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "multu")) {
-        resp = (0x00008 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "mfh")) {
-        resp = (0x00009 << 12) + getR1(instrucao);
-    } else if (!strcmp(mneumonico, "mfl")) {
-        resp = (0x0000A << 12) + getR1(instrucao);
-    } else if (!strcmp(mneumonico, "div")) {
-        resp = (0x0000B << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "divu")) {
-        resp = (0x0000C << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "asl")) {
-        resp = (0x0000D << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "asr")) {
-        resp = (0x0000E << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "zaros")) {
-        resp = (0x0000F << 12) + getR1(instrucao);
-    } else if (!strcmp(mneumonico, "ones")) {
-        resp = (0x00010 << 12) + getR1(instrucao);
-    } else if (!strcmp(mneumonico, "passa")) {
-        resp = (0x00011 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "passnota")) {
-        resp = (0x00012 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "and")) {
-        resp = (0x00013 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "andnota")) {
-        resp = (0x00014 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "nand")) {
-        resp = (0x00015 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "or")) {
-        resp = (0x00016 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "ornotb")) {
-        resp = (0x00017 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "nor")) {
-        resp = (0x00018 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "xor")) {
-        resp = (0x00019 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "xornota")) {
-        resp = (0x0001A << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "xnor")) {
-        resp = (0x0001B << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "lsl")) {
-        resp = (0x0001C << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "lsr")) {
-        resp = (0x0001D << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "slt")) {
-        resp = (0x0001E << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "sltu")) {
-        resp = (0x0001F << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
-    } else if (!strcmp(mneumonico, "loadlit")) {
-        resp = (0x400 << 20) + (getR1(instrucao) << 8) + getConst(instrucao);
-    } else if (!strcmp(mneumonico, "lcl")) {
-        resp = (0x401 << 20) + (getR1(instrucao) << 8) + getConst(instrucao);
-    } else if (!strcmp(mneumonico, "lch")) {
-        resp = (0x402 << 20) + (getR1(instrucao) << 8) + getConst(instrucao);
-    } else if (!strcmp(mneumonico, "load")) {
-        resp = (0x80000 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "store")) {
-        resp = (0x80001 << 12) + getR1(instrucao) + getR2(instrucao);
-    } else if (!strcmp(mneumonico, "j")) {
-        resp = (0xC00 << 20) + getDestino(instrucao);
-    } else if (!strcmp(mneumonico, "jt")) {
-        resp = (0xC01 << 20) + getCondicao(instrucao) + getDestino(instrucao);
-    } else if (!strcmp(mneumonico, "jf")) {
-        resp = (0xC02 << 20) + getCondicao(instrucao) + getDestino(instrucao);
-    } else if (!strcmp(mneumonico, "jal")) {
-        resp = (0xC03 << 20) + (getR1(instrucao) << 4);
-    } else if (!strcmp(mneumonico, "jr")) {
-        resp = (0xC04 << 20) + (getR1(instrucao) << 4);
-    } else if (!strcmp(mneumonico, "nop")) {
-        resp = 0x00011000;      //passa r0, r0
+/* Traduz a instrucao e retorna o codigo binario resultante */
+int traduzir(char instruction[]) {
+    int result = 0;
+    char *mnemonic = (instruction);     // Pega o mnemonico da instrucao
+    if (!strcmp(mnemonic, "add")) {     // Identifica o mnemonico e acopla o codigo binario de cada uma das partes da instrucao
+        result = (0x00000 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "addu")) {
+        result = (0x00001 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "addinc")) {
+        result = (0x00002 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "inca")) {
+        result = (0x00003 << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "sub")) {
+        result = (0x00004 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "subdec")) {
+        result = (0x00005 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "deca")) {
+        result = (0x00006 << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "mult")) {
+        result = (0x00007 << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "multu")) {
+        result = (0x00008 << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "mfh")) {
+        result = (0x00009 << 12) + getR1(instruction);
+    } else if (!strcmp(mnemonic, "mfl")) {
+        result = (0x0000A << 12) + getR1(instruction);
+    } else if (!strcmp(mnemonic, "div")) {
+        result = (0x0000B << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "divu")) {
+        result = (0x0000C << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "asl")) {
+        result = (0x0000D << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "asr")) {
+        result = (0x0000E << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "zeros")) {
+        result = (0x0000F << 12) + getR1(instruction);
+    } else if (!strcmp(mnemonic, "ones")) {
+        result = (0x00010 << 12) + getR1(instruction);
+    } else if (!strcmp(mnemonic, "passa")) {
+        result = (0x00011 << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "passnota")) {
+        result = (0x00012 << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "and")) {
+        result = (0x00013 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "andnota")) {
+        result = (0x00014 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "nand")) {
+        result = (0x00015 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "or")) {
+        result = (0x00016 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "ornotb")) {
+        result = (0x00017 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "nor")) {
+        result = (0x00018 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "xor")) {
+        result = (0x00019 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "xornota")) {
+        result = (0x0001A << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "xnor")) {
+        result = (0x0001B << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "lsl")) {
+        result = (0x0001C << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "lsr")) {
+        result = (0x0001D << 12) + getR1(instruction) + getR2(instruction);
+    } else if (!strcmp(mnemonic, "slt")) {
+        result = (0x0001E << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "sltu")) {
+        result = (0x0001F << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+    } else if (!strcmp(mnemonic, "loadlit")) {
+        result = (0x400 << 20) + (getR1(instruction) << 8) + getConst(instruction);
+    } else if (!strcmp(mnemonic, "lcl")) {
+        result = (0x401 << 20) + (getR1(instruction) << 8) + getConst(instruction);
+    } else if (!strcmp(mnemonic, "lch")) {
+        result = (0x402 << 20) + (getR1(instruction) << 8) + getConst(instruction);
+    } else if (!strcmp(mnemonic, "load")) {
+        result = (0x800000 << 8) + (getR1(instruction) >> 4) + (getR2(instruction) >> 4);
+    } else if (!strcmp(mnemonic, "store")) {
+        result = (0x800001 << 8) + (getR1(instruction) >> 4) + (getR2(instruction) >> 4);
+    } else if (!strcmp(mnemonic, "j")) {
+        result = (0xC00 << 20) + getDestination(instruction);
+    } else if (!strcmp(mnemonic, "jt")) {
+        result = (0xC01 << 20) + getCondicao(instruction) + getDestination(instruction);
+    } else if (!strcmp(mnemonic, "jf")) {
+        result = (0xC02 << 20) + getCondicao(instruction) + getDestination(instruction);
+    } else if (!strcmp(mnemonic, "jal")) {
+        result = (0xC03 << 20) + (getR1(instruction) << 4);
+    } else if (!strcmp(mnemonic, "jr")) {
+        result = (0xC04 << 20) + (getR1(instruction) << 4);
+    } else if (!strcmp(mnemonic, "nop")) {
+        result = 0x00011000;      //passa r0, r0
     } else {
-        printf("ERRO: instrucao inexistente");
+        printf("ERRO: instrucao inexistente - %s\n", instruction);
     }
-    return resp;
+    return result;
 }
 
-void escreveArquivo(FILE *arq, int bin) {
+/* Traduz a instrucao e retorna o codigo binario resultante */
+void escreveArquivo(FILE *file, int bin) {
     int i;
-    for (i = 0; i < 32; i++) {
-        if (bin >= 2147483648)
-            fprintf(arq, "%d", 1);
+    for (i = 0; i < 32; i++) {      // Para cada bit da palavra
+        if (bin >= 2147483648)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
+            fprintf(file, "%d", 1);
         else
-            fprintf(arq, "%d", 0);
-        bin = (bin << 1);
+            fprintf(file, "%d", 0);
+        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo)
     }
+    //fprintf(file, "\n");
 }
 
+/* Algoritmo principal do programa */
 int main(int argc, char *argv[]) {
+    char *fileName;
     if (argc > 1)
-        nomeArq = argv[1];
+        fileName = argv[1];     // Define o nome do arquivo de teste a ser lido de acordo com o parametro recebido
     else
-        nomeArq = "teste.asm";
+        fileName = "teste.asm";
 
-    criaRegistradores();
-    criaLabels();
+    createRegisters();          // Cria e salva os registradores na hashmap
+    createLabels(fileName);     // Identifica os labels e seus respectivos enderecos e salva-os na hashmap
 
-    char *instrucao;
-    char linha[300];
-	FILE *arqR;
-	FILE *arqW;
-	arqR = fopen(nomeArq, "r");
-	arqW = fopen("resultado.bin", "w");
+    char *instruction;
+    char line[300];
+	FILE *fileR;
+	FILE *fileW;
+	fileR = fopen(fileName, "r");           // Abre o arquivo de leitura
+	fileW = fopen("resultado.bin", "w");    // Abre o arquivo de escrita
 
-    if(arqR != NULL) {
+    if(fileR != NULL) {
         bool pseg = false;
         bool dseg = false;
         bool module = false;
-	    while(fgets(linha, sizeof(linha), arqR) != NULL) {
-            instrucao = tiraUltimo(linha);
-	        instrucao = ignoraLabelsEComents(instrucao);
-            if (instrucao != NULL && instrucao[0] == '.') {
-                char diretiva[100];
+	    while(fgets(line, sizeof(line), fileR) != NULL) {       // Le cada linha do arquivo
+            instruction = removeLast(line);                     // Remove o '\n' da string
+	        instruction = ignoraLabelsEComents(instruction);    // Retira o label e o comentario da string, se tiver
+            else if (line != NULL && line[0] != '.' && module) {      // Se a linha nao for uma diretiva
+                char *aux = strchr(line, ':');      // Pega a posicao do "dois pontos" na string, se tiver
+                if (aux != NULL) {
+                    aux += 1;
+                    if (ignoraLabelsEComents(aux) != NULL &&  pseg) {   // Se a linha tiver uma instrucao
+                        actualPosition++;                   // Incrementa a posicao atual da memoria
+                    }
+                    line = strrev(line);                    // Inverte a string
+                    char *label = strchr(line, ':') + 1;    // Pega tudo que esta depois do "dois pontos"
+                    label = strrev(label);                  // Desinverte a string
+                    addLabel(label, actualPosition);        // Adiciona label na hashmap
+                } else {
+                    if (pseg) {
+                        actualPosition++;   // Incrementa a posicao atual da memoria
+                    }
+                }
+            }
+            if (instruction != NULL && instruction[0] == '.') {     // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
+                char directive[100];
                 int i = 0;
                 do {
-                    diretiva[i] = instrucao[i];
+                    directive[i] = instruction[i];      // Salva a primeira palavra da string na variavel "deretiva"
                     i++;
-                } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
-                diretiva[i] = '\0';
-                if (!strcmp(diretiva, ".module")) {
-                    module = true;
-                } else if (!strcmp(diretiva, ".end")) {
-                    module = false;
-                } else if (!strcmp(diretiva, ".pseg")) {
-                    pseg = true;
-                    dseg = false;
-                } else if (!strcmp(diretiva, ".dseg")) {
-                    pseg = false;
-                    dseg = true;
-                } else if (!strcmp(diretiva, ".word")) {
-                    if (dseg && module) {
-                        instrucao += 5;
-                        instrucao = tiraEspacos(instrucao);
+                } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
+                directive[i] = '\0';
+                if (!strcmp(directive, ".module")) {    // Verifica qual foi a diretiva lida
+                    module = true;                      // Ativa o module (programa comecou)
+                } else if (!strcmp(directive, ".end")) {
+                    module = false;                     // Desativa o module (programa terminou)
+                } else if (!strcmp(directive, ".pseg")) {
+                    pseg = true;                        // Ativa o pseg (trecho de instrucoes comecou)
+                    dseg = false;                       // Desativa o deseg (trecho de dados terminou)
+                } else if (!strcmp(directive, ".dseg")) {
+                    pseg = false;                       // Desativa o pseg (trecho de instrucoes terminou)
+                    dseg = true;                        // Ativa o deseg (trecho de dados comecou)
+                } else if (!strcmp(directive, ".word")) {
+                    if (dseg && module) {       // Se tiver em um trecho de dados dentro do module
+                        instruction += 5;       // Tira o ".word" da string
+                        instruction = leftClean(instruction);       // Tira os espacos e tabs a esquerda da string
                         char word[100];
                         int i = 0;
                         do {
-                            word[i] = instrucao[i];
+                            word[i] = instruction[i];       // Pega a primeira palavra de string
                             i++;
-                        } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
+                        } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
                         word[i] = '\0';
 
-                        escreveArquivo(arqW, atoi(word));
+                        escreveArquivo(fileW, atoi(word));      // Escreve no arquivo de saida o codigo binario da palavra obtida
                     }
                 }
-            } else if (instrucao != NULL && module && pseg) {
-                escreveArquivo(arqW, traduzir(instrucao));
+            } else if (instruction != NULL && module && pseg) {     // Se a linha for uma instrucao
+                escreveArquivo(fileW, traduzir(instruction));       // Escreve no arquivo de saida o codigo binario da instrucao
             }
 	    }
     }
-    fclose(arqR);
-    fclose(arqW);
+    fclose(fileR);      // Fecha o arquivo de saida
+    fclose(fileW);      // Fecha o arquivo de saida
 
     return 0;
 }
