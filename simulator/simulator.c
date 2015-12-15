@@ -12,51 +12,198 @@ int ir;
 int hi;
 int lo;
 
+bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool subs_operation)
+{
+    if (unsigned_operation)
+    {
+        unsigned int value_0 = (unsigned int) v0;
+        unsigned int value_1 = (unsigned int) v1;
+        unsigned int max = 0xFFFFFFFF;
+        if (!subs_operation && (value_1 > (max - value_0)))
+        {
+            flags_reg[0x00000001] = true;   //OVERFLOW
+            return true;
+        }
+        else
+        {
+            flags_reg[0x00000001] = false;
+            return false;
+        }
+    }
+    else
+    {
+        int value_0 = v0;
+        int value_1 = v1;
+        int max = 0x7FFFFFFF;
+        int min = 0x80000000;
+        if ((value_0 > 0) && (value_1 > 0))
+        {
+            if (!subs_operation && (value_1 > (max - value_0)))
+            {
+                flags_reg[0x00000006] = true;   //CARRY
+                return true;
+            }
+            else
+            {
+                flags_reg[0x00000006] = false;
+                return false;
+            }
+        }
+        else if ((value_0 < 0) && (value_1 < 0))
+        {
+            if (!subs_operation && (value_1 < (min - value_0)))
+            {
+                flags_reg[0x00000006] = true;   //CARRY
+                return true;
+            }
+            else
+            {
+                flags_reg[0x00000006] = false;
+                return false;
+            }
+        }
+        else
+        {
+            flags_reg[0x00000006] = false;
+            return false;
+        }
+    }
+}
+
+void check_and_set_neg_zero_true(int value)
+{
+    if (value == 0x00000000)
+    {
+        flags_reg[0x00000002] = true;   //ZERO
+        flags_reg[0x00000004] = true;   //NEGZERO
+        flags_reg[0x00000005] = false;   //TRUE
+    }
+    if (value < 0x00000000)
+    {
+        flags_reg[0x00000003] = true;   //NEG
+        flags_reg[0x00000004] = true;   //NEGZERO
+        flags_reg[0x00000005] = false;   //TRUE
+    }
+    if (value > 0x00000000)
+    {
+        flags_reg[0x00000002] = false;   //ZERO
+        flags_reg[0x00000003] = false;   //NEG
+        flags_reg[0x00000004] = false;   //NEGZERO
+        flags_reg[0x00000005] = true;   //TRUE
+    }
+}
+
+bool get_flag(int flag)
+{
+    return flags_reg[flag];
+}
+
 void ula_add(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] + gpr[reg3];
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);
+    if (!carry)
+    {
+        check_and_set_neg_zero_true(gpr[reg1]);
+    }
 }
 
 void ula_addu(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] + gpr[reg3];
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true, false);
+    if (!overflow)
+    {
+        check_and_set_neg_zero_true(gpr[reg1]);
+    }
 }
 
 void ula_addinc(int reg1, int reg2, int reg3)
 {
-    gpr[reg1] = gpr[reg2] + gpr[reg3] + 0x00000001;
+    gpr[reg1] = gpr[reg2] + gpr[reg3];
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);
+    if (!carry)
+    {
+        gpr[reg1] = gpr[reg1] + 0x00000001;
+        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, false);
+        if (!carry)
+        {
+            check_and_set_neg_zero_true(gpr[reg1]);
+        }
+    }
 }
 
 void ula_inca(int reg1, int reg2)
 {
     gpr[reg1] = ++gpr[reg2];
+    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, false);
+    if (!carry)
+    {
+        check_and_set_neg_zero_true(gpr[reg1]);
+    }
 }
 
 void ula_sub(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] - gpr[reg3];
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);
+    if (!carry)
+    {
+        check_and_set_neg_zero_true(gpr[reg1]);
+    }
 }
 
 void ula_subdec(int reg1, int reg2, int reg3)
 {
-    gpr[reg1] = gpr[reg2] - gpr[reg3] - 0x00000001;
+    gpr[reg1] = gpr[reg2] - gpr[reg3];
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);
+    if (!carry)
+    {
+        gpr[reg1] = gpr[reg1] - 0x00000001;
+        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, true);
+        if (!carry)
+        {
+            check_and_set_neg_zero_true(gpr[reg1]);
+        }
+    }
 }
 
 void ula_deca(int reg1, int reg2)
 {
     gpr[reg1] = --gpr[reg2];
+    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, true);
+    if (!carry)
+    {
+        check_and_set_neg_zero_true(gpr[reg1]);
+    }
 }
 
 void ula_mult(int reg1, int reg2)
 {
     hi = (gpr[reg1] * gpr[reg2]);
     lo = (gpr[reg1] * gpr[reg2]);
+    if ((hi == 0x00000000) && (lo == 0x00000000))
+    {
+        check_and_set_neg_zero_true(0x00000000);
+    }
+    else
+    {
+        check_and_set_neg_zero_true(hi);
+    }
 }
 
 void ula_multu(int reg1, int reg2)
 {
     hi = (gpr[reg1] * gpr[reg2]);
     lo = (gpr[reg1] * gpr[reg2]);
+    if ((hi == 0x00000000) && (lo == 0x00000000))
+    {
+        check_and_set_neg_zero_true(0x00000000);
+    }
+    else
+    {
+        check_and_set_neg_zero_true(hi);
+    }
 }
 
 void ula_mfh(int reg1)
@@ -72,31 +219,37 @@ void ula_mfl(int reg1)
 void ula_div(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] / gpr[reg3];
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_divu(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] / gpr[reg3];
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_asl(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] << 0x00000001;
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_asr(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] >> 0x00000001;
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_zeros(int reg1)
 {
     gpr[reg1] = 0x00000000;
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_ones(int reg1)
 {
     gpr[reg1] = 0x00000001;
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_passa(int reg1, int reg2)
@@ -112,56 +265,67 @@ void ula_passnota(int reg1, int reg2)
 void ula_and(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] & gpr[reg3];
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_andnota(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = (~gpr[reg2]) & gpr[reg3];
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_nand(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] & gpr[reg3]);
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_or(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] | gpr[reg3];
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_ornotb(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] | (~gpr[reg3]);
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_nor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] | gpr[reg3]);
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_xor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] ^ gpr[reg3];
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_xornota(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = (~gpr[reg2]) ^ gpr[reg3];
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_xnor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] ^ gpr[reg3]);
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_lsl(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] << 0x00000001;
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_lsr(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] >> 0x00000001;
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_slt(int reg1, int reg2, int reg3)
@@ -174,6 +338,7 @@ void ula_slt(int reg1, int reg2, int reg3)
     {
         gpr[reg1] = 0x00000000;
     }
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void ula_sltu(int reg1, int reg2, int reg3)
@@ -186,6 +351,7 @@ void ula_sltu(int reg1, int reg2, int reg3)
     {
         gpr[reg1] = 0x00000000;
     }
+    check_and_set_neg_zero_true(gpr[reg1]);
 }
 
 void const_loadlit(int reg1, int cst)
@@ -205,12 +371,12 @@ void const_lch(int reg1, int cst)
 
 void mem_load(int reg1, int addr)
 {
-    gpr[reg1] = mem[addr];
+    gpr[reg1] = mem[gpr[addr]];
 }
 
 void mem_store(int reg1, int addr)
 {
-    mem[addr] = gpr[reg1];
+    mem[gpr[addr]] = gpr[reg1];
 }
 
 void jump(int addr)
@@ -220,7 +386,7 @@ void jump(int addr)
 
 void jump_true(int flag, int addr)
 {
-    bool is_true = check_flag(flag);
+    bool is_true = get_flag(flag);
     if (is_true)
     {
         pc = addr;
@@ -229,7 +395,7 @@ void jump_true(int flag, int addr)
 
 void jump_false(int flag, int addr)
 {
-    bool is_true = check_flag(flag);
+    bool is_true = get_flag(flag);
     if (!is_true)
     {
         pc = addr;
@@ -245,21 +411,6 @@ void jump_and_link(int addr)
 void jump_register(int reg1)
 {
     pc = gpr[reg1];
-}
-
-bool check_flag(int flag)
-{
-    return flags_reg[flag];
-}
-
-void set_flags(int flag1, int flag2, int flag3, int flag4, int flag5, int flag6)
-{
-    flags_reg[0x00000001] = flag1;   //OVERFLOW
-    flags_reg[0x00000002] = flag2;   //ZERO
-    flags_reg[0x00000003] = flag3;   //NEG
-    flags_reg[0x00000004] = flag4;   //NEGZERO
-    flags_reg[0x00000005] = flag5;   //TRUE
-    flags_reg[0x00000006] = flag6;   //CARRY
 }
 
 void decode_and_run_instruction(int ir)
@@ -404,7 +555,7 @@ void decode_and_run_instruction(int ir)
     {
         int opcode = (ir >> 0x00000014) & 0x00000003; //Desloca 20 bits e pega 2 menos significativos
         int cst = ir & 0x0000FFFF;
-        int reg1 = (ir >> 0x0000FFFF) & 0x0000000F;
+        int reg1 = (ir >> 0x0000000F) & 0x0000000F;
         if (opcode == 0x00000000)
         {
             const_loadlit(reg1, cst);
@@ -420,50 +571,51 @@ void decode_and_run_instruction(int ir)
     }
     else if (layout == 0x00000002)  //Layout de operaões de acesso a memória
     {
-        int opcode = (ir >> 0x0000000C) & 0x00000001; //Desloca 12 bits e pega o bit menos significativo
-        int cst = ir & 0x0000FFFF;
-        int reg1 = (ir >> 0x0000FFFF) & 0x0000000F;
-        if (opcode == 0x00000000)
+        int opcode = (ir >> 0x00000008) & 0x00000003; //Desloca 8 bits e pega os 2 bits menos significativos
+        int reg2 = ir & 0x0000000F;
+        int reg1 = (ir >> 0x00000004) & 0x0000000F;
         if (opcode == 0x00000000)
         {
-            mem_load();
+            mem_load(reg1, reg2);
         }
         else if (opcode == 0x00000001)
         {
-            mem_store();
+            mem_store(reg1, reg2);
         }
     }
     else if (layout == 0x00000003)  //Layout de operações de desvios e saltos
     {
         int opcode = (ir >> 0x00000014) & 0x0000000F; //Desloca 20 bits e pega 4 menos significativos
+        int addr = ir & 0x00000FFF;
+        int reg1 = (ir >> 0x0000000C) & 0x0000000F;
+        int cond = (ir >> 0x0000000F) & 0x0000000F;
         if (opcode == 0x00000000)
         {
-            jump();
+            jump(addr);
         }
         else if (opcode == 0x00000001)
         {
-            jump_true();
+            jump_true(cond, addr);
         }
         else if (opcode == 0x00000002)
         {
-            jump_false();
+            jump_false(cond, addr);
         }
         else if (opcode == 0x00000003)
         {
-            jump_and_link();
+            jump_and_link(addr);
         }
         else if (opcode == 0x00000004)
         {
-            jump_register();
+            jump_register(reg1);
         }
     }
 }
 void main(void)
 {
-    int a = 0x00000014;
-    int b = 0x0000000c;
-    printf ("20=%d, 12=%d", a, b);
-    int i;
+    int max = 0x7FFFFFFF;
+    int min = 0x80000000;
+    printf ("%d %d", max, min);
     while (true)
     {
         ir = mem[pc];
