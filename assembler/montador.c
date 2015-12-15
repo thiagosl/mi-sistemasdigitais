@@ -8,77 +8,62 @@ typedef int bool;
 #define true 1
 #define false 0
 
-char nomeArq[] = "teste.asm";
-int posAtual = 0;
+char *nomeArq;
 
 struct hash {
-    char *key;                /* key */
+    char key[100];                /* key */
     int valor;
     UT_hash_handle hh;        /* faz dessa struct uma hashtable */
 };
 
 struct hash *registradores = NULL;
 struct hash *labels = NULL;
-struct hash *flags = NULL;
 
 void addRegist(char key[], int valor) {
     struct hash *s;
-    s = malloc(sizeof(struct hash));
-    s->key = key;
-    s->valor = valor;
-    HASH_ADD_STR(registradores, key, s);
+    HASH_FIND_STR(registradores, key, s);
+    if (s==NULL) {
+      s = (struct hash*)malloc(sizeof(struct hash));
+      strncpy(s->key, key, 100);
+      s->valor = valor;
+      HASH_ADD_STR(registradores, key, s);
+      //printf("Criando registrador: %s - %d\n", s->key, s->valor);
+    }
 }
 
 void addLabel(char key[], int valor) {
     struct hash *s;
-    HASH_FIND_STR(labels, &key, s);
+    HASH_FIND_STR(labels, key, s);
     if (s==NULL) {
       s = (struct hash*)malloc(sizeof(struct hash));
-      s->key = key;
+      strncpy(s->key, key, 100);
+      s->valor = valor;
       HASH_ADD_STR(labels, key, s);
+      //printf("Criando label: %s - %d\n", s->key, s->valor);
     }
-    s->valor = valor;
 }
 
 int findRegist(char key[]) {
     struct hash *s;
-
-    HASH_FIND_STR(registradores, &key, s);
+    HASH_FIND_STR(registradores, key, s);
     return s->valor;
 }
 
 int findLabel(char key[]) {
     struct hash *s;
-
-    HASH_FIND_STR(labels, &key, s);
+    HASH_FIND_STR(labels, key, s);
     return s->valor;
 }
 
-char* tiraEspacos(char s[]) {
-    char novo[100];
-    char c;
-    bool b = false;
+char* tiraEspacos(char *s) {
     int i = 0;
-    do {
-        c = s[i];
-        if (c != ' ' && c != '\t') {
-            b = true;
-        }
+    while(s[i] != '\0' && (s[i] == ' ' || s[i] == '\t')) {
         i++;
-    } while(c != '\0' && b == false);
-    if (s[--i] == '\0') {
-        return NULL;
-    } else {
-        int j = 0;
-        do {
-            c = s[i];
-            novo[j] = c;
-            i++;
-            j++;
-        } while(c != '\0');
     }
-
-    return novo;
+    if (s[i] == '\0') {
+        return NULL;
+    }
+    return strchr(s, s[i]);
 }
 
 void criaRegistradores() {
@@ -90,14 +75,19 @@ void criaRegistradores() {
     }
 }
 
-char* ignoraLabelsEComents(char instrucao[100]) {
+char* ignoraLabelsEComents(char *instrucao) {
     char *aux = strchr(instrucao, ':');
     if (aux != NULL)
         instrucao = ++aux;
-
     instrucao = tiraEspacos(instrucao);
     if(instrucao == NULL || instrucao[0] == ';')
         return NULL;
+    instrucao = strrev(instrucao);
+    aux = strchr(instrucao, ';');
+    if (aux != NULL)
+        instrucao = ++aux;
+    instrucao = tiraEspacos(instrucao);
+    instrucao = strrev(instrucao);
 
     return instrucao;
 }
@@ -113,7 +103,7 @@ void criaLabels() {
 	char *linha;
 	FILE *arq;
 	int count = 0;
-	char aux[100];
+	char aux[300];
 
 	arq = fopen(nomeArq, "r");
 	if(arq == NULL)
@@ -145,23 +135,23 @@ void criaLabels() {
                     dseg = true;
                 } else if (!strcmp(diretiva, ".word")) {
                     if (dseg && module) {
-                        count++;
+                        count += 1;
                     }
                 }
-            } else if (linha != NULL && linha[0] != ';' && linha[0] != '.' && module && pseg) {
+            } else if (linha != NULL && linha[0] != ';' && linha[0] != '.' && module) {
                 char *aux = strchr(linha, ':');
                 if (aux != NULL) {
+                    aux += 1;
+                    if (ignoraLabelsEComents(aux) != NULL &&  pseg) {
+                        count++;
+                    }
                     linha = strrev(linha);
                     char *label = strchr(linha, ':') + 1;
                     label = strrev(label);
                     addLabel(label, count);
-
-                    aux += 1;
-                    if (ignoraLabelsEComents(aux) != NULL) {
-                        count++;
-                    }
                 } else {
-                    count++;
+                    if (pseg)
+                        count++;
                 }
             }
 	    }
@@ -175,7 +165,7 @@ char* getMneumonico(char instrucao[]) {
     do {
         mneumonico[i] = instrucao[i];
         i++;
-    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
+    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';' && instrucao[i] != '.');
     mneumonico[i] = '\0';
 
     return mneumonico;
@@ -187,8 +177,12 @@ int getR1(char instrucao[]) {
     char reg[100];
     reg[0] = instrucao[0];
     reg[1] = instrucao[1];
-    reg[2] = '\0';
-
+    if (instrucao[2] >= '0' && instrucao[2] <= '9') {
+        reg[2] = instrucao[2];
+        reg[3] = '\0';
+    } else {
+        reg[2] = '\0';
+    }
     return (findRegist(reg) << 8);
 }
 
@@ -198,8 +192,12 @@ int getR2(char instrucao[]) {
     char reg[100];
     reg[0] = instrucao[0];
     reg[1] = instrucao[1];
-    reg[2] = '\0';
-
+    if (instrucao[2] >= '0' && instrucao[2] <= '9') {
+        reg[2] = instrucao[2];
+        reg[3] = '\0';
+    } else {
+        reg[2] = '\0';
+    }
     return (findRegist(reg) << 4);
 }
 
@@ -210,12 +208,64 @@ int getR3(char instrucao[]) {
     char reg[100];
     reg[0] = instrucao[0];
     reg[1] = instrucao[1];
-    reg[2] = '\0';
-
+    if (instrucao[2] >= '0' && instrucao[2] <= '9') {
+        reg[2] = instrucao[2];
+        reg[3] = '\0';
+    } else {
+        reg[2] = '\0';
+    }
     return findRegist(reg);
 }
 
-int getLabel(char instrucao[]) {
+int getConst(char instrucao[]) {
+    instrucao = strchr(instrucao, ',') + 1;
+    instrucao = tiraEspacos(instrucao);
+
+    char constante[100];
+    int i = 0;
+    do {
+        constante[i] = instrucao[i];
+        i++;
+    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
+    constante[i] = '\0';
+    if (constante[0] <= '9' && constante[0] >= '0') {
+        return atoi(constante);
+    } else if (!strcmp(constante, "LOWBYTE")) {
+        return (getDestino(instrucao) & 0x0000ffff);
+    } else if (!strcmp(constante, "HIGHBYTE")) {
+        return (getDestino(instrucao) >> 16);
+    } else {
+        return (findLabel(constante) & 0x0000ffff);
+    }
+}
+
+int getCondicao(char instrucao[]) {
+    instrucao = strchr(instrucao, '.') + 1;
+    char condicao[100];
+    int i = 0;
+    while(instrucao[i] != ' ') {
+        condicao[i] = instrucao[i];
+        i++;
+    }
+    condicao[i] = '\0';
+
+    if (!strcmp(condicao, "overflow"))
+        return (1 << 16);
+    else if (!strcmp(condicao, "zero"))
+        return (2 << 16);
+    else if (!strcmp(condicao, "neg"))
+        return (3 << 16);
+    else if (!strcmp(condicao, "negzero"))
+        return (4 << 16);
+    else if (!strcmp(condicao, "true"))
+        return (5 << 16);
+    else if (!strcmp(condicao, "carry"))
+        return (6 << 16);
+    else
+        return 0;
+}
+
+int getDestino(char instrucao[]) {
     instrucao = strchr(instrucao, ' ') + 1;
     instrucao = tiraEspacos(instrucao);
 
@@ -230,67 +280,6 @@ int getLabel(char instrucao[]) {
     return findLabel(label);
 }
 
-int getConst(char instrucao[]) {
-    instrucao = strchr(instrucao, ',') + 1;
-    instrucao = tiraEspacos(instrucao);
-
-    char constante[100];
-    int i = 0;
-    do {
-        constante[i] = instrucao[i];
-        i++;
-    } while(instrucao[i] != ' ' && instrucao[i] != '\0' && instrucao[i] != '\t' && instrucao[i] != ';');
-    constante[i] = '\0';
-
-    if (constante[0] <= 9 && constante[0] >= 0)
-        return atoi(constante);
-    else if (!strcmp(constante, "LOWBYTE")) {
-        return (getLabel(instrucao) & 0x00001111);
-    } else if (!strcmp(constante, "HIBYTE")) {
-        return (getLabel(instrucao) >> 16);
-    } else {
-        return (findLabel(constante) & 0x00001111);
-    }
-}
-
-int getCondicao(char instrucao[]) {
-    instrucao = strchr(instrucao, '.') + 1;
-    char condicao[100];
-    int i = 0;
-    do {
-        condicao[i] = instrucao[i];
-        i++;
-    } while(instrucao[i] != ' ');
-    condicao[i] = '\0';
-
-    if (!strcmp(condicao, "overflow"))
-        return 1;
-    else if (!strcmp(condicao, "zero"))
-        return 2;
-    else if (!strcmp(condicao, "neg"))
-        return 3;
-    else if (!strcmp(condicao, "negzero"))
-        return 4;
-    else if (!strcmp(condicao, "true"))
-        return 5;
-    else if (!strcmp(condicao, "carry"))
-        return 6;
-    else
-        return 0;
-}
-
-int getDestino(char instrucao[]) {
-    instrucao = strchr(instrucao, ',') + 1;
-    instrucao = tiraEspacos(instrucao);
-    instrucao = strrev(instrucao);
-    instrucao = tiraEspacos(instrucao);
-    instrucao = strrev(instrucao);
-
-    int destino = atoi(instrucao);
-
-    return destino;
-}
-
 int traduzir(char instrucao[]) {
     int resp = 0;
     char *mneumonico = getMneumonico(instrucao);
@@ -301,7 +290,7 @@ int traduzir(char instrucao[]) {
     } else if (!strcmp(mneumonico, "addinc")) {
         resp = (0x00002 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
     } else if (!strcmp(mneumonico, "inca")) {
-        resp = (0x00003 << 12) + getR1(instrucao) + getR2(instrucao);
+        resp = (0x00003 << 12) + getR1(instrucao);
     } else if (!strcmp(mneumonico, "sub")) {
         resp = (0x00004 << 12) + getR1(instrucao) + getR2(instrucao) + getR3(instrucao);
     } else if (!strcmp(mneumonico, "subdec")) {
@@ -370,22 +359,20 @@ int traduzir(char instrucao[]) {
         resp = (0x80001 << 12) + getR1(instrucao) + getR2(instrucao);
     } else if (!strcmp(mneumonico, "j")) {
         resp = (0xC00 << 20) + getDestino(instrucao);
-        if (getDestino(instrucao) == posAtual)
-            resp = 0x40000000;
     } else if (!strcmp(mneumonico, "jt")) {
-        resp = (0xC01 << 20) + getCondicao(instrucao); + getDestino(instrucao);
+        resp = (0xC01 << 20) + getCondicao(instrucao) + getDestino(instrucao);
     } else if (!strcmp(mneumonico, "jf")) {
-        resp = (0xC02 << 20) + getCondicao(instrucao); + getDestino(instrucao);
+        resp = (0xC02 << 20) + getCondicao(instrucao) + getDestino(instrucao);
     } else if (!strcmp(mneumonico, "jal")) {
         resp = (0xC03 << 20) + (getR1(instrucao) << 4);
     } else if (!strcmp(mneumonico, "jr")) {
         resp = (0xC04 << 20) + (getR1(instrucao) << 4);
     } else if (!strcmp(mneumonico, "nop")) {
-        resp = 0x20000000;
+        resp = 0x00011000;      //passa r0, r0
     } else {
         printf("ERRO: instrucao inexistente");
     }
-    posAtual++;
+    return resp;
 }
 
 void escreveArquivo(FILE *arq, int bin) {
@@ -399,20 +386,23 @@ void escreveArquivo(FILE *arq, int bin) {
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc > 1)
+        nomeArq = argv[1];
+    else
+        nomeArq = "teste.asm";
+
     criaRegistradores();
     criaLabels();
 
     char *instrucao;
-    char linha[100];
+    char linha[300];
 	FILE *arqR;
 	FILE *arqW;
 	arqR = fopen(nomeArq, "r");
 	arqW = fopen("resultado.bin", "w");
 
-    if(arqR == NULL)
-	    printf("Erro, nao foi possivel abrir o arquivo\n");
-	else {
+    if(arqR != NULL) {
         bool pseg = false;
         bool dseg = false;
         bool module = false;
@@ -450,7 +440,6 @@ int main() {
                         word[i] = '\0';
 
                         escreveArquivo(arqW, atoi(word));
-                        posAtual++;
                     }
                 }
             } else if (instrucao != NULL && module && pseg) {
