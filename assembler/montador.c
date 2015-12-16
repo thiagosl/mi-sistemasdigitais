@@ -188,7 +188,7 @@ void createLabels(char *fileName) {
 }
 
 /* Identifica e retorna o mnemonico da instrucao */
-char* (char instruction[]) {
+char* getMnemonic(char instruction[]) {
     char mnemonic[100];
     int i = 0;
     do {
@@ -318,7 +318,7 @@ int getDestination(char instruction[]) {
 /* Traduz a instrucao e retorna o codigo binario resultante */
 int traduzir(char instruction[]) {
     int result = 0;
-    char *mnemonic = (instruction);     // Pega o mnemonico da instrucao
+    char *mnemonic = getMnemonic(instruction);     // Pega o mnemonico da instrucao
     if (!strcmp(mnemonic, "add")) {     // Identifica o mnemonico e acopla o codigo binario de cada uma das partes da instrucao
         result = (0x00000 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
     } else if (!strcmp(mnemonic, "addu")) {
@@ -365,7 +365,7 @@ int traduzir(char instruction[]) {
         result = (0x00015 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
     } else if (!strcmp(mnemonic, "or")) {
         result = (0x00016 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
-    } else if (!strcmp(mnemonic, "ornotb")) {
+    } else if (!strcmp(mnemonic, "ornota")) {
         result = (0x00017 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
     } else if (!strcmp(mnemonic, "nor")) {
         result = (0x00018 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
@@ -449,23 +449,6 @@ int main(int argc, char *argv[]) {
 	    while(fgets(line, sizeof(line), fileR) != NULL) {       // Le cada linha do arquivo
             instruction = removeLast(line);                     // Remove o '\n' da string
 	        instruction = ignoraLabelsEComents(instruction);    // Retira o label e o comentario da string, se tiver
-            else if (line != NULL && line[0] != '.' && module) {      // Se a linha nao for uma diretiva
-                char *aux = strchr(line, ':');      // Pega a posicao do "dois pontos" na string, se tiver
-                if (aux != NULL) {
-                    aux += 1;
-                    if (ignoraLabelsEComents(aux) != NULL &&  pseg) {   // Se a linha tiver uma instrucao
-                        actualPosition++;                   // Incrementa a posicao atual da memoria
-                    }
-                    line = strrev(line);                    // Inverte a string
-                    char *label = strchr(line, ':') + 1;    // Pega tudo que esta depois do "dois pontos"
-                    label = strrev(label);                  // Desinverte a string
-                    addLabel(label, actualPosition);        // Adiciona label na hashmap
-                } else {
-                    if (pseg) {
-                        actualPosition++;   // Incrementa a posicao atual da memoria
-                    }
-                }
-            }
             if (instruction != NULL && instruction[0] == '.') {     // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
                 char directive[100];
                 int i = 0;
