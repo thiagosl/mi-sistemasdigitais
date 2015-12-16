@@ -4,22 +4,22 @@ typedef int bool;
 #define true 1
 #define false 0
 
-int gpr[16];
-int flags_reg[7];
-int mem[200] = {0x1345AF2D};
-int pc = 0x00000000;
-int ir;
-int hi;
-int lo;
+int gpr[16];    //Registradores de propósito geral (GPR)
+int flags_reg[7];   //Registrador de flags
+int mem[200] = {0x1345AF2D};    //Memória de dados
+int pc = 0x00000000;    //Ponteiro para a próxima instrução que será executada
+int ir;     //Registrador de propósito específico que armazena a instrução que está sendo executada neste ciclo
+int hi;     //Registrador de propósito específico que armazena os bytes mais significativos da operação de multiplicação
+int lo;     //Registrador de propósito específico que armazena os bytes menos significativos da operação de multiplicação
 
 bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool subs_operation)
 {
-    if (unsigned_operation)
+    if (unsigned_operation)     //Operações sem sinal
     {
         unsigned int value_0 = (unsigned int) v0;
         unsigned int value_1 = (unsigned int) v1;
-        unsigned int max = 0xFFFFFFFF;
-        if (!subs_operation && (value_1 > (max - value_0)))
+        unsigned int max = 0xFFFFFFFF;      //Valor inteiro sem sinal máximo
+        if (!subs_operation && (value_1 > (max - value_0))) //Se o valor1 for maior do que o número máximo decrescido do valor0, acontecerá um overflow
         {
             flags_reg[0x00000001] = true;   //OVERFLOW
             return true;
@@ -30,39 +30,39 @@ bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool 
             return false;
         }
     }
-    else
+    else        //Operações com sinal
     {
         int value_0 = v0;
         int value_1 = v1;
-        int max = 0x7FFFFFFF;
-        int min = 0x80000000;
-        if ((value_0 > 0) && (value_1 > 0))
+        int max = 0x7FFFFFFF;       //Valor máximo para inteiros com sinal
+        int min = 0x80000000;       //Valor mínimo para inteiros com sinal
+        if ((value_0 > 0) && (value_1 > 0))     //Se ambos os valores forem positivos
         {
-            if (!subs_operation && (value_1 > (max - value_0)))
+            if (!subs_operation && (value_1 > (max - value_0)))     //Se for uma operação de soma e ocorrer carry
             {
                 flags_reg[0x00000006] = true;   //CARRY
                 return true;
             }
-            else
+            else        //Se for uma operação de subtração ou não ocorrer carry
             {
                 flags_reg[0x00000006] = false;
                 return false;
             }
         }
-        else if ((value_0 < 0) && (value_1 < 0))
+        else if ((value_0 < 0) && (value_1 < 0))    //Se ambos os valores forem negativos
         {
-            if (!subs_operation && (value_1 < (min - value_0)))
+            if (!subs_operation && (value_1 < (min - value_0)))     //Se for uma operação de soma e ocorrer carry
             {
                 flags_reg[0x00000006] = true;   //CARRY
                 return true;
             }
-            else
+            else        //Se for uma operação de subtração ou não ocorrer carry
             {
                 flags_reg[0x00000006] = false;
                 return false;
             }
         }
-        else
+        else        //Se um dos números for positivo e o outro negativo
         {
             flags_reg[0x00000006] = false;
             return false;
@@ -72,19 +72,21 @@ bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool 
 
 void check_and_set_neg_zero_true(int value)
 {
-    if (value == 0x00000000)
+    if (value == 0x00000000)    //Se o valor for zero
     {
         flags_reg[0x00000002] = true;   //ZERO
+        flags_reg[0x00000003] = false;   //NEG
         flags_reg[0x00000004] = true;   //NEGZERO
         flags_reg[0x00000005] = false;   //TRUE
     }
-    if (value < 0x00000000)
+    if (value < 0x00000000)     //Se o valor for menor que zero
     {
+        flags_reg[0x00000002] = false;   //ZERO
         flags_reg[0x00000003] = true;   //NEG
         flags_reg[0x00000004] = true;   //NEGZERO
         flags_reg[0x00000005] = false;   //TRUE
     }
-    if (value > 0x00000000)
+    if (value > 0x00000000)     //Se o valor for maior que zero
     {
         flags_reg[0x00000002] = false;   //ZERO
         flags_reg[0x00000003] = false;   //NEG
@@ -101,34 +103,34 @@ bool get_flag(int flag)
 void ula_add(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag carry
     if (!carry)
     {
-        check_and_set_neg_zero_true(gpr[reg1]);
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
     }
 }
 
 void ula_addu(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true, false);
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true, false);    //Verifica a ocorrencia da flag overflow
     if (!overflow)
     {
-        check_and_set_neg_zero_true(gpr[reg1]);
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu overflow, verifica as flags zero, neg, negzero e true
     }
 }
 
 void ula_addinc(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag carry
     if (!carry)
     {
         gpr[reg1] = gpr[reg1] + 0x00000001;
-        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, false);
+        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, false);      //Verifica a ocorrencia da flag carry
         if (!carry)
         {
-            check_and_set_neg_zero_true(gpr[reg1]);
+            check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
         }
     }
 }
@@ -136,34 +138,34 @@ void ula_addinc(int reg1, int reg2, int reg3)
 void ula_inca(int reg1, int reg2)
 {
     gpr[reg1] = ++gpr[reg2];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, false);
+    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, false);     //Verifica a ocorrencia da flag carry
     if (!carry)
     {
-        check_and_set_neg_zero_true(gpr[reg1]);
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
     }
 }
 
 void ula_sub(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] - gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag carry
     if (!carry)
     {
-        check_and_set_neg_zero_true(gpr[reg1]);
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
     }
 }
 
 void ula_subdec(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] - gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag carry
     if (!carry)
     {
         gpr[reg1] = gpr[reg1] - 0x00000001;
-        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, true);
+        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, true);       //Verifica a ocorrencia da flag carry
         if (!carry)
         {
-            check_and_set_neg_zero_true(gpr[reg1]);
+            check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
         }
     }
 }
@@ -171,10 +173,10 @@ void ula_subdec(int reg1, int reg2, int reg3)
 void ula_deca(int reg1, int reg2)
 {
     gpr[reg1] = --gpr[reg2];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, true);
+    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, true);      //Verifica a ocorrencia da flag carry
     if (!carry)
     {
-        check_and_set_neg_zero_true(gpr[reg1]);
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
     }
 }
 
@@ -184,11 +186,11 @@ void ula_mult(int reg1, int reg2)
     lo = (gpr[reg1] * gpr[reg2]);
     if ((hi == 0x00000000) && (lo == 0x00000000))
     {
-        check_and_set_neg_zero_true(0x00000000);
+        check_and_set_neg_zero_true(0x00000000);    //Se o número for zero, ativa flag zero e negzero
     }
     else
     {
-        check_and_set_neg_zero_true(hi);
+        check_and_set_neg_zero_true(hi);    //Se o número for diferente de zero verifica as flags zero, neg, negzero e true
     }
 }
 
@@ -198,11 +200,11 @@ void ula_multu(int reg1, int reg2)
     lo = (gpr[reg1] * gpr[reg2]);
     if ((hi == 0x00000000) && (lo == 0x00000000))
     {
-        check_and_set_neg_zero_true(0x00000000);
+        check_and_set_neg_zero_true(0x00000000);        //Se o número for zero, ativa flag zero e negzero
     }
     else
     {
-        check_and_set_neg_zero_true(hi);
+        check_and_set_neg_zero_true(hi);        //Se o número for diferente de zero verifica as flags zero, neg, negzero e true
     }
 }
 
@@ -219,37 +221,37 @@ void ula_mfl(int reg1)
 void ula_div(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] / gpr[reg3];
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_divu(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] / gpr[reg3];
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_asl(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] << 0x00000001;
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_asr(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] >> 0x00000001;
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_zeros(int reg1)
 {
     gpr[reg1] = 0x00000000;
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_ones(int reg1)
 {
     gpr[reg1] = 0x00000001;
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_passa(int reg1, int reg2)
@@ -265,67 +267,67 @@ void ula_passnota(int reg1, int reg2)
 void ula_and(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] & gpr[reg3];
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_andnota(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = (~gpr[reg2]) & gpr[reg3];
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_nand(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] & gpr[reg3]);
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_or(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] | gpr[reg3];
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_ornotb(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] | (~gpr[reg3]);
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_nor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] | gpr[reg3]);
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_xor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] ^ gpr[reg3];
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_xornota(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = (~gpr[reg2]) ^ gpr[reg3];
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_xnor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] ^ gpr[reg3]);
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_lsl(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] << 0x00000001;
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_lsr(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] >> 0x00000001;
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_slt(int reg1, int reg2, int reg3)
@@ -338,7 +340,7 @@ void ula_slt(int reg1, int reg2, int reg3)
     {
         gpr[reg1] = 0x00000000;
     }
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_sltu(int reg1, int reg2, int reg3)
@@ -351,7 +353,7 @@ void ula_sltu(int reg1, int reg2, int reg3)
     {
         gpr[reg1] = 0x00000000;
     }
-    check_and_set_neg_zero_true(gpr[reg1]);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void const_loadlit(int reg1, int cst)
@@ -361,22 +363,22 @@ void const_loadlit(int reg1, int cst)
 
 void const_lcl(int reg1, int cst)
 {
-    gpr[reg1] = cst | (gpr[reg1] & 0xFFFF0000);
+    gpr[reg1] = cst | (gpr[reg1] & 0xFFFF0000);     //Pega os 16 bits mais significativos do valor no registrador e faz um OR com a constante
 }
 
 void const_lch(int reg1, int cst)
 {
-    gpr[reg1] = (cst << 8) | (gpr[reg1] & 0x0000FFFF);
+    gpr[reg1] = (cst << 8) | (gpr[reg1] & 0x0000FFFF);      //Pega os 16 bits menos significativos do valor no registrador e faz um OR com a constante deslocada 8 bits a esquerda
 }
 
 void mem_load(int reg1, int addr)
 {
-    gpr[reg1] = mem[gpr[addr]];
+    gpr[reg1] = mem[gpr[addr]];     //Pega endereço no registrador, lê o valor neste endereço de memória e grava no registrador
 }
 
 void mem_store(int reg1, int addr)
 {
-    mem[gpr[addr]] = gpr[reg1];
+    mem[gpr[addr]] = gpr[reg1];     //Grava no endereço de memória o valor no registrador
 }
 
 void jump(int addr)
@@ -416,12 +418,12 @@ void jump_register(int reg1)
 void decode_and_run_instruction(int ir)
 {
     int layout = ir >> 0x0000001E; //Desloca 30 bits
-    if (layout == 0x00000000)   //Layout de operações lógico-aritméticas
+    if (layout == 0x00000000)   //Layout de operações lógico-aritméticas é definido como 00
     {
         int opcode = (ir >> 0x0000000C) & 0x0000003F; //Desloca 12 bits e pega os 6 menos significativos
-        int reg3 = ir & 0x0000000F;
-        int reg2 = (ir >> 0x00000004) & 0x0000000F;
-        int reg1 = (ir >> 0x00000008) & 0x0000000F;
+        int reg3 = ir & 0x0000000F;     //Pega os 4 bits menos significativos
+        int reg2 = (ir >> 0x00000004) & 0x0000000F;     //Desloca 4 bits e pega os 4 menos significativos
+        int reg1 = (ir >> 0x00000008) & 0x0000000F;     //Desloca 8 bits e pega os 4 menos significativos
         if (opcode == 0x00000000)
         {
             ula_add(reg1, reg2, reg3);
@@ -551,11 +553,11 @@ void decode_and_run_instruction(int ir)
             ula_sltu(reg1, reg2, reg3);
         }
     }
-    else if (layout == 0x00000001)  //Layout de operações com constantes
+    else if (layout == 0x00000001)  //Layout de operações com constantes é definido como 01
     {
-        int opcode = (ir >> 0x00000014) & 0x00000003; //Desloca 20 bits e pega 2 menos significativos
-        int cst = ir & 0x0000FFFF;
-        int reg1 = (ir >> 0x0000000F) & 0x0000000F;
+        int opcode = (ir >> 0x00000014) & 0x00000003; //Desloca 20 bits e pega os 2 menos significativos
+        int cst = ir & 0x0000FFFF;      //Pega os 16 bits menos significativos
+        int reg1 = (ir >> 0x0000000F) & 0x0000000F;     //Desloca 16 bits e pega os 4 menos significativos
         if (opcode == 0x00000000)
         {
             const_loadlit(reg1, cst);
@@ -569,11 +571,11 @@ void decode_and_run_instruction(int ir)
             const_lch(reg1, cst);
         }
     }
-    else if (layout == 0x00000002)  //Layout de operaões de acesso a memória
+    else if (layout == 0x00000002)  //Layout de operaões de acesso a memória é definida como 10
     {
-        int opcode = (ir >> 0x00000008) & 0x00000003; //Desloca 8 bits e pega os 2 bits menos significativos
-        int reg2 = ir & 0x0000000F;
-        int reg1 = (ir >> 0x00000004) & 0x0000000F;
+        int opcode = (ir >> 0x00000008) & 0x00000003; //Desloca 8 bits e pega os 2 menos significativos
+        int reg2 = ir & 0x0000000F;     //Pega os 4 bits menos significativos
+        int reg1 = (ir >> 0x00000004) & 0x0000000F;     //Desloca 4 bits e pega os 4 menos significativos
         if (opcode == 0x00000000)
         {
             mem_load(reg1, reg2);
@@ -583,12 +585,12 @@ void decode_and_run_instruction(int ir)
             mem_store(reg1, reg2);
         }
     }
-    else if (layout == 0x00000003)  //Layout de operações de desvios e saltos
+    else if (layout == 0x00000003)  //Layout de operações de desvios e saltos é definido como 11
     {
         int opcode = (ir >> 0x00000014) & 0x0000000F; //Desloca 20 bits e pega 4 menos significativos
-        int addr = ir & 0x00000FFF;
-        int reg1 = (ir >> 0x0000000C) & 0x0000000F;
-        int cond = (ir >> 0x0000000F) & 0x0000000F;
+        int addr = ir & 0x00000FFF;     //Pega os 12 bits menos significativos
+        int reg1 = (ir >> 0x0000000C) & 0x0000000F;     //Desloca 12 bits e pega os 4 menos significativos
+        int cond = (ir >> 0x0000000F) & 0x0000000F;     //Desloca 16 bits e pega os 4 menos significativos
         if (opcode == 0x00000000)
         {
             jump(addr);
@@ -618,8 +620,8 @@ void main(void)
     printf ("%d %d", max, min);
     while (true)
     {
-        ir = mem[pc];
-        pc++;
-        decode_and_run_instruction(ir);
+        ir = mem[pc];   //Transfere para o registrador IR a instrução que será executada
+        pc++;       //Incrementa o ponteiro de instruções
+        decode_and_run_instruction(ir);     //Decodifica e executa a instrução
     }
 }
