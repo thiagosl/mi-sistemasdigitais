@@ -5,7 +5,7 @@ typedef int bool;
 #define false 0
 
 int gpr[16];    //Registradores de propósito geral (GPR)
-int flags_reg[7];   //Registrador de flags
+int flags_reg[7];   //Registrador de flags 1 - overflow
 int mem[200] = {0x1345AF2D};    //Memória de dados
 int pc = 0x00000000;    //Ponteiro para a próxima instrução que será executada
 int ir;     //Registrador de propósito específico que armazena a instrução que está sendo executada neste ciclo
@@ -19,14 +19,16 @@ bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool 
         unsigned int value_0 = (unsigned int) v0;
         unsigned int value_1 = (unsigned int) v1;
         unsigned int max = 0xFFFFFFFF;      //Valor inteiro sem sinal máximo
-        if (!subs_operation && (value_1 > (max - value_0))) //Se o valor1 for maior do que o número máximo decrescido do valor0, acontecerá um overflow
+        if (!subs_operation && (value_1 > (max - value_0))) //Se o valor1 for maior do que o número máximo decrescido do valor0, acontecerá um carry
         {
-            flags_reg[0x00000001] = true;   //OVERFLOW
+            flags_reg[0x00000001] = false;
+            flags_reg[0x00000006] = true;   //CARRY
             return true;
         }
         else
         {
             flags_reg[0x00000001] = false;
+            flags_reg[0x00000006] = false;
             return false;
         }
     }
@@ -38,32 +40,37 @@ bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool 
         int min = 0x80000000;       //Valor mínimo para inteiros com sinal
         if ((value_0 > 0) && (value_1 > 0))     //Se ambos os valores forem positivos
         {
-            if (!subs_operation && (value_1 > (max - value_0)))     //Se for uma operação de soma e ocorrer carry
+            if (!subs_operation && (value_1 > (max - value_0)))     //Se for uma operação de soma e ocorrer overflow
             {
-                flags_reg[0x00000006] = true;   //CARRY
+                flags_reg[0x00000001] = true;   //OVERFLOW
+                flags_reg[0x00000006] = false;
                 return true;
             }
-            else        //Se for uma operação de subtração ou não ocorrer carry
+            else        //Se for uma operação de subtração ou não ocorrer overflow
             {
+                flags_reg[0x00000001] = false;
                 flags_reg[0x00000006] = false;
                 return false;
             }
         }
         else if ((value_0 < 0) && (value_1 < 0))    //Se ambos os valores forem negativos
         {
-            if (!subs_operation && (value_1 < (min - value_0)))     //Se for uma operação de soma e ocorrer carry
+            if (!subs_operation && (value_1 < (min - value_0)))     //Se for uma operação de soma e ocorrer overflow
             {
-                flags_reg[0x00000006] = true;   //CARRY
+                flags_reg[0x00000001] = true;   //OVERFLOW
+                flags_reg[0x00000006] = false;
                 return true;
             }
-            else        //Se for uma operação de subtração ou não ocorrer carry
+            else        //Se for uma operação de subtração ou não ocorrer overflow
             {
+                flags_reg[0x00000001] = false;
                 flags_reg[0x00000006] = false;
                 return false;
             }
         }
         else        //Se um dos números for positivo e o outro negativo
         {
+            flags_reg[0x00000001] = false;
             flags_reg[0x00000006] = false;
             return false;
         }
@@ -95,6 +102,14 @@ void check_and_set_neg_zero_true(int value)
     }
 }
 
+void reset_neg_zero_true()
+{
+    flags_reg[0x00000002] = false;   //ZERO
+    flags_reg[0x00000003] = false;   //NEG
+    flags_reg[0x00000004] = false;   //NEGZERO
+    flags_reg[0x00000005] = false;   //TRUE
+}
+
 bool get_flag(int flag)
 {
     return flags_reg[flag];
@@ -103,80 +118,118 @@ bool get_flag(int flag)
 void ula_add(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag carry
-    if (!carry)
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag overflow
+    if (!overflow)
     {
-        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu overflow, verifica as flags zero, neg, negzero e true
+    }
+    else
+    {
+        reset_neg_zero_true();
     }
 }
 
 void ula_addu(int reg1, int reg2, int reg3)
 {
-    gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true, false);    //Verifica a ocorrencia da flag overflow
-    if (!overflow)
+    unsigned int value_0 = gpr[reg2];
+    unsigned int value_1 = gpr[reg3];
+    gpr[reg1] =  value_0 + value_1;
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true, false);    //Verifica a ocorrencia da flag carry
+    if (!carry)
     {
-        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu overflow, verifica as flags zero, neg, negzero e true
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
+    }
+    else
+    {
+        reset_neg_zero_true();
     }
 }
 
 void ula_addinc(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag carry
-    if (!carry)
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag overflow
+    if (!overflow)
     {
         gpr[reg1] = gpr[reg1] + 0x00000001;
-        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, false);      //Verifica a ocorrencia da flag carry
-        if (!carry)
+        overflow = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, false);      //Verifica a ocorrencia da flag overflow
+        if (!overflow)
         {
             check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
         }
+        else
+        {
+            reset_neg_zero_true();
+        }
+    }
+    else
+    {
+        reset_neg_zero_true();
     }
 }
 
 void ula_inca(int reg1, int reg2)
 {
     gpr[reg1] = ++gpr[reg2];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, false);     //Verifica a ocorrencia da flag carry
-    if (!carry)
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, false);     //Verifica a ocorrencia da flag overflow
+    if (!overflow)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
+    }
+    else
+    {
+        reset_neg_zero_true();
     }
 }
 
 void ula_sub(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] - gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag carry
-    if (!carry)
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag overflow
+    if (!overflow)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
+    }
+    else
+    {
+        reset_neg_zero_true();
     }
 }
 
 void ula_subdec(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] - gpr[reg3];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag carry
-    if (!carry)
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag overflow
+    if (!overflow)
     {
         gpr[reg1] = gpr[reg1] - 0x00000001;
-        carry = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, true);       //Verifica a ocorrencia da flag carry
-        if (!carry)
+        overflow = check_and_set_carry_overflow(gpr[reg1], 0x00000001, false, true);       //Verifica a ocorrencia da flag overflow
+        if (!overflow)
         {
             check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
         }
+        else
+        {
+            reset_neg_zero_true();
+        }
+    }
+    else
+    {
+        reset_neg_zero_true();
     }
 }
 
 void ula_deca(int reg1, int reg2)
 {
     gpr[reg1] = --gpr[reg2];
-    bool carry = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, true);      //Verifica a ocorrencia da flag carry
-    if (!carry)
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], 0x00000001, false, true);      //Verifica a ocorrencia da flag overflow
+    if (!overflow)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
+    }
+    else
+    {
+        reset_neg_zero_true();
     }
 }
 
@@ -211,122 +264,150 @@ void ula_multu(int reg1, int reg2)
 void ula_mfh(int reg1)
 {
     gpr[reg1] = hi;
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
+    check_and_set_neg_zero_true(hi);
 }
 
 void ula_mfl(int reg1)
 {
     gpr[reg1] = lo;
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
+    check_and_set_neg_zero_true(lo);
 }
 
 void ula_div(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] / gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_divu(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] / gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_asl(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] << 0x00000001;
+    flags_reg[0x00000001] = (gpr[reg2] >> 31) ^ ((gpr[reg2] >> 30) & 0x00000001);
+    flags_reg[0x00000006] = (gpr[reg2] >> 31); //carry
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_asr(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] >> 0x00000001;
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_zeros(int reg1)
 {
     gpr[reg1] = 0x00000000;
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_ones(int reg1)
 {
     gpr[reg1] = 0x00000001;
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_passa(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_passnota(int reg1, int reg2)
 {
     gpr[reg1] = ~gpr[reg2];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
+    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_and(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] & gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_andnota(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = (~gpr[reg2]) & gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_nand(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] & gpr[reg3]);
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_or(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] | gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
-void ula_ornotb(int reg1, int reg2, int reg3)
+void ula_ornota(int reg1, int reg2, int reg3)
 {
-    gpr[reg1] = gpr[reg2] | (~gpr[reg3]);
+    gpr[reg1] = (~gpr[reg2]) | gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_nor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] | gpr[reg3]);
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_xor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = gpr[reg2] ^ gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_xornota(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = (~gpr[reg2]) ^ gpr[reg3];
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_xnor(int reg1, int reg2, int reg3)
 {
     gpr[reg1] = ~(gpr[reg2] ^ gpr[reg3]);
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
-
+/*************************
+*/
 void ula_lsl(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] << 0x00000001;
+    flags_reg[0x00000001] = 0x00000000;
+    flags_reg[0x00000006] = (gpr[reg2] >> 31); //carry
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_lsr(int reg1, int reg2)
 {
     gpr[reg1] = gpr[reg2] >> 0x00000001;
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
@@ -340,6 +421,7 @@ void ula_slt(int reg1, int reg2, int reg3)
     {
         gpr[reg1] = 0x00000000;
     }
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
@@ -353,6 +435,7 @@ void ula_sltu(int reg1, int reg2, int reg3)
     {
         gpr[reg1] = 0x00000000;
     }
+    check_and_set_carry_overflow(0x00000000, 0x00000000, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
