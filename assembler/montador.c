@@ -16,6 +16,8 @@ struct hash {                   // Hashtable
 
 struct hash *registers = NULL;  // Hashtable de registradores
 struct hash *labels = NULL;     // Hashtable de labels
+int numInstructions = 0;        // Num total de instrucoes
+char *fileName;                 // Nome do arquivo
 
 /* Adiciona registrador (nome, codigo) na hashmap */
 void addRegist(char key[], int value) {
@@ -96,7 +98,7 @@ char* ignoreComents (char *s) {
 }
 
 /* Ignora o label e o comentario da linha, se tiver */
-char* ignoraLabelsEComents(char *instruction) {
+char* ignoreLabelsAndComents(char *instruction) {
     instruction = ignoreComents(instruction);   // Ignora o comentario da linha, se tiver
     if(instruction == NULL)
         return NULL;
@@ -123,21 +125,20 @@ char* removeLast(char aux[100]) {
 }
 
 /* Percorre o arquivo de entrada procurando labels e salvando-os na hashmap */
-void createLabels(char *fileName) {
+void createLabels() {
 	char *line;
 	FILE *file;
 	int actualPosition = 0;
+	int actualPositionData = 0;
 	char aux[300];
 
 	file = fopen(fileName, "r");  // Abre o arquivo
-	if(file == NULL) {
-	    printf("Erro, nao foi possivel abrir o arquivo\n");
-	} else {
+	if(file != NULL) {
         bool pseg = false;
         bool dseg = false;
         bool module = false;
-	    while(fgets(aux, sizeof(aux), file) != NULL) {   // Le as lines do arquivo
-	        line = removeLast(aux);                    // Tira o caractere '\n' da string
+	    while(fgets(aux, sizeof(aux), file) != NULL) {// Le as linhas do arquivo
+	        line = removeLast(aux);                   // Tira o caractere '\n' da string
 	        line = leftClean(line);                   // Tira os espacos e tabs a esquerda de string
 	        if (line != NULL)
                 line = ignoreComents(line);           // Ignora o comentario da linha, se tiver
@@ -150,32 +151,39 @@ void createLabels(char *fileName) {
                     i++;
                 } while(line[i] != ' ' && line[i] != '\0' && line[i] != '\t');
                 directive[i] = '\0';
-                if (!strcmp(directive, ".module")) {        // Se a diretiva for "module"
-                    module = true;                              // Ativa o module (programa comecou)
-                } else if (!strcmp(directive, ".end")) {    // Se a diretiva for ".end"
-                    module = false;                             // Desativa o module (programa terminou)
-                } else if (!strcmp(directive, ".pseg")) {   // Se a diretiva for "pseg"
-                    pseg = true;                                // Ativa o pseg (trecho de instrucoes comecou)
-                    dseg = false;                               // Desativa o deseg (trecho de dados terminou)
-                } else if (!strcmp(directive, ".dseg")) {   // Se a diretiva for "dseg"
-                    pseg = false;                               // Desativa o pseg (trecho de instrucoes terminou)
-                    dseg = true;                                // Ativa o deseg (trecho de dados comecou)
-                } else if (!strcmp(directive, ".word")) {   // Se a diretiva for "word"
+                if (!strcmp(directive, ".module")) {        // Verifica qual foi a diretiva lida
+                    module = true;                      // Ativa o module (programa comecou)
+                } else if (!strcmp(directive, ".end")) {
+                    module = false;                     // Desativa o module (programa terminou)
+                } else if (!strcmp(directive, ".pseg")) {
+                    pseg = true;                        // Ativa o pseg (trecho de instrucoes comecou)
+                    dseg = false;                       // Desativa o deseg (trecho de dados terminou)
+                } else if (!strcmp(directive, ".dseg")) {
+                    pseg = false;                       // Desativa o pseg (trecho de instrucoes terminou)
+                    dseg = true;                        // Ativa o deseg (trecho de dados comecou)
+                } else if (!strcmp(directive, ".word")) {
                     if (dseg && module) {       // Se tiver em um trecho de dados dentro do module
-                        actualPosition += 1;    // Incrementa a posicao atual da memoria
+                        actualPositionData += 1;    // Incrementa a posicao atual da memoria de dados
                     }
                 }
             } else if (line != NULL && line[0] != '.' && module) {      // Se a linha nao for uma diretiva
                 char *aux = strchr(line, ':');      // Pega a posicao do "dois pontos" na string, se tiver
                 if (aux != NULL) {
                     aux += 1;
-                    if (ignoraLabelsEComents(aux) != NULL &&  pseg) {   // Se a linha tiver uma instrucao
-                        actualPosition++;                   // Incrementa a posicao atual da memoria
+                    if (ignoreLabelsAndComents(aux) != NULL) {   // Se a linha tiver uma instrucao além do label
+                        if (ignoreLabelsAndComents(aux)[0] != '.' &&  pseg) {   // Se essa instrução não for uma diretiva
+                            actualPosition++;                   // Incrementa a posicao atual da memoria
+                        } else if (ignoreLabelsAndComents(aux)[0] == '.' && ignoreLabelsAndComents(aux)[0] == 'w' && dseg) { // Se essa instrução for ".word"
+                            actualPositionData++;               // Incrementa a posicao atual da memoria de dados
+                        }
                     }
                     line = strrev(line);                    // Inverte a string
                     char *label = strchr(line, ':') + 1;    // Pega tudo que esta depois do "dois pontos"
                     label = strrev(label);                  // Desinverte a string
-                    addLabel(label, actualPosition);        // Adiciona label na hashmap
+                    if (dseg)       // Se o label estiver em uma área de dados
+                        addLabel(label, (numInstructions + actualPositionData));    // Adiciona label na hashmap
+                    else if (pseg)  // Se o label estiver em uma área de instruções
+                        addLabel(label, actualPosition);        // Adiciona label na hashmap
                 } else {
                     if (pseg) {
                         actualPosition++;   // Incrementa a posicao atual da memoria
@@ -411,44 +419,60 @@ int traduzir(char instruction[]) {
     return result;
 }
 
-/* Traduz a instrucao e retorna o codigo binario resultante */
-void escreveArquivo(FILE *file, int bin) {
-    int i;
-    for (i = 0; i < 32; i++) {      // Para cada bit da palavra
-        if (bin >= 2147483648)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
-            fprintf(file, "%d", 1);
-        else
-            fprintf(file, "%d", 0);
-        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo)
-    }
-    //fprintf(file, "\n");
-}
-
-/* Algoritmo principal do programa */
-int main(int argc, char *argv[]) {
-    char *fileName;
-    if (argc > 1)
-        fileName = argv[1];     // Define o nome do arquivo de teste a ser lido de acordo com o parametro recebido
-    else
-        fileName = "teste.asm";
-
-    createRegisters();          // Cria e salva os registradores na hashmap
-    createLabels(fileName);     // Identifica os labels e seus respectivos enderecos e salva-os na hashmap
-
+/* Identifica o numero de instrucoes do arquivo de entrada */
+void setNumInstructions() {
     char *instruction;
     char line[300];
-	FILE *fileR;
-	FILE *fileW;
-	fileR = fopen(fileName, "r");           // Abre o arquivo de leitura
-	fileW = fopen("resultado.bin", "w");    // Abre o arquivo de escrita
+    bool pseg = false;
+    bool dseg = false;
+    bool module = false;
+    FILE *fileR = fopen(fileName, "r");     // Abre o arquivo de leitura
 
-    if(fileR != NULL) {
-        bool pseg = false;
-        bool dseg = false;
-        bool module = false;
-	    while(fgets(line, sizeof(line), fileR) != NULL) {       // Le cada linha do arquivo
+    if (fileR != NULL) {
+        while(fgets(line, sizeof(line), fileR) != NULL) {       // Le cada linha do arquivo
             instruction = removeLast(line);                     // Remove o '\n' da string
-	        instruction = ignoraLabelsEComents(instruction);    // Retira o label e o comentario da string, se tiver
+            instruction = ignoreLabelsAndComents(instruction);    // Retira o label e o comentario da string, se tiver
+
+            if (instruction != NULL && instruction[0] == '.') {     // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
+                char directive[100];
+                int i = 0;
+                do {
+                    directive[i] = instruction[i];      // Salva a primeira palavra da string na variavel "deretiva"
+                    i++;
+                } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
+                directive[i] = '\0';
+                if (!strcmp(directive, ".module")) {    // Verifica qual foi a diretiva lida
+                    module = true;                      // Ativa o module (programa comecou)
+                } else if (!strcmp(directive, ".end")) {
+                    module = false;                     // Desativa o module (programa terminou)
+                } else if (!strcmp(directive, ".pseg")) {
+                    pseg = true;                        // Ativa o pseg (trecho de instrucoes comecou)
+                    dseg = false;                       // Desativa o deseg (trecho de dados terminou)
+                } else if (!strcmp(directive, ".dseg")) {
+                    pseg = false;                       // Desativa o pseg (trecho de instrucoes terminou)
+                    dseg = true;                        // Ativa o deseg (trecho de dados comecou)
+                }
+            } else if (instruction != NULL && instruction[0] != '.' && module && pseg) {     // Se a linha for uma instrucao
+                numInstructions++;
+            }
+        }
+    }
+}
+
+/* Identifica e escreve todos os ".word" no arquivo de saida */
+void readWords(FILE *fileW) {
+    char *instruction;
+    char line[300];
+    bool pseg = false;
+    bool dseg = false;
+    bool module = false;
+    FILE *fileR = fopen(fileName, "r");     // Abre o arquivo de leitura
+
+    if (fileR != NULL) {
+        while(fgets(line, sizeof(line), fileR) != NULL) {       // Le cada linha do arquivo
+            instruction = removeLast(line);                     // Remove o '\n' da string
+            instruction = ignoreLabelsAndComents(instruction);    // Retira o label e o comentario da string, se tiver
+
             if (instruction != NULL && instruction[0] == '.') {     // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
                 char directive[100];
                 int i = 0;
@@ -479,15 +503,80 @@ int main(int argc, char *argv[]) {
                         } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
                         word[i] = '\0';
 
-                        escreveArquivo(fileW, atoi(word));      // Escreve no arquivo de saida o codigo binario da palavra obtida
+                        writeOnFile(fileW, atoi(word));      // Escreve no arquivo de saida o codigo binario da palavra obtida
                     }
                 }
+            }
+        }
+    }
+}
+
+/* Traduz a instrucao e retorna o codigo binario resultante */
+void writeOnFile(FILE *file, int bin) {
+    int i;
+    for (i = 0; i < 32; i++) {      // Para cada bit da palavra
+        if (bin >= 2147483648)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
+            fprintf(file, "%c", '1');
+        else
+            fprintf(file, "%c", '0');
+        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo)
+    }
+    //fprintf(file, "\n");
+}
+
+/* Algoritmo principal do programa */
+int main(int argc, char *argv[]) {
+    if (argc > 1)               // Se o usuario tiver passado algum parametro
+        fileName = argv[1];     // Define o nome do arquivo de entrada como o parametro recebido
+    else
+        fileName = "teste.asm"; // Nome default do arquivo de entrada
+
+    setNumInstructions();       // Escreve no arquivo de saida o codigo binario da instrucao
+    createRegisters();          // Cria e salva os registradores na hashmap
+    createLabels(fileName);     // Identifica os labels e seus respectivos enderecos e salva-os na hashmap
+
+    char *instruction;
+    char line[300];
+	FILE *fileR = fopen(fileName, "r");           // Abre o arquivo de leitura
+	FILE *fileW = fopen("resultado montador.bin", "w");    // Abre o arquivo de escrita
+
+    if (fileR == NULL) {
+	    printf("Erro, nao foi possivel abrir o arquivo\n");
+	} else {
+        bool pseg = false;
+        bool dseg = false;
+        bool module = false;
+
+	    while(fgets(line, sizeof(line), fileR) != NULL) {       // Le cada linha do arquivo
+            instruction = removeLast(line);                     // Remove o '\n' da string
+	        instruction = ignoreLabelsAndComents(instruction);    // Retira o label e o comentario da string, se tiver
+
+            if (instruction != NULL && instruction[0] == '.') {     // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
+                char directive[100];
+                int i = 0;
+                do {
+                    directive[i] = instruction[i];      // Salva a primeira palavra da string na variavel "deretiva"
+                    i++;
+                } while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
+                directive[i] = '\0';
+                if (!strcmp(directive, ".module")) {    // Verifica qual foi a diretiva lida
+                    module = true;                      // Ativa o module (programa comecou)
+                } else if (!strcmp(directive, ".end")) {
+                    module = false;                     // Desativa o module (programa terminou)
+                } else if (!strcmp(directive, ".pseg")) {
+                    pseg = true;                        // Ativa o pseg (trecho de instrucoes comecou)
+                    dseg = false;                       // Desativa o deseg (trecho de dados terminou)
+                } else if (!strcmp(directive, ".dseg")) {
+                    pseg = false;                       // Desativa o pseg (trecho de instrucoes terminou)
+                    dseg = true;                        // Ativa o deseg (trecho de dados comecou)
+                }
             } else if (instruction != NULL && module && pseg) {     // Se a linha for uma instrucao
-                escreveArquivo(fileW, traduzir(instruction));       // Escreve no arquivo de saida o codigo binario da instrucao
+                writeOnFile(fileW, traduzir(instruction));       // Escreve no arquivo de saida o codigo binario da instrucao
             }
 	    }
+	    readWords(fileW);
     }
-    fclose(fileR);      // Fecha o arquivo de saida
+    fclose(fileR);      // Fecha o arquivo de entrada
     fclose(fileW);      // Fecha o arquivo de saida
 
     return 0;

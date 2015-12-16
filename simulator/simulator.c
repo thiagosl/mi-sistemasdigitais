@@ -11,6 +11,7 @@ int pc = 0x00000000;    //Ponteiro para a próxima instrução que será executada
 int ir;     //Registrador de propósito específico que armazena a instrução que está sendo executada neste ciclo
 int hi;     //Registrador de propósito específico que armazena os bytes mais significativos da operação de multiplicação
 int lo;     //Registrador de propósito específico que armazena os bytes menos significativos da operação de multiplicação
+int memLenth = 0;   //Tamanho da memória utilisada pelo programa
 
 bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool subs_operation)
 {
@@ -601,7 +602,7 @@ void decode_and_run_instruction(int ir)
         }
         else if (opcode == 0x00000017)
         {
-            ula_ornotb(reg1, reg2, reg3);
+            ula_ornota(reg1, reg2, reg3);
         }
         else if (opcode == 0x00000018)
         {
@@ -696,15 +697,53 @@ void decode_and_run_instruction(int ir)
         }
     }
 }
-void main(void)
-{
-    int max = 0x7FFFFFFF;
-    int min = 0x80000000;
-    printf ("%d %d", max, min);
-    while (true)
-    {
-        ir = mem[pc];   //Transfere para o registrador IR a instrução que será executada
-        pc++;       //Incrementa o ponteiro de instruções
-        decode_and_run_instruction(ir);     //Decodifica e executa a instrução
+
+void writeResult() {
+	FILE *fileW = fopen("resultado simulador.txt", "w");    // Abre o arquivo de escrita
+
+    int i;
+    for (i = 0; i < 16; i++)
+        fprintf(fileW, "gpr%d: %d", i, gpr[i]);
+    for (i = 0; i < memLenth; i++) {
+        fprintf(fileW, "mem(%d): %d", i, mem[i]);
     }
+    fclose(fileW);
+}
+
+int main(int argc, char *argv[]) {
+    char *fileName;
+    if (argc > 1)               // Se o usuario tiver passado algum parametro
+        fileName = argv[1];     // Define o nome do arquivo de entrada como o parametro recebido
+    else
+        fileName = "resultado montador.bin"; // Nome default do arquivo de entrada
+
+	FILE *fileR = fopen(fileName, "r");                     // Abre o arquivo de leitura
+
+    if (fileR == NULL) {
+	    printf("Erro, nao foi possivel abrir o arquivo\n");
+	    return -1;
+	} else {
+        char c = fgetc(fileR);
+        int instruction = 0;
+        int i;
+	    while(!feof(fileR)) {       // Le cada caractere do arquivo
+            for(i = 0; i < 32; i++) {
+                if (c == '1')
+                    instruction++;
+                if (i != 31)
+                    instruction = instruction << 1;
+                char c = fgetc(fileR);
+            }
+            mem[memLenth] = instruction;
+            memLenth++;
+	    }
+	    while (true) {
+            ir = mem[pc];                       // Transfere para o registrador IR a instrução que será executada
+            pc++;                               // Incrementa o ponteiro de instruções
+            decode_and_run_instruction(ir);     // Decodifica e executa a instrução
+        }
+    }
+    fclose(fileR);      // Fecha o arquivo de entrada
+
+    return 1;
 }
