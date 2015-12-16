@@ -11,7 +11,7 @@ int pc = 0x00000000;    //Ponteiro para a próxima instrução que será executada
 int ir;     //Registrador de propósito específico que armazena a instrução que está sendo executada neste ciclo
 int hi;     //Registrador de propósito específico que armazena os bytes mais significativos da operação de multiplicação
 int lo;     //Registrador de propósito específico que armazena os bytes menos significativos da operação de multiplicação
-int memLenth = 0;   //Tamanho da memória utilisada pelo programa
+int mem_lenth = 0;   //Tamanho da memória utilisada pelo programa
 
 bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation, bool subs_operation)
 {
@@ -699,51 +699,51 @@ void decode_and_run_instruction(int ir)
 }
 
 void writeResult() {
-	FILE *fileW = fopen("resultado simulador.txt", "w");    // Abre o arquivo de escrita
+	FILE *file_w = fopen("resultado simulador.txt", "w");    // Abre o arquivo de escrita
 
     int i;
-    for (i = 0; i < 16; i++)
-        fprintf(fileW, "gpr%d: %d", i, gpr[i]);
-    for (i = 0; i < memLenth; i++) {
-        fprintf(fileW, "mem(%d): %d", i, mem[i]);
+    for (i = 0; i < 16; i++)    //Percorre os 16 registradores
+        fprintf(file_w, "gpr%d: %d", i, gpr[i]);    //Imprime cada um no arquivo de saida
+    for (i = 0; i < mem_lenth; i++) {   //Percorre a memoria utilezada
+        fprintf(file_w, "mem(%d): %d", i, mem[i]);  //Imprime cada valor no arquivo de saida
     }
-    fclose(fileW);
+    fclose(file_w);
 }
 
 int main(int argc, char *argv[]) {
-    char *fileName;
+    char *file_name;
     if (argc > 1)               // Se o usuario tiver passado algum parametro
-        fileName = argv[1];     // Define o nome do arquivo de entrada como o parametro recebido
+        file_name = argv[1];     // Define o nome do arquivo de entrada como o parametro recebido
     else
-        fileName = "resultado montador.bin"; // Nome default do arquivo de entrada
+        file_name = "resultado montador.bin"; // Nome default do arquivo de entrada
 
-	FILE *fileR = fopen(fileName, "r");                     // Abre o arquivo de leitura
+	FILE *file_r = fopen(file_name, "r");      // Abre o arquivo de leitura
 
-    if (fileR == NULL) {
+    if (file_r == NULL) {
 	    printf("Erro, nao foi possivel abrir o arquivo\n");
 	    return -1;
 	} else {
-        char c = fgetc(fileR);
+        char c = fgetc(file_r);      //Le um caractere do arquivo
         int instruction = 0;
         int i;
-	    while(!feof(fileR)) {       // Le cada caractere do arquivo
-            for(i = 0; i < 32; i++) {
-                if (c == '1')
+	    while(!feof(file_r)) {       //Verifica se chegou no fim do arquivo
+            for(i = 0; i < 32; i++) {   //Percorre os 32 bits da palavra
+                if (c == '1')       //Se o bit for '1'
                     instruction++;
                 if (i != 31)
-                    instruction = instruction << 1;
-                char c = fgetc(fileR);
+                    instruction = instruction << 1;     //Desloca um bit para a esquerda
+                char c = fgetc(file_r);     //Le um caractere do arquivo
             }
-            mem[memLenth] = instruction;
-            memLenth++;
+            mem[mem_lenth] = instruction;   //Salva a palavra na memoria
+            mem_lenth++;
 	    }
 	    while (true) {
-            ir = mem[pc];                       // Transfere para o registrador IR a instrução que será executada
-            pc++;                               // Incrementa o ponteiro de instruções
-            decode_and_run_instruction(ir);     // Decodifica e executa a instrução
+            ir = mem[pc];                       //Transfere para o registrador IR a instrução que será executada
+            pc++;                               //Incrementa o ponteiro de instruções
+            decode_and_run_instruction(ir);     //Decodifica e executa a instrução
         }
     }
-    fclose(fileR);      // Fecha o arquivo de entrada
+    fclose(file_r);      //Fecha o arquivo de entrada
 
     return 1;
 }
