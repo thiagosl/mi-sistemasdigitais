@@ -1,55 +1,24 @@
-.module bubblesort
+.module fibonacci
 .pseg
-		;Algoritmo de ordenação Bubble Sort aplicado a um vetor
-		;O primeiro elemento do vetor é o tamanho do mesmo e não estará ordenado ao final do processo
-		;Somente estarão ordenados os valores que de fato fazem parte do vetor de dados
+		;Algoritmo da Sequência Fibonacci iterativo
 MAIN:
 		lcl r0, LOWBYTE ARR1
-		lch r0, HIGHBYTE ARR1 ;r0 tem o endereço base do array
-		load r1, r0 ;r1 passa a armazenar o tamanho do array
-		inca r0, r0 ;faz r0 apontar uma palavra adiante, não considera o tamanho do array durante a ordenação
-		zeros r2 ;i = 0
-		zeros r6
+		lch r0, HIGHBYTE ARR1
+		load r0, r0 ;carrega número n para realizar o fibonacci
+		loadlit r14, 1 ;f(1) = 1
+		loadlit r15, 1 ;f(2) = 1
+		loadlit r1, 2 ;i = 2
 LOOP:
-		passa r4, r2; j = i
-		sub r3, r2, r1 ;r3 não é utilizado
-		jt.neg LOOP2 ;se i for menor que o tamanho do array vai para o LOOP2
-		j FIM ;se i for maior igual que o tamanho do array termina a ordenação
-INC:
-		inca r2, r2 ;i++
-		j LOOP ;volta para o LOOP1
-LOOP2:
-		sub r5, r4, r6 ;r5 não é utilizado
-		jt.zero INC ;se j for igual a zero, pula para INC
-		;se j for maior que zero, continua
-		deca r7, r4;r7 = j - 1
-		add r7, r7, r0 ;endereço (j-1)+base
-		add r11, r4, r0 ;endereço j+base
-		load r9, r7 ;carrega valor que está na posição (j-1)+base
-		load r10, r11 ;carrega valor que está na posição j+base
-		sub r12, r9, r10 ;r12 não é utilizado
-		jf.neg TROCA ;se valor da posição (j-1) for maior que o da posição j do vetor, pula para TROCA
-		;se não, continua
-DEC:
-		deca r4, r4 ;j--
-		j LOOP2 ;volta para o LOOP2
-TROCA:
-		store r9, r11 ;grava valor que estava na posição (j-1) na posição j do array
-		store r10, r7 ;grava valor que estava na posição j na posição (j-1) do array
-		j DEC
+		sub r2, r1, r0 ;verifica se i < n
+		jf.neg FIM ;se i for maior ou igual a n, termina
+		add r3, r14, r15 ;se i for menor que n, adiciona os dois numeros correspondentes ao fibonacci de i-1 e i-2 e coloca em r3
+		passa r14, r15 ;f(i-2) = f(i-1)
+		passa r15, r3 ;f(i-1) = soma em r3
+		inca r1 ;i++
+		j LOOP
 FIM:
-		j FIM
+		j FIM ;ao final do processamento o resultado estará armazenado no registrador r15
 .dseg
 ARR1:
-	.word 10
-		.word 3
-		.word 2
-		.word 10
-		.word 9
-		.word 1
-		.word 4
-		.word 7
-		.word 8
-		.word 5
-		.word 6
+	.word 4
 .end
