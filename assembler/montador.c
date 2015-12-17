@@ -414,7 +414,7 @@ int traduzir(char instruction[])
     }
     else if (!strcmp(mnemonic, "inca"))
     {
-        result = (0x00003 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00003 << 12) + getR1(instruction);
     }
     else if (!strcmp(mnemonic, "sub"))
     {
@@ -426,7 +426,7 @@ int traduzir(char instruction[])
     }
     else if (!strcmp(mnemonic, "deca"))
     {
-        result = (0x00006 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00006 << 12) + getR1(instruction);
     }
     else if (!strcmp(mnemonic, "mult"))
     {
