@@ -118,6 +118,7 @@ bool get_flag(int flag)
 
 void ula_add(int reg1, int reg2, int reg3)
 {
+    printf("ADD: %d <-- %d\n", reg1, gpr[reg2] + gpr[reg3]);
     gpr[reg1] = gpr[reg2] + gpr[reg3];
     bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag overflow
     if (!overflow)
@@ -132,6 +133,7 @@ void ula_add(int reg1, int reg2, int reg3)
 
 void ula_addu(int reg1, int reg2, int reg3)
 {
+    printf("ADDU: %d <-- %d\n", reg1, gpr[reg2] + gpr[reg3]);
     unsigned int value_0 = gpr[reg2];
     unsigned int value_1 = gpr[reg3];
     gpr[reg1] =  value_0 + value_1;
@@ -148,6 +150,7 @@ void ula_addu(int reg1, int reg2, int reg3)
 
 void ula_addinc(int reg1, int reg2, int reg3)
 {
+    printf("ADDINC: %d <-- %d\n", reg1, gpr[reg2] + gpr[reg3] + 1);
     gpr[reg1] = gpr[reg2] + gpr[reg3];
     bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, false);      //Verifica a ocorrencia da flag overflow
     if (!overflow)
@@ -171,6 +174,7 @@ void ula_addinc(int reg1, int reg2, int reg3)
 
 void ula_inca(int reg1, int reg2)
 {
+    printf("INCA: %d <-- %d\n", reg1, gpr[reg2] + 1);
     gpr[reg1] = gpr[reg2] + 1;
     bool overflow = check_and_set_carry_overflow(gpr[reg2], 1, false, false);     //Verifica a ocorrencia da flag overflow
     if (!overflow)
@@ -185,6 +189,7 @@ void ula_inca(int reg1, int reg2)
 
 void ula_sub(int reg1, int reg2, int reg3)
 {
+    printf("SUB: %d <-- %d\n", reg1, gpr[reg2] - gpr[reg3]);
     gpr[reg1] = gpr[reg2] - gpr[reg3];
     bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag overflow
     if (!overflow)
@@ -199,6 +204,7 @@ void ula_sub(int reg1, int reg2, int reg3)
 
 void ula_subdec(int reg1, int reg2, int reg3)
 {
+    printf("SUBDEC: %d <-- %d\n", reg1, gpr[reg2] - gpr[reg3] - 1);
     gpr[reg1] = gpr[reg2] - gpr[reg3];
     bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false, true);       //Verifica a ocorrencia da flag overflow
     if (!overflow)
@@ -222,7 +228,8 @@ void ula_subdec(int reg1, int reg2, int reg3)
 
 void ula_deca(int reg1, int reg2)
 {
-    gpr[reg1] = --gpr[reg2];
+    printf("DECA: %d <-- %d\n", reg1, gpr[reg2] - 1);
+    gpr[reg1] = gpr[reg2] - 1;
     bool overflow = check_and_set_carry_overflow(gpr[reg2], 1, false, true);      //Verifica a ocorrencia da flag overflow
     if (!overflow)
     {
@@ -324,6 +331,7 @@ void ula_mfl(int reg1)
 
 void ula_div(int reg1, int reg2, int reg3)
 {
+    printf("DIV: %d <-- %d\n", reg1, gpr[reg2] / gpr[reg3]);
     gpr[reg1] = gpr[reg2] / gpr[reg3];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -338,6 +346,7 @@ void ula_divu(int reg1, int reg2, int reg3)
 
 void ula_asl(int reg1, int reg2)
 {
+    printf("ASL: %d <-- %d\n", reg1, gpr[reg2] << 1);
     gpr[reg1] = gpr[reg2] << 1;
     flags_reg[1] = (gpr[reg2] >> 31) ^ ((gpr[reg2] >> 30) & 0x00000001);
     flags_reg[6] = (gpr[reg2] >> 31); //carry
@@ -346,6 +355,7 @@ void ula_asl(int reg1, int reg2)
 
 void ula_asr(int reg1, int reg2)
 {
+    printf("ASR: %d <-- %d\n", reg1, gpr[reg2] >> 1);
     gpr[reg1] = gpr[reg2] >> 1;
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -353,6 +363,7 @@ void ula_asr(int reg1, int reg2)
 
 void ula_zeros(int reg1)
 {
+    printf("ZEROS: %d <-- %d\n", reg1, 0);
     gpr[reg1] = 0;
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -360,6 +371,7 @@ void ula_zeros(int reg1)
 
 void ula_ones(int reg1)
 {
+    printf("ONES: %d <-- %d\n", reg1, 1);
     gpr[reg1] = 1;
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -367,6 +379,7 @@ void ula_ones(int reg1)
 
 void ula_passa(int reg1, int reg2)
 {
+    printf("PASSA: %d <-- %d\n", reg1, gpr[reg2]);
     gpr[reg1] = gpr[reg2];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -374,6 +387,7 @@ void ula_passa(int reg1, int reg2)
 
 void ula_passnota(int reg1, int reg2)
 {
+    printf("PASSNOTA: %d <-- %d\n", reg1, ~gpr[reg2]);
     gpr[reg1] = ~gpr[reg2];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -381,6 +395,7 @@ void ula_passnota(int reg1, int reg2)
 
 void ula_and(int reg1, int reg2, int reg3)
 {
+    printf("AND: %d <-- %d\n", reg1, gpr[reg2] & gpr[reg3]);
     gpr[reg1] = gpr[reg2] & gpr[reg3];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -388,6 +403,7 @@ void ula_and(int reg1, int reg2, int reg3)
 
 void ula_andnota(int reg1, int reg2, int reg3)
 {
+    printf("ANDNOTA: %d <-- %d\n", reg1, (~gpr[reg2]) & gpr[reg3]);
     gpr[reg1] = (~gpr[reg2]) & gpr[reg3];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -395,6 +411,7 @@ void ula_andnota(int reg1, int reg2, int reg3)
 
 void ula_nand(int reg1, int reg2, int reg3)
 {
+    printf("NAND: %d <-- %d\n", reg1, ~(gpr[reg2] & gpr[reg3]));
     gpr[reg1] = ~(gpr[reg2] & gpr[reg3]);
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -402,6 +419,7 @@ void ula_nand(int reg1, int reg2, int reg3)
 
 void ula_or(int reg1, int reg2, int reg3)
 {
+    printf("OR: %d <-- %d\n", reg1, gpr[reg2] | gpr[reg3]);
     gpr[reg1] = gpr[reg2] | gpr[reg3];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -409,6 +427,7 @@ void ula_or(int reg1, int reg2, int reg3)
 
 void ula_ornota(int reg1, int reg2, int reg3)
 {
+    printf("ORNOTA: %d <-- %d\n", reg1, (~gpr[reg2]) | gpr[reg3]);
     gpr[reg1] = (~gpr[reg2]) | gpr[reg3];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -416,6 +435,7 @@ void ula_ornota(int reg1, int reg2, int reg3)
 
 void ula_nor(int reg1, int reg2, int reg3)
 {
+    printf("NOR: %d <-- %d\n", reg1, ~(gpr[reg2] | gpr[reg3]));
     gpr[reg1] = ~(gpr[reg2] | gpr[reg3]);
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -423,6 +443,7 @@ void ula_nor(int reg1, int reg2, int reg3)
 
 void ula_xor(int reg1, int reg2, int reg3)
 {
+    printf("XOR: %d <-- %d\n", reg1, gpr[reg2] ^ gpr[reg3]);
     gpr[reg1] = gpr[reg2] ^ gpr[reg3];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -430,6 +451,7 @@ void ula_xor(int reg1, int reg2, int reg3)
 
 void ula_xornota(int reg1, int reg2, int reg3)
 {
+    printf("XORNOTA: %d <-- %d\n", reg1, (~gpr[reg2]) ^ gpr[reg3]);
     gpr[reg1] = (~gpr[reg2]) ^ gpr[reg3];
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -437,6 +459,7 @@ void ula_xornota(int reg1, int reg2, int reg3)
 
 void ula_xnor(int reg1, int reg2, int reg3)
 {
+    printf("XNOR: %d <-- %d\n", reg1, ~(gpr[reg2] ^ gpr[reg3]));
     gpr[reg1] = ~(gpr[reg2] ^ gpr[reg3]);
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -444,6 +467,7 @@ void ula_xnor(int reg1, int reg2, int reg3)
 
 void ula_lsl(int reg1, int reg2)
 {
+    printf("LSL: %d <-- %d\n", reg1, gpr[reg2] << 1);
     gpr[reg1] = gpr[reg2] << 1;
     flags_reg[1] = 0;
     flags_reg[6] = (gpr[reg2] >> 31); //carry
@@ -452,6 +476,7 @@ void ula_lsl(int reg1, int reg2)
 
 void ula_lsr(int reg1, int reg2)
 {
+    printf("LSR: %d <-- %d\n", reg1, gpr[reg2] >> 1);
     gpr[reg1] = gpr[reg2] >> 1;
     check_and_set_carry_overflow(0, 0, false, false);
     check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -487,37 +512,46 @@ void ula_sltu(int reg1, int reg2, int reg3)
 
 void const_loadlit(int reg1, int cst)
 {
+    if (cst >= 32768)
+        cst = 0xFFFF0000 & cst;
+    printf("LOADLIT: %d <-- %d\n", reg1, cst);
     gpr[reg1] = cst;
 }
 
 void const_lcl(int reg1, int cst)
 {
+    printf("LCL: %d <-- %d\n", reg1, cst | (gpr[reg1] & 0xFFFF0000));
     gpr[reg1] = cst | (gpr[reg1] & 0xFFFF0000);     //Pega os 16 bits mais significativos do valor no registrador e faz um OR com a constante
 }
 
 void const_lch(int reg1, int cst)
 {
-    gpr[reg1] = (cst << 8) | (gpr[reg1] & 0x0000FFFF);      //Pega os 16 bits menos significativos do valor no registrador e faz um OR com a constante deslocada 8 bits a esquerda
+    printf("LCH: %d <-- %d\n", reg1, (cst << 16) | (gpr[reg1] & 0x0000FFFF));
+    gpr[reg1] = (cst << 16) | (gpr[reg1] & 0x0000FFFF);      //Pega os 16 bits menos significativos do valor no registrador e faz um OR com a constante deslocada 8 bits a esquerda
 }
 
 void mem_load(int reg1, int addr)
 {
+    printf("LOAD: %d <-- %d\n", reg1, mem[gpr[addr]]);
     gpr[reg1] = mem[gpr[addr]];     //Pega endereço no registrador, lê o valor neste endereço de memória e grava no registrador
 }
 
 void mem_store(int reg1, int addr)
 {
+    printf("STORE: %d <-- %d\n", gpr[addr], gpr[reg1]);
     //printf("endereço de mem = %d, conteudo da mem = %d, vai ser gravado = %d\n", gpr[addr], mem[gpr[addr]], gpr[reg1]);
     mem[gpr[addr]] = gpr[reg1];     //Grava no endereço de memória o valor no registrador
 }
 
 void jump(int addr)
 {
+    printf("JUMP: pc <-- %d\n", addr);
     pc = addr;
 }
 
 void jump_true(int flag, int addr)
 {
+    printf("JUMPTRUE: pc <-- %d ; flag: %d\n", addr, flag);
     bool is_true = get_flag(flag);
     if (is_true)
     {
@@ -527,6 +561,7 @@ void jump_true(int flag, int addr)
 
 void jump_false(int flag, int addr)
 {
+    printf("JUMPFALSE: pc <-- %d ; flag: %d\n", addr, flag);
     bool is_true = get_flag(flag);
     if (!is_true)
     {
@@ -536,12 +571,14 @@ void jump_false(int flag, int addr)
 
 void jump_and_link(int addr)
 {
+    printf("JUMPANDLINK: pc <-- %d ; 7 <-- pc\n", addr);
     gpr[7] = pc;
     pc = addr;
 }
 
 void jump_register(int reg1)
 {
+    printf("JUMREGISTER: pc <-- %d ; 7 <-- pc\n", addr);
     pc = gpr[reg1];
 }
 
@@ -797,9 +834,9 @@ int main(int argc, char *argv[]) {
             pc++;                               //Incrementa o ponteiro de instruções
             decode_and_run_instruction(ir);     //Decodifica e executa a instrução
             writeResult();
+            system("pause");
         }
     }
-    fclose(file_r);      //Fecha o arquivo de entrada
 
     return 1;
 }

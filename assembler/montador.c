@@ -270,6 +270,7 @@ int getR1(char instruction[])
     {
         reg[2] = '\0';
     }
+    printf("--------%d\n", findRegist(reg) << 8);
     return (findRegist(reg) << 8);      // Procura o registrador na hashmap e retorna seu codigo deslocado 8 bits a esquerda
 }
 
@@ -329,7 +330,7 @@ int getConst(char instruction[])
     }
     while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
     constante[i] = '\0';
-    if (constante[0] <= '9' && constante[0] >= '0')         // Se for um numero
+    if ((constante[0] <= '9' && constante[0] >= '0') || constante[0] == '-')    // Se for um numero
     {
         return atoi(constante);                             // Transforma em inteiro e retorna
     }
@@ -348,7 +349,7 @@ int getConst(char instruction[])
 }
 
 /* Identifica e retorna condicao na instrucao */
-int getCondicao(char instruction[])
+int getCondition(char instruction[])
 {
     instruction = strchr(instruction, '.') + 1; // Ignora tudo antes do ponto
     char condicao[100];
@@ -414,7 +415,7 @@ int traduzir(char instruction[])
     }
     else if (!strcmp(mnemonic, "inca"))
     {
-        result = (0x00003 << 12) + getR1(instruction);
+        result = (0x00003 << 12) + getR1(instruction) + getR2(instruction);
     }
     else if (!strcmp(mnemonic, "sub"))
     {
@@ -426,7 +427,7 @@ int traduzir(char instruction[])
     }
     else if (!strcmp(mnemonic, "deca"))
     {
-        result = (0x00006 << 12) + getR1(instruction);
+        result = (0x00006 << 12) + getR1(instruction) + getR2(instruction);
     }
     else if (!strcmp(mnemonic, "mult"))
     {
@@ -530,7 +531,10 @@ int traduzir(char instruction[])
     }
     else if (!strcmp(mnemonic, "loadlit"))
     {
+        printf("%s\n", instruction);
         result = (0x400 << 20) + (getR1(instruction) << 8) + getConst(instruction);
+        printf("----<>----%d\n", getR1(instruction));
+        printf("%d\n", result);
     }
     else if (!strcmp(mnemonic, "lcl"))
     {
@@ -554,11 +558,11 @@ int traduzir(char instruction[])
     }
     else if (!strcmp(mnemonic, "jt"))
     {
-        result = (0xC01 << 20) + getCondicao(instruction) + getDestination(instruction);
+        result = (0xC01 << 20) + getCondition(instruction) + getDestination(instruction);
     }
     else if (!strcmp(mnemonic, "jf"))
     {
-        result = (0xC02 << 20) + getCondicao(instruction) + getDestination(instruction);
+        result = (0xC02 << 20) + getCondition(instruction) + getDestination(instruction);
     }
     else if (!strcmp(mnemonic, "jal"))
     {
@@ -750,7 +754,7 @@ int main(int argc, char *argv[])
         {
             instruction = removeLast(line);                     // Remove o '\n' da string
             instruction = ignoreLabelsAndComents(instruction);    // Retira o label e o comentario da string, se tiver
-
+            printf("%s\n", instruction);
             if (instruction != NULL && instruction[0] == '.')       // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
             {
                 char directive[100];
