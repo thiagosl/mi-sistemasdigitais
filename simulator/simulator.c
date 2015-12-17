@@ -236,8 +236,54 @@ void ula_deca(int reg1, int reg2)
 
 void ula_mult(int reg1, int reg2)
 {
-    hi = (gpr[reg1] * gpr[reg2]);
-    lo = (gpr[reg1] * gpr[reg2]);
+    int multiplier = gpr[reg1];
+    int multiplicand = gpr[reg2];
+    unsigned int u_multiplier;
+    unsigned int u_multiplicand;
+    int i, bit, signal = 1;
+    int max = 4294967295;
+    int u_lo = 0;
+    int u_hi = 0;
+    lo = 0;
+    hi = 0;
+
+    if ((multiplier < 0 && multiplicand > 0) || (multiplier > 0 && multiplicand < 0))
+        signal = -1;
+    if (multiplier < 0)
+        multiplier *= -1;
+    if (multiplicand < 0)
+        multiplicand *= -1;
+    u_multiplier = multiplier;
+    u_multiplicand = multiplicand;
+
+    for (i = 0; i < 32; i++)
+    {
+        bit = u_multiplier % 2;
+        if (bit == 1)
+        {
+            if (u_multiplicand > (max - u_lo))     //Se ocorrer overflow
+            {
+                u_hi++;
+                u_lo = u_multiplicand - (max - u_lo) - 1;
+            } else {
+                u_lo += u_multiplicand;
+            }
+        }
+        if (i != 31) {
+            u_hi = u_hi << 1;
+        }
+        u_multiplicand = u_multiplicand << 1;
+        u_multiplier = u_multiplier >> 1;
+    }
+    if (signal == -1) {
+        lo = ~u_lo + 1;
+        hi = ~u_hi;
+    } else {
+        lo = u_lo;
+        hi = u_hi;
+    }
+    printf("\n%u-%u\n", u_hi, u_lo);
+
     if ((hi == 0x00000000) && (lo == 0x00000000))
     {
         check_and_set_neg_zero_true(0x00000000);    //Se o número for zero, ativa flag zero e negzero
