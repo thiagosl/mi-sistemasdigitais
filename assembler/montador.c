@@ -17,7 +17,7 @@ struct hash                     // Hashtable
 
 struct hash *registers = NULL;  // Hashtable de registradores
 struct hash *labels = NULL;     // Hashtable de labels
-int numInstructions = 0;        // Num total de instrucoes
+unsigned int numInstructions = 0;        // Num total de instrucoes
 char *fileName;                 // Nome do arquivo
 
 /* Adiciona registrador (nome, codigo) na hashmap */
@@ -145,8 +145,8 @@ void createLabels()
 {
     char *line;
     FILE *file;
-    int actualPosition = 0;
-    int actualPositionData = 0;
+    unsigned int actualPosition = 0;
+    unsigned int actualPositionData = 0;
     char aux[300];
 
     file = fopen(fileName, "r");  // Abre o arquivo
@@ -270,7 +270,6 @@ int getR1(char instruction[])
     {
         reg[2] = '\0';
     }
-    printf("--------%d\n", findRegist(reg) << 8);
     return (findRegist(reg) << 8);      // Procura o registrador na hashmap e retorna seu codigo deslocado 8 bits a esquerda
 }
 
@@ -330,9 +329,9 @@ int getConst(char instruction[])
     }
     while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
     constante[i] = '\0';
-    if ((constante[0] <= '9' && constante[0] >= '0') || constante[0] == '-')    // Se for um numero
+    if ((constante[0] <= '9' && constante[0] >= '0') || constante[0] == '-' || constante[0] == '+')    // Se for um numero
     {
-        return atoi(constante);                             // Transforma em inteiro e retorna
+        return atoi(constante) & 0x0000ffff;               // Transforma em inteiro e retorna
     }
     else if (!strcmp(constante, "LOWBYTE"))                 // Se for "LOWBYTE
     {
@@ -340,7 +339,7 @@ int getConst(char instruction[])
     }
     else if (!strcmp(constante, "HIGHBYTE"))                // Se for "HIGHBYTE"
     {
-        return (getDestination(instruction) >> 16);         // Pega o byte mais significativo do codigo do label a seguir
+        return (((unsigned int) getDestination(instruction)) >> 16);         // Pega o byte mais significativo do codigo do label a seguir
     }
     else                                                    // Se for somente um label
     {
@@ -393,184 +392,181 @@ int getDestination(char instruction[])
     while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
     label[i] = '\0';
 
-    return findLabel(label);        // Procura o label na hashmap e retorna seu respectivo codigo
+    return findLabel(label) & 0x00000fff;        // Procura o label na hashmap e retorna seu respectivo codigo
 }
 
 /* Traduz a instrucao e retorna o codigo binario resultante */
-int traduzir(char instruction[])
+unsigned int traduzir(char instruction[])
 {
-    int result = 0;
+    unsigned int result = 0;
     char *mnemonic = getMnemonic(instruction);     // Pega o mnemonico da instrucao
     if (!strcmp(mnemonic, "add"))       // Identifica o mnemonico e acopla o codigo binario de cada uma das partes da instrucao
     {
-        result = (0x00000 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00000 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "addu"))
     {
-        result = (0x00001 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00001 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "addinc"))
     {
-        result = (0x00002 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00002 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "inca"))
     {
-        result = (0x00003 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00003 << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "sub"))
     {
-        result = (0x00004 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00004 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "subdec"))
     {
-        result = (0x00005 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00005 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "deca"))
     {
-        result = (0x00006 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00006 << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "mult"))
     {
-        result = (0x00007 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00007 << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "multu"))
     {
-        result = (0x00008 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00008 << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "mfh"))
     {
-        result = (0x00009 << 12) + getR1(instruction);
+        result = (0x00009 << 12) | getR1(instruction);
     }
     else if (!strcmp(mnemonic, "mfl"))
     {
-        result = (0x0000A << 12) + getR1(instruction);
+        result = (0x0000A << 12) | getR1(instruction);
     }
     else if (!strcmp(mnemonic, "div"))
     {
-        result = (0x0000B << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x0000B << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "divu"))
     {
-        result = (0x0000C << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x0000C << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "asl"))
     {
-        result = (0x0000D << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x0000D << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "asr"))
     {
-        result = (0x0000E << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x0000E << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "zeros"))
     {
-        result = (0x0000F << 12) + getR1(instruction);
+        result = (0x0000F << 12) | getR1(instruction);
     }
     else if (!strcmp(mnemonic, "ones"))
     {
-        result = (0x00010 << 12) + getR1(instruction);
+        result = (0x00010 << 12) | getR1(instruction);
     }
     else if (!strcmp(mnemonic, "passa"))
     {
-        result = (0x00011 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00011 << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "passnota"))
     {
-        result = (0x00012 << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x00012 << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "and"))
     {
-        result = (0x00013 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00013 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "andnota"))
     {
-        result = (0x00014 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00014 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "nand"))
     {
-        result = (0x00015 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00015 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "or"))
     {
-        result = (0x00016 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00016 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "ornota"))
     {
-        result = (0x00017 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00017 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "nor"))
     {
-        result = (0x00018 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00018 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "xor"))
     {
-        result = (0x00019 << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x00019 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "xornota"))
     {
-        result = (0x0001A << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x0001A << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "xnor"))
     {
-        result = (0x0001B << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x0001B << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "lsl"))
     {
-        result = (0x0001C << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x0001C << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "lsr"))
     {
-        result = (0x0001D << 12) + getR1(instruction) + getR2(instruction);
+        result = (0x0001D << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "slt"))
     {
-        result = (0x0001E << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x0001E << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "sltu"))
     {
-        result = (0x0001F << 12) + getR1(instruction) + getR2(instruction) + getR3(instruction);
+        result = (0x0001F << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
     else if (!strcmp(mnemonic, "loadlit"))
     {
-        printf("%s\n", instruction);
-        result = (0x400 << 20) + (getR1(instruction) << 8) + getConst(instruction);
-        printf("----<>----%d\n", getR1(instruction));
-        printf("%d\n", result);
+        result = (0x400 << 20) | (getR1(instruction) << 8) | getConst(instruction);
     }
     else if (!strcmp(mnemonic, "lcl"))
     {
-        result = (0x401 << 20) + (getR1(instruction) << 8) + getConst(instruction);
+        result = (0x401 << 20) | (getR1(instruction) << 8) | getConst(instruction);
     }
     else if (!strcmp(mnemonic, "lch"))
     {
-        result = (0x402 << 20) + (getR1(instruction) << 8) + getConst(instruction);
+        result = (0x402 << 20) | (getR1(instruction) << 8) | getConst(instruction);
     }
     else if (!strcmp(mnemonic, "load"))
     {
-        result = (0x800000 << 8) + (getR1(instruction) >> 4) + (getR2(instruction) >> 4);
+        result = (0x800000 << 8) | (getR1(instruction) >> 4) | (getR2(instruction) >> 4);
     }
     else if (!strcmp(mnemonic, "store"))
     {
-        result = (0x800001 << 8) + (getR1(instruction) >> 4) + (getR2(instruction) >> 4);
+        result = (0x800001 << 8) | (getR1(instruction) >> 4) | (getR2(instruction) >> 4);
     }
     else if (!strcmp(mnemonic, "j"))
     {
-        result = (0xC00 << 20) + getDestination(instruction);
+        result = (0xC00 << 20) | getDestination(instruction);
     }
     else if (!strcmp(mnemonic, "jt"))
     {
-        result = (0xC01 << 20) + getCondition(instruction) + getDestination(instruction);
+        result = (0xC01 << 20) | getCondition(instruction) | getDestination(instruction);
     }
     else if (!strcmp(mnemonic, "jf"))
     {
-        result = (0xC02 << 20) + getCondition(instruction) + getDestination(instruction);
+        result = (0xC02 << 20) | getCondition(instruction) | getDestination(instruction);
     }
     else if (!strcmp(mnemonic, "jal"))
     {
-        result = (0xC03 << 20) + (getR1(instruction) << 4);
+        result = (0xC03 << 20) | (getR1(instruction) << 4);
     }
     else if (!strcmp(mnemonic, "jr"))
     {
-        result = (0xC04 << 20) + (getR1(instruction) << 4);
+        result = (0xC04 << 20) | (getR1(instruction) << 4);
     }
     else if (!strcmp(mnemonic, "nop"))
     {
@@ -700,7 +696,7 @@ void readWords(FILE *fileW)
                         while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
                         word[i] = '\0';
 
-                        writeOnFile(fileW, atoi(word));      // Escreve no arquivo de saida o codigo binario da palavra obtida
+                        writeOnFile(fileW, (unsigned int) atoi(word));      // Escreve no arquivo de saida o codigo binario da palavra obtida
                     }
                 }
             }
@@ -708,8 +704,8 @@ void readWords(FILE *fileW)
     }
 }
 
-/* Traduz a instrucao e retorna o codigo binario resultante */
-void writeOnFile(FILE *file, int bin)
+/* Escreve em binário no arquivo o inteiro recebido */
+void writeOnFile(FILE *file, unsigned int bin)
 {
     int i;
     for (i = 0; i < 32; i++)        // Para cada bit da palavra
@@ -718,7 +714,7 @@ void writeOnFile(FILE *file, int bin)
             fprintf(file, "%c", '1');
         else
             fprintf(file, "%c", '0');
-        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo)
+        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo bit)
     }
     //fprintf(file, "\n");
 }
@@ -738,7 +734,7 @@ int main(int argc, char *argv[])
     char *instruction;
     char line[300];
     FILE *fileR = fopen(fileName, "r");           // Abre o arquivo de leitura
-    FILE *fileW = fopen("resultado montador.bin", "w");    // Abre o arquivo de escrita
+    FILE *fileW = fopen(strcpy(fileName, "\b\b\bbin"), "w");    // Abre o arquivo de escrita
 
     if (fileR == NULL)
     {

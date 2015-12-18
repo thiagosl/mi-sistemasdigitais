@@ -34,8 +34,8 @@ DEC:
 		deca r4, r4 ;j--
 		j LOOP2 ;volta para o LOOP2
 TROCA:
-		store r9, r11 ;grava valor que estava na posição (j-1) na posição j do array
-		store r10, r7 ;grava valor que estava na posição j na posição (j-1) do array
+		store r11, r9 ;grava valor que estava na posição (j-1) na posição j do array
+		store r7, r10 ;grava valor que estava na posição j na posição (j-1) do array
 		j DEC
 FIM:
 		j FIM
