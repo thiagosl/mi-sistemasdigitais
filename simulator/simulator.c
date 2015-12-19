@@ -14,30 +14,24 @@ int lo;     //Registrador de propósito específico que armazena os bytes menos si
 unsigned int mem_lenth = 0;   //Tamanho da memória utilisada pelo programa
 char *file_name;    //Nome do arquivo de leitura
 
-bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation)
+bool check_and_set_carry_overflow(int value_0, int value_1, bool unsigned_operation)
 {
-    if (unsigned_operation)     //Operações sem sinal
+    flags_reg[1] = false;
+    flags_reg[6] = false;
+    //if (unsigned_operation)     //Operações sem sinal
+    //{
+    unsigned int u_v0 = value_0;
+    unsigned int u_v1 = value_1;
+    unsigned int max = 0xFFFFFFFF;      //Valor inteiro sem sinal máximo
+    if (u_v1 > (max - u_v0)) //Se o valor1 for maior do que o número máximo decrescido do valor0, acontecerá um carry
     {
-        unsigned int value_0 = v0;
-        unsigned int value_1 = v1;
-        unsigned int max = 0xFFFFFFFF;      //Valor inteiro sem sinal máximo
-        if (value_1 > (max - value_0)) //Se o valor1 for maior do que o número máximo decrescido do valor0, acontecerá um carry
-        {
-            flags_reg[1] = false;
-            flags_reg[6] = true;   //CARRY
+        flags_reg[6] = true;   //CARRY
+        if (unsigned_operation)
             return true;
-        }
-        else
-        {
-            flags_reg[1] = false;
-            flags_reg[6] = false;
-            return false;
-        }
     }
-    else        //Operações com sinal
+    //}
+    if (!unsigned_operation)        //Operações com sinal
     {
-        int value_0 = v0;
-        int value_1 = v1;
         int max = 0x7FFFFFFF;       //Valor máximo para inteiros com sinal
         int min = 0x80000000;       //Valor mínimo para inteiros com sinal
         if ((value_0 > 0) && (value_1 > 0))     //Se ambos os valores forem positivos
@@ -45,14 +39,7 @@ bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation)
             if (value_1 > (max - value_0))     //Se for uma operação de soma e ocorrer overflow
             {
                 flags_reg[1] = true;   //OVERFLOW
-                flags_reg[6] = false;
                 return true;
-            }
-            else        //Se for uma operação de subtração ou não ocorrer overflow
-            {
-                flags_reg[1] = false;
-                flags_reg[6] = false;
-                return false;
             }
         }
         else if ((value_0 < 0) && (value_1 < 0))    //Se ambos os valores forem negativos
@@ -60,22 +47,10 @@ bool check_and_set_carry_overflow(int v0, int v1, bool unsigned_operation)
             if (value_1 < (min - value_0))     //Se for uma operação de soma e ocorrer overflow
             {
                 flags_reg[1] = true;   //OVERFLOW
-                flags_reg[6] = false;
                 return true;
             }
-            else        //Se for uma operação de subtração ou não ocorrer overflow
-            {
-                flags_reg[1] = false;
-                flags_reg[6] = false;
-                return false;
-            }
         }
-        else        //Se um dos números for positivo e o outro negativo
-        {
-            flags_reg[1] = false;
-            flags_reg[6] = false;
-            return false;
-        }
+        return false;
     }
 }
 
@@ -119,9 +94,9 @@ bool get_flag(int flag)
 
 void ula_add(int reg1, int reg2, int reg3)
 {
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false);      //Verifica a ocorrencia da flag overflow
     printf("ADD: %d <-- %d\n", reg1, gpr[reg2] + gpr[reg3]);
     gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false);      //Verifica a ocorrencia da flag overflow
     if (!overflow)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu overflow, verifica as flags zero, neg, negzero e true
@@ -134,11 +109,11 @@ void ula_add(int reg1, int reg2, int reg3)
 
 void ula_addu(int reg1, int reg2, int reg3)
 {
+    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true);    //Verifica a ocorrencia da flag carry
     unsigned int value_0 = gpr[reg2];
     unsigned int value_1 = gpr[reg3];
     printf("ADDU: %d <-- %u\n", reg1, value_0 + value_1);
     gpr[reg1] =  value_0 + value_1;
-    bool carry = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true);    //Verifica a ocorrencia da flag carry
     if (!carry)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
@@ -151,9 +126,9 @@ void ula_addu(int reg1, int reg2, int reg3)
 
 void ula_addinc(int reg1, int reg2, int reg3)
 {
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false);      //Verifica a ocorrencia da flag overflow
     printf("ADDINC: %d <-- %d\n", reg1, gpr[reg2] + gpr[reg3] + 1);
     gpr[reg1] = gpr[reg2] + gpr[reg3];
-    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], false);      //Verifica a ocorrencia da flag overflow
     if (!overflow)
     {
         gpr[reg1] = gpr[reg1] + 1;
@@ -175,9 +150,9 @@ void ula_addinc(int reg1, int reg2, int reg3)
 
 void ula_inca(int reg1, int reg2)
 {
-    printf("INCA: %d <-- %d\n", reg1, gpr[reg2] + 1);
-    gpr[reg1] = gpr[reg2] + 1;
     bool overflow = check_and_set_carry_overflow(gpr[reg2], 1, false);     //Verifica a ocorrencia da flag overflow
+    printf("INCA: %d <-- %d\n", reg1, gpr[reg2] + 1);
+    gpr[reg1] = 1 + gpr[reg2];
     if (!overflow)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
@@ -190,9 +165,9 @@ void ula_inca(int reg1, int reg2)
 
 void ula_sub(int reg1, int reg2, int reg3)
 {
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], -gpr[reg3], false);       //Verifica a ocorrencia da flag overflow
     printf("SUB: %d <-- %d\n", reg1, gpr[reg2] - gpr[reg3]);
     gpr[reg1] = gpr[reg2] - gpr[reg3];
-    bool overflow = check_and_set_carry_overflow(gpr[reg2], -gpr[reg3], false);       //Verifica a ocorrencia da flag overflow
     if (!overflow)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
@@ -205,13 +180,14 @@ void ula_sub(int reg1, int reg2, int reg3)
 
 void ula_subdec(int reg1, int reg2, int reg3)
 {
-    printf("SUBDEC: %d <-- %d\n", reg1, gpr[reg2] - gpr[reg3] - 1);
-    gpr[reg1] = gpr[reg2] - gpr[reg3];
     bool overflow = check_and_set_carry_overflow(gpr[reg2], -gpr[reg3], false);       //Verifica a ocorrencia da flag overflow
+    int aux = gpr[reg2];
+    int aux2 = gpr[reg3];
+    printf("SUBDEC: %d <-- %d\n", reg1, gpr[reg2] - gpr[reg3] - 1);
+    gpr[reg1] = gpr[reg2] - gpr[reg3] - 1;
     if (!overflow)
     {
-        gpr[reg1] = gpr[reg1] - 1;
-        overflow = check_and_set_carry_overflow(gpr[reg1], -1, false);       //Verifica a ocorrencia da flag overflow
+        overflow = check_and_set_carry_overflow(aux - aux2, -1, false);       //Verifica a ocorrencia da flag overflow
         if (!overflow)
         {
             check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
@@ -229,9 +205,9 @@ void ula_subdec(int reg1, int reg2, int reg3)
 
 void ula_deca(int reg1, int reg2)
 {
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], -1, false);      //Verifica a ocorrencia da flag overflow
     printf("DECA: %d <-- %d\n", reg1, gpr[reg2] - 1);
     gpr[reg1] = gpr[reg2] - 1;
-    bool overflow = check_and_set_carry_overflow(gpr[reg2], -1, false);      //Verifica a ocorrencia da flag overflow
     if (!overflow)
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
@@ -273,20 +249,26 @@ void ula_mult(int reg1, int reg2)
             {
                 u_hi++;
                 u_lo = u_multiplicand - (max - u_lo) - 1;
-            } else {
+            }
+            else
+            {
                 u_lo += u_multiplicand;
             }
         }
-        if (i != 31) {
+        if (i != 31)
+        {
             u_hi = u_hi << 1;
         }
         u_multiplicand = u_multiplicand << 1;
         u_multiplier = u_multiplier >> 1;
     }
-    if (signal == -1) {
+    if (signal == -1)
+    {
         lo = ~u_lo + 1;
         hi = ~u_hi;
-    } else {
+    }
+    else
+    {
         lo = u_lo;
         hi = u_hi;
     }
@@ -353,9 +335,10 @@ void ula_divu(int reg1, int reg2, int reg3)
 void ula_asl(int reg1, int reg2)
 {
     printf("ASL: %d <-- %d\n", reg1, gpr[reg2] << 1);
+    int aux = gpr[reg2];
     gpr[reg1] = gpr[reg2] << 1;
-    flags_reg[1] = ((gpr[reg2] >> 31) & 0x00000001) ^ ((gpr[reg2] >> 30) & 0x00000001);    //Overflow
-    flags_reg[6] = (gpr[reg2] >> 31) & 0x00000001; //carry
+    flags_reg[1] = ((aux >> 31) & 0x00000001) ^ ((aux >> 30) & 0x00000001);    //Overflow
+    flags_reg[6] = (aux >> 31) & 0x00000001; //carry
     if (!flags_reg[1] && !flags_reg[6])
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
@@ -392,10 +375,17 @@ void ula_ones(int reg1)
 
 void ula_passa(int reg1, int reg2)
 {
-    printf("PASSA: %d <-- %d\n", reg1, gpr[reg2]);
-    gpr[reg1] = gpr[reg2];
-    check_and_set_carry_overflow(0, 0, false);
-    check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
+    if (reg1 != reg2)
+    {
+        printf("PASSA: %d <-- %d\n", reg1, gpr[reg2]);
+        gpr[reg1] = gpr[reg2];
+        check_and_set_carry_overflow(0, 0, false);
+        check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
+    }
+    else
+    {
+        printf("NOP\n");
+    }
 }
 
 void ula_passnota(int reg1, int reg2)
@@ -481,9 +471,10 @@ void ula_xnor(int reg1, int reg2, int reg3)
 void ula_lsl(int reg1, int reg2)
 {
     printf("LSL: %d <-- %d\n", reg1, gpr[reg2] << 1);
+    int aux = gpr[reg2];
     gpr[reg1] = gpr[reg2] << 1;
     flags_reg[1] = 0;   //Overflow
-    flags_reg[6] = (gpr[reg2] >> 31) & 0x00000001; //Carry
+    flags_reg[6] = (aux >> 31) & 0x00000001; //Carry
     if (!flags_reg[6])
     {
         check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
@@ -554,17 +545,19 @@ void const_lch(int reg1, int cst)
     gpr[reg1] = (cst << 16) | (gpr[reg1] & 0x0000FFFF);      //Pega os 16 bits menos significativos do valor no registrador e faz um OR com a constante deslocada 8 bits a esquerda
 }
 
-void mem_load(int addr, int reg1)
+void mem_load(int reg1, int addr)
 {
     printf("LOAD: %d <-- %d\n", reg1, mem[gpr[addr]]);
     gpr[reg1] = mem[gpr[addr]];     //Pega endereço no registrador, lê o valor neste endereço de memória e grava no registrador
 }
 
-void mem_store(int reg1, int addr)
+void mem_store(int addr, int reg1)
 {
     printf("STORE: %d <-- %d\n", gpr[addr], gpr[reg1]);
     //printf("endereço de mem = %d, conteudo da mem = %d, vai ser gravado = %d\n", gpr[addr], mem[gpr[addr]], gpr[reg1]);
     mem[gpr[addr]] = gpr[reg1];     //Grava no endereço de memória o valor no registrador
+    if (gpr[addr] > mem_lenth)
+        mem_lenth = gpr[addr];
 }
 
 void jump(int addr)
@@ -575,17 +568,19 @@ void jump(int addr)
 
 void jump_true(int flag, int addr)
 {
-    printf("JUMPTRUE: pc <-- %d ; flag: %d\n", addr, flag);
+    printf("JT: pc <-- %d ; flag: %d\n", addr, flag);
     bool is_true = get_flag(flag);
     if (is_true)
     {
         pc = addr;
     }
+    if (pc == addr)
+        //system("pause");
 }
 
 void jump_false(int flag, int addr)
 {
-    printf("JUMPFALSE: pc <-- %d ; flag: %d\n", addr, flag);
+    printf("JF: pc <-- %d ; flag: %d\n", addr, flag);
     bool is_true = get_flag(flag);
     if (!is_true)
     {
@@ -593,11 +588,11 @@ void jump_false(int flag, int addr)
     }
 }
 
-void jump_and_link(int addr)
+void jump_and_link(int reg1)
 {
-    printf("JUMPANDLINK: pc <-- %d ; 7 <-- pc\n", addr);
+    printf("JAL: pc <-- %d ; 7 <-- pc \n", gpr[reg1], reg1);
     gpr[7] = pc;
-    pc = addr;
+    pc = gpr[reg1];
 }
 
 void jump_register(int reg1)
@@ -796,7 +791,7 @@ void decode_and_run_instruction()
         }
         else if (opcode == 0x00000003)
         {
-            jump_and_link(addr);
+            jump_and_link(reg1);
         }
         else if (opcode == 0x00000004)
         {
@@ -805,34 +800,44 @@ void decode_and_run_instruction()
     }
 }
 
-void writeResult() {
-	FILE *file_w = fopen(strcpy(file_name, "\b\b\btxt"), "w");    // Abre o arquivo de escrita
+void writeResult()
+{
+    FILE *file_w = fopen("teste.txt", "w");    // Abre o arquivo de escrita
 
     int i;
-    for (i = 0; i < 16; i++)    //Percorre os 16 registradores
+    for (i = 0; i < 16; i++)      //Percorre os 16 registradores
+    {
         fprintf(file_w, "gpr%d: %d\n", i, gpr[i]);    //Imprime cada um no arquivo de saida
-    for (i = 0; i < mem_lenth; i++) {   //Percorre a memoria utilezada
+    }
+    for (i = 0; i < 99; i++)     //Percorre a memoria utilezada
+    {
         fprintf(file_w, "mem(%d): %d\n", i, mem[i]);  //Imprime cada valor no arquivo de saida
     }
     fclose(file_w);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     if (argc > 1)                // Se o usuario tiver passado algum parametro
         file_name = argv[1];     // Define o nome do arquivo de entrada como o parametro recebido
     else
         file_name = "teste.bin"; // Nome default do arquivo de entrada
 
-	FILE *file_r = fopen(file_name, "r");      // Abre o arquivo de leitura
-    if (file_r == NULL) {
-	    printf("Erro, nao foi possivel abrir o arquivo\n");
-	    return -1;
-	} else {
+    FILE *file_r = fopen(file_name, "r");      // Abre o arquivo de leitura
+    if (file_r == NULL)
+    {
+        printf("Erro, nao foi possivel abrir o arquivo\n");
+        return -1;
+    }
+    else
+    {
         char c = fgetc(file_r);      //Le um caractere do arquivo
-	    while(!feof(file_r)) {       //Verifica se chegou no fim do arquivo
+        while(!feof(file_r))         //Verifica se chegou no fim do arquivo
+        {
             int instruction = 0;
             int i;
-            for(i = 0; i < 32; i++) {   //Percorre os 32 bits da palavra
+            for(i = 0; i < 32; i++)     //Percorre os 32 bits da palavra
+            {
                 printf("%c",c);
                 if (c == '1')       //Se o bit for '1'
                 {
@@ -847,14 +852,14 @@ int main(int argc, char *argv[]) {
             mem[mem_lenth] = instruction;   //Salva a palavra na memoria
             mem_lenth++;
             printf("\n");
-	    }
-	    while (true) {
+        }
+        while (true)
+        {
             ir = mem[pc];                        //Transfere para o registrador IR a instrução que será executada
             printf("IR=%d <--> PC=%d \n", ir, pc);
             pc++;                               //Incrementa o ponteiro de instruções
             decode_and_run_instruction();       //Decodifica e executa a instrução
             writeResult();
-            //system("pause");
         }
     }
 

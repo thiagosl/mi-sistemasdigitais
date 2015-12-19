@@ -33,12 +33,7 @@
 	jt.zero L1
 	nop
 	store	r0,r1
-L1:	inca	r0,r0
-	passb	r3,r1
-	jf.zero L2
-	nop
-	store	r0,r1
-L2:	inca	r0,r0		
+L1:	inca	r0,r0		
 	zeros	r3
 	deca	r3,r3
 	inca	r3,r3
@@ -52,8 +47,8 @@ L31:	jf.overflow L3
 	deca	r0,r0
 L3:	inca	r0,r0
 	inca	r0,r0
-	lcl	r3,255
-	lch	r3,127
+	lcl	r3,-1
+	lch	r3,32767
 	inca	r3,r3
 	jt.overflow L4
 	nop
@@ -67,14 +62,14 @@ L4:	inca	r0,r0
 L5:	inca	r0,r0
         deca    r2,r2
 	lcl	r3,0
-	lch	r3,128
+	lch	r3,-32768
         subdec  r3,r3,r1
 	jt.overflow L6
 	nop
 	store	r0,r1
 L6:	inca	r0,r0
         passnota r2,r2
-	jt.zero HLT
+	jt.zero HALT
 	nop
 	store	r0,r1
 HALT:   j HALT
@@ -83,7 +78,6 @@ HALT:   j HALT
 .dseg
 ARR1:
         .word  0               ; errou flag ZERO 	passa 		(FFFF->0)
-        .word  0               ; errou flag ZERO 	passb 		(FFFF->0)
         .word  0               ; errou flag CARRY 	inca 		(FFFF->0)
         .word  0               ; errou flag OVERFLOW 	inca 		(FFFF->0)
         .word  0               ; errou flag OVERFLOW 	inca 		(FFFF->0)
