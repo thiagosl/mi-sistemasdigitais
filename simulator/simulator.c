@@ -218,100 +218,63 @@ void ula_deca(int reg1, int reg2)
     }
 }
 
-void ula_mult(int reg1, int reg2)
+void ula_subu(int reg1, int reg2, int reg3)
 {
-    int multiplier = gpr[reg1];
-    int multiplicand = gpr[reg2];
-    unsigned int u_multiplier;
-    unsigned int u_multiplicand;
-    int i, bit, signal = 1;
-    int max = 4294967295;
-    int u_lo = 0;
-    int u_hi = 0;
-    lo = 0;
-    hi = 0;
-
-    if ((multiplier < 0 && multiplicand > 0) || (multiplier > 0 && multiplicand < 0))
-        signal = -1;
-    if (multiplier < 0)
-        multiplier *= -1;
-    if (multiplicand < 0)
-        multiplicand *= -1;
-    u_multiplier = multiplier;
-    u_multiplicand = multiplicand;
-
-    for (i = 0; i < 32; i++)
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], -gpr[reg3], true);       //Verifica a ocorrencia da flag overflow
+    unsigned int value_0 = gpr[reg2];
+    unsigned int value_1 = gpr[reg3];
+    printf("SUBU: %d <-- %u\n", reg1, value_0 - value_1);
+    gpr[reg1] = value_0 - value_1;
+    if (!overflow)
     {
-        bit = u_multiplier % 2;
-        if (bit == 1)
+        check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
+    }
+    else
+    {
+        reset_neg_zero_true();
+    }
+}
+
+void ula_addincu(int reg1, int reg2, int reg3)
+{
+    bool overflow = check_and_set_carry_overflow(gpr[reg2], gpr[reg3], true);      //Verifica a ocorrencia da flag overflow
+    unsigned int value_0 = gpr[reg2];
+    unsigned int value_1 = gpr[reg3];
+    printf("ADDINCU: %d <-- %u\n", reg1, value_0 + value_1 + 1);
+    gpr[reg1] = value_0 + value_1;
+    if (!overflow)
+    {
+        gpr[reg1] = (unsigned int) gpr[reg1] + (unsigned int) 1;
+        overflow = check_and_set_carry_overflow(gpr[reg1], 1, true);      //Verifica a ocorrencia da flag overflow
+        if (!overflow)
         {
-            if (u_multiplicand > (max - u_lo))     //Se ocorrer overflow
-            {
-                u_hi++;
-                u_lo = u_multiplicand - (max - u_lo) - 1;
-            }
-            else
-            {
-                u_lo += u_multiplicand;
-            }
+            check_and_set_neg_zero_true(gpr[reg1]);     //Se não ocorreu carry, verifica as flags zero, neg, negzero e true
         }
-        if (i != 31)
+        else
         {
-            u_hi = u_hi << 1;
+            reset_neg_zero_true();
         }
-        u_multiplicand = u_multiplicand << 1;
-        u_multiplier = u_multiplier >> 1;
-    }
-    if (signal == -1)
-    {
-        lo = ~u_lo + 1;
-        hi = ~u_hi;
     }
     else
     {
-        lo = u_lo;
-        hi = u_hi;
-    }
-    printf("\n%u-%u\n", u_hi, u_lo);
-
-    if ((hi == 0x00000000) && (lo == 0x00000000))
-    {
-        check_and_set_neg_zero_true(0x00000000);    //Se o número for zero, ativa flag zero e negzero
-    }
-    else
-    {
-        check_and_set_neg_zero_true(hi);    //Se o número for diferente de zero verifica as flags zero, neg, negzero e true
+        reset_neg_zero_true();
     }
 }
 
-void ula_multu(int reg1, int reg2)
+void ula_passb(int reg1, int reg2)
 {
-    hi = (gpr[reg1] * gpr[reg2]);
-    lo = (gpr[reg1] * gpr[reg2]);
-    if ((hi == 0x00000000) && (lo == 0x00000000))
-    {
-        check_and_set_neg_zero_true(0x00000000);        //Se o número for zero, ativa flag zero e negzero
-    }
-    else
-    {
-        check_and_set_neg_zero_true(hi);        //Se o número for diferente de zero verifica as flags zero, neg, negzero e true
-    }
+    printf("PASSB: %d <-- %d\n", reg1, gpr[reg2]);
+    gpr[reg1] = gpr[reg2];
+    //check_and_set_carry_overflow(0, 0, false);
+    //check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
-void ula_mfh(int reg1)
+void ula_passbotb(int reg1, int reg2)
 {
-    printf("MFH: %d <-- %d\n", reg1, hi);
-    gpr[reg1] = hi;
-    check_and_set_carry_overflow(0, 0, false);
-    check_and_set_neg_zero_true(gpr[reg1]);
-}
-
-void ula_mfl(int reg1)
-{
-    printf("MFL: %d <-- %d\n", reg1, lo);
-    gpr[reg1] = lo;
-    check_and_set_carry_overflow(0, 0, false);
-    check_and_set_neg_zero_true(lo);
+    printf("PASSNOTB: %d <-- %d\n", reg1, gpr[reg2]);
+    gpr[reg1] = ~gpr[reg2];
+    //check_and_set_carry_overflow(0, 0, false);
+    //check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
 void ula_div(int reg1, int reg2, int reg3)
@@ -576,7 +539,7 @@ void jump_true(int flag, int addr)
     }
     if (pc == addr)
         //system("pause");
-}
+    }
 
 void jump_false(int flag, int addr)
 {
@@ -640,19 +603,19 @@ void decode_and_run_instruction()
         }
         else if (opcode == 0x00000007)
         {
-            ula_mult(reg1, reg2);
+            ula_subu(reg1, reg2, reg3);
         }
         else if (opcode == 0x00000008)
         {
-            ula_multu(reg1, reg2);
+            ula_addincu(reg1, reg2, reg3);
         }
         else if (opcode == 0x00000009)
         {
-            ula_mfh(reg1);
+            ula_passb(reg1, reg2);
         }
         else if (opcode == 0x0000000A)
         {
-            ula_mfl(reg1);
+            ula_passnotb(reg1, reg2);
         }
         else if (opcode == 0x0000000B)
         {
@@ -802,7 +765,7 @@ void decode_and_run_instruction()
 
 void writeResult()
 {
-    FILE *file_w = fopen("teste.txt", "w");    // Abre o arquivo de escrita
+    FILE *file_w = fopen("result.txt", "w");    // Abre o arquivo de escrita
 
     int i;
     for (i = 0; i < 16; i++)      //Percorre os 16 registradores
@@ -821,7 +784,7 @@ int main(int argc, char *argv[])
     if (argc > 1)                // Se o usuario tiver passado algum parametro
         file_name = argv[1];     // Define o nome do arquivo de entrada como o parametro recebido
     else
-        file_name = "teste.bin"; // Nome default do arquivo de entrada
+        file_name = "result.bin"; // Nome default do arquivo de entrada
 
     FILE *file_r = fopen(file_name, "r");      // Abre o arquivo de leitura
     if (file_r == NULL)

@@ -435,21 +435,21 @@ unsigned int traduzir(char instruction[])
     {
         result = (0x00006 << 12) | getR1(instruction) | getR2(instruction);
     }
-    else if (!strcmp(mnemonic, "mult"))
+    else if (!strcmp(mnemonic, "subu"))
     {
-        result = (0x00007 << 12) | getR1(instruction) | getR2(instruction);
+        result = (0x00007 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
-    else if (!strcmp(mnemonic, "multu"))
+    else if (!strcmp(mnemonic, "addincu"))
     {
-        result = (0x00008 << 12) | getR1(instruction) | getR2(instruction);
+        result = (0x00008 << 12) | getR1(instruction) | getR2(instruction) | getR3(instruction);
     }
-    else if (!strcmp(mnemonic, "mfh"))
+    else if (!strcmp(mnemonic, "passb"))
     {
-        result = (0x00009 << 12) | getR1(instruction);
+        result = (0x00009 << 12) | getR1(instruction) | getR2(instruction);
     }
-    else if (!strcmp(mnemonic, "mfl"))
+    else if (!strcmp(mnemonic, "passnotb"))
     {
-        result = (0x0000A << 12) | getR1(instruction);
+        result = (0x0000A << 12) | getR1(instruction) | getR2(instruction);
     }
     else if (!strcmp(mnemonic, "div"))
     {
@@ -717,8 +717,10 @@ char* changeExtention(char *fileName) {
         i++;
     }
     while(fileName[i] != '.');
-    result[i] = '\0';
-    strcat(result, ".bin");
+    result[i] = '.';
+    result[i+1] = 'b';
+    result[i+2] = 'i';
+    result[i+3] = 'n';
     return result;
 }
 
@@ -753,7 +755,7 @@ int main(int argc, char *argv[])
     char line[300];
     FILE *fileR = fopen(fileName, "r");           // Abre o arquivo de leitura
     //fileWName = changeExtention(fileName);
-    fileWName = "teste.bin";
+    fileWName = "result.bin";
     FILE *fileW = fopen(fileWName, "w");    // Abre o arquivo de escrita
 
     if (fileR == NULL)
