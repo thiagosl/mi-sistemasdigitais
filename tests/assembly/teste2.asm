@@ -33,7 +33,7 @@ SKIP:
      lcl r3, LOWBYTE STACK
      lch r3, HIGHBYTE STACK
 L3:  load r1,r3
-     passa r2,r1
+     passb r2,r1
      jal r6
      nop
      store r0,r1

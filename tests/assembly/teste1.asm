@@ -33,7 +33,12 @@
 	jt.zero L1
 	nop
 	store	r0,r1
-L1:	inca	r0,r0		
+L1:	inca	r0,r0
+	passb	r3,r1
+	jf.zero L2
+	nop
+	store	r0,r1
+L2:	inca	r0,r0		
 	zeros	r3
 	deca	r3,r3
 	inca	r3,r3
@@ -78,6 +83,7 @@ HALT:   j HALT
 .dseg
 ARR1:
         .word  0               ; errou flag ZERO 	passa 		(FFFF->0)
+        .word  0               ; errou flag ZERO 	passb 		(FFFF->0)
         .word  0               ; errou flag CARRY 	inca 		(FFFF->0)
         .word  0               ; errou flag OVERFLOW 	inca 		(FFFF->0)
         .word  0               ; errou flag OVERFLOW 	inca 		(FFFF->0)

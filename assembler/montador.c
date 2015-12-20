@@ -812,5 +812,6 @@ int main(int argc, char *argv[])
         readWords(fileW);
         fclose(fileW);      // Fecha o arquivo de saida
     }
+    //system("pause");
     return 0;
 }

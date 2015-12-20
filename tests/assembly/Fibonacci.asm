@@ -20,5 +20,5 @@ FIM:
 		j FIM ;ao final do processamento o resultado estará armazenado no registrador r15
 .dseg
 ARR1:
-	.word 4
+	.word 8
 .end

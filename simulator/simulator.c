@@ -9,10 +9,9 @@ int flags_reg[7];   //Registrador de flags 1 - overflow
 int mem[200];    //Memória de dados
 unsigned int pc = 0x00000000;    //Ponteiro para a próxima instrução que será executada
 unsigned int ir;     //Registrador de propósito específico que armazena a instrução que está sendo executada neste ciclo
-int hi;     //Registrador de propósito específico que armazena os bytes mais significativos da operação de multiplicação
-int lo;     //Registrador de propósito específico que armazena os bytes menos significativos da operação de multiplicação
 unsigned int mem_lenth = 0;   //Tamanho da memória utilisada pelo programa
 char *file_name;    //Nome do arquivo de leitura
+bool halt = false;
 
 bool check_and_set_carry_overflow(int value_0, int value_1, bool unsigned_operation)
 {
@@ -269,7 +268,7 @@ void ula_passb(int reg1, int reg2)
     //check_and_set_neg_zero_true(gpr[reg1]);     //Verifica as flags zero, neg, negzero e true
 }
 
-void ula_passbotb(int reg1, int reg2)
+void ula_passnotb(int reg1, int reg2)
 {
     printf("PASSNOTB: %d <-- %d\n", reg1, gpr[reg2]);
     gpr[reg1] = ~gpr[reg2];
@@ -526,6 +525,9 @@ void mem_store(int addr, int reg1)
 void jump(int addr)
 {
     printf("JUMP: pc <-- %d\n", addr);
+    if ((pc - 1) == addr) {
+        halt = true;
+    }
     pc = addr;
 }
 
@@ -537,9 +539,10 @@ void jump_true(int flag, int addr)
     {
         pc = addr;
     }
-    if (pc == addr)
+    if (pc == addr) {
         //system("pause");
     }
+}
 
 void jump_false(int flag, int addr)
 {
@@ -772,7 +775,7 @@ void writeResult()
     {
         fprintf(file_w, "gpr%d: %d\n", i, gpr[i]);    //Imprime cada um no arquivo de saida
     }
-    for (i = 0; i < 99; i++)     //Percorre a memoria utilezada
+    for (i = 0; i < mem_lenth; i++)     //Percorre a memoria utilezada
     {
         fprintf(file_w, "mem(%d): %d\n", i, mem[i]);  //Imprime cada valor no arquivo de saida
     }
@@ -823,6 +826,8 @@ int main(int argc, char *argv[])
             pc++;                               //Incrementa o ponteiro de instruções
             decode_and_run_instruction();       //Decodifica e executa a instrução
             writeResult();
+            if (halt)
+                system("pause");
         }
     }
 
