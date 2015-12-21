@@ -21,6 +21,7 @@ unsigned int numInstructions = 0;        // Num total de instrucoes
 char *fileName;                 // Nome do arquivo de entrada
 char *fileWName;                 // Nome do arquivo de saida
 
+/* Inverte a string */
 char *strrev(char *str)
 {
       char *p1, *p2;
@@ -42,7 +43,7 @@ void writeOnFile(FILE *file, unsigned int bin)
     int i;
     for (i = 0; i < 32; i++)        // Para cada bit da palavra
     {
-        if (bin >= 2147483648)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
+        if (bin >= 0x80000000)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
             fprintf(file, "%c", '1');
         else
             fprintf(file, "%c", '0');
