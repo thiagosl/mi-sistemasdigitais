@@ -556,7 +556,7 @@ void jump_false(int flag, int addr)
 
 void jump_and_link(int reg1)
 {
-    printf("JAL: pc <-- %d ; 7 <-- pc \n", gpr[reg1], reg1);
+    printf("JAL: pc <-- %d ; 7 <-- pc %d\n", gpr[reg1], reg1);
     gpr[7] = pc;
     pc = gpr[reg1];
 }
@@ -827,7 +827,8 @@ int main(int argc, char *argv[])
             decode_and_run_instruction();       //Decodifica e executa a instrução
             writeResult();
             if (halt)
-                system("pause");
+                //system("pause");
+            getchar();
         }
     }
 

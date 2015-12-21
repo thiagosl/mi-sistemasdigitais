@@ -1,4 +1,3 @@
-makefile::simulator.o
-simulator.o:
-	simulator.c -o simulator
-	./simulator result.bin
+makefile::simulator
+simulator:
+	gcc -o simulator simulator.c

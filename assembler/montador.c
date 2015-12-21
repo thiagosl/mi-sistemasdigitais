@@ -21,6 +21,36 @@ unsigned int numInstructions = 0;        // Num total de instrucoes
 char *fileName;                 // Nome do arquivo de entrada
 char *fileWName;                 // Nome do arquivo de saida
 
+char *strrev(char *str)
+{
+      char *p1, *p2;
+
+      if (! str || ! *str)
+            return str;
+      for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
+      {
+            *p1 ^= *p2;
+            *p2 ^= *p1;
+            *p1 ^= *p2;
+      }
+      return str;
+}
+
+/* Escreve em binário no arquivo o inteiro recebido */
+void writeOnFile(FILE *file, unsigned int bin)
+{
+    int i;
+    for (i = 0; i < 32; i++)        // Para cada bit da palavra
+    {
+        if (bin >= 2147483648)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
+            fprintf(file, "%c", '1');
+        else
+            fprintf(file, "%c", '0');
+        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo bit)
+    }
+    //fprintf(file, "\n");
+}
+
 /* Adiciona registrador (nome, codigo) na hashmap */
 void addRegist(char key[], int value)
 {
@@ -242,7 +272,7 @@ void createLabels()
 /* Identifica e retorna o mnemonico da instrucao */
 char* getMnemonic(char instruction[])
 {
-    char mnemonic[100];
+    static char mnemonic[100];
     int i = 0;
     do
     {
@@ -700,7 +730,7 @@ void readWords(FILE *fileW)
                         }
                         while(instruction[i] != ' ' && instruction[i] != '\0' && instruction[i] != '\t');
                         word[i] = '\0';
-                        writeOnFile(fileW, (unsigned int) atoi(word));      // Escreve no arquivo de saida o codigo binario da palavra obtida
+                        writeOnFile(fileW, ((unsigned int) atoi(word)));      // Escreve no arquivo de saida o codigo binario da palavra obtida
                     }
                 }
             }
@@ -709,7 +739,7 @@ void readWords(FILE *fileW)
 }
 
 char* changeExtention(char *fileName) {
-    char result[100];
+    static char result[100];
     int i = 0;
     do
     {
@@ -722,21 +752,6 @@ char* changeExtention(char *fileName) {
     result[i+2] = 'i';
     result[i+3] = 'n';
     return result;
-}
-
-/* Escreve em binário no arquivo o inteiro recebido */
-void writeOnFile(FILE *file, unsigned int bin)
-{
-    int i;
-    for (i = 0; i < 32; i++)        // Para cada bit da palavra
-    {
-        if (bin >= 2147483648)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
-            fprintf(file, "%c", '1');
-        else
-            fprintf(file, "%c", '0');
-        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo bit)
-    }
-    //fprintf(file, "\n");
 }
 
 /* Algoritmo principal do programa */

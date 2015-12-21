@@ -1,4 +1,3 @@
-makefile::montador.o
-montador.o:
-	montador.c -o montador
-	./montador teste.asm
+makefile::assembler
+assembler:
+	gcc -o montador montador.c
