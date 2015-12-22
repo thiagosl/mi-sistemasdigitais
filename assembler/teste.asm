@@ -1,61 +1,34 @@
-.module teste7
+.module fibonacci
 .pseg
-main:
-     ; r0 points to the stack pointer
-     lcl r0, LOWBYTE STACK
-     lch r0, HIGHBYTE STACK
-     lcl r6, LOWBYTE DIV
-     lch r6, HIGHBYTE DIV
-     loadlit r5,30
-     ; Generate primes until 30. R5 is the limit
-     loadlit r4,2
-     ; Start at 2
-L1:  loadlit r2,2
-L2:  passa r1,r4
-     jal r6
-     nop
-     and r1,r1,r1
-     jt.zero SKIP
-     nop
-     inca r2,r2
-     sub r1,r4,r2
-     jf.zero L2
-     nop
-     ;;  Doesn't divide any number
-     store r0,r4
-     inca r0,r0
-SKIP:
-     inca r4,r4
-     sub r3,r4,r5
-     jf.zero L1
-     nop   
-     passa r5,r0
-     lcl r3, LOWBYTE STACK
-     lch r3, HIGHBYTE STACK
-L3:  load r1,r3
-     passb r2,r1
-     jal r6
-     nop
-     store r0,r1
-     inca  r0,r0
-     inca  r3,r3
-     sub   r7,r3,r5
-     jf.zero L3
-     nop
-HLT: j HLT
-     nop
-     ; Computes the remainder of R1 divided by R2, both positive
-     ; by doing successive subtractions.
-DIV: sub r1,r1,r2
-     jt.neg ADD
-     nop
-     jt.zero RET
-     nop
-     j DIV
-     nop
-ADD: add r1,r1,r2
-RET: jr r7
-     nop
+		;Algoritmo da Sequência Fibonacci iterativo
+MAIN:
+		lcl r0, LOWBYTE ARR1
+		lch r0, HIGHBYTE ARR1
+		inca r4, r0 ;proximo endereço de memória
+		load r0, r0 ;carrega número n para realizar o fibonacci
+		
+		loadlit r14, 1 ;f(1) = 1
+		store r4, r14
+		inca r4, r4
+		
+		loadlit r15, 1 ;f(2) = 1
+		store r4, r15
+		inca r4, r4
+		
+		loadlit r1, 2 ;i = 2
+LOOP:
+		sub r2, r1, r0 ;verifica se i < n
+		jf.neg FIM ;se i for maior ou igual a n, termina
+		add r3, r14, r15 ;se i for menor que n, adiciona os dois numeros correspondentes ao fibonacci de i-1 e i-2 e coloca em r3
+		passa r14, r15 ;f(i-2) = f(i-1)
+		passa r15, r3 ;f(i-1) = soma em r3
+		store r4, r15
+		inca r4, r4
+		inca r1, r1 ;i++
+		j LOOP
+FIM:
+		j FIM ;ao final do processamento o resultado estará armazenado no registrador r15
 .dseg
-STACK:  
+ARR1:
+	.word 8
 .end

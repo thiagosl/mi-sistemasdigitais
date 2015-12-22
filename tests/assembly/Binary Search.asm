@@ -7,6 +7,9 @@ MAIN:
 		lcl r0, LOWBYTE ARR1
 		lch r0, HIGHBYTE ARR1 ;carrega endereço base do vetor
 		
+		loadlit r14, 12
+		add r15, r0, r14
+		
 		load r1, r0 ;r1 tem o elemento que será buscado
 		inca r0, r0 ;r0 aponta para a proxima palavra
 		load r2, r0 ;r2 tem o tamanho do array
@@ -16,6 +19,7 @@ MAIN:
 		deca r4, r2 ;r4 tem o limite superior
 		zeros r5 ;registrador da variável "meio"
 		loadlit r6, -1 ;resultado, -1 quer dizer que não foi encontrado
+		store r15, r6
 LOOP:
 		sub r8, r3, r4 ;r8 não é utilizado
 		jf.negzero FIM ;se o limite inferior for maior que o limite superior, termina
@@ -31,6 +35,7 @@ LOOP:
 		j LOOP ;volta ao loop
 IF1:
 		passa r6, r5 ;passa a posição em que esta o elemento buscado para o registrador que armazena o resultado
+		store r15, r6
 		j FIM ;termina
 IF2:
 		deca r4, r5 ;limite superior recebe (meio-1)
@@ -39,8 +44,8 @@ FIM:
 		j FIM ;ao terminar o resultado está no registrador r6
 .dseg
 ARR1:
-	.word -21
-	.word 10
+	.word -21 ;item buscado
+	.word 10 ;tamanho do array
 		.word -21
 		.word 4
 		.word 5

@@ -520,6 +520,7 @@ void mem_store(int addr, int reg1)
     mem[gpr[addr]] = gpr[reg1];     //Grava no endereço de memória o valor no registrador
     if (gpr[addr] > mem_lenth)
         mem_lenth = gpr[addr];
+        printf("mem_length = %u", mem_lenth);
 }
 
 void jump(int addr)
@@ -772,7 +773,7 @@ void writeResult()
     FILE *file_w = fopen("result.txt", "w");    // Abre o arquivo de escrita
 
     int i;
-    for (i = 0; i < mem_lenth; i++)     //Percorre a memoria utilezada
+    for (i = 0; i <= mem_lenth; i++)     //Percorre a memoria utilezada
     {
         fprintf(file_w, "mem(%d): %d\n", i, mem[i]);  //Imprime cada valor no arquivo de saida
     }

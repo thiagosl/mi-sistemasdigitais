@@ -3,7 +3,7 @@ int main(void)
 {
     int num1 = 1;
     int num2 = 1;
-    int n = 10;
+    int n = 45;
     int aux, i;
     for (i = 2; i < n; i++)
     {
