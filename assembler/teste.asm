@@ -1,64 +1,61 @@
-.module test
-
-; escreve o tamanho do array na posicao 27 (decimal) da memoria, e a partir dai o array inicial 
-; escrevendo o array ordenado por ordem inversa por cima do mesmo
-
-
+.module teste7
 .pseg
-
-main:		;Implementacao do algoritmo selection sort aplicado a um array
-                ;r2 elemento a ordenar ficando na sua posicao final
-                ;r3 para varrer todos os elementos do array
-
-        lcl r0,LOWBYTE ARR1
-        lch r0,HIGHBYTE ARR1
-        load r4,r0	;r4 tem o numero de elementos que constituem o array
-        add r4,r0,r4	;r4 tem o endereco final,aponta para a ultima posicao do array a ordenar
-        inca r0,r0	;r0 aponta para o primeiro elemento do array a ordenar
-        passa r1,r0	;r1	"	"	"		"	"	"
-        load r2,r0	;r2 contem primeiro elemento do array
-
-LOOP:   inca r1,r1	;
-        load r3,r1	;
-        sub r6,r2,r3	;r6 nao e utilizado apenas interessa o resultado presente à saida da ALU para as flags
-        jt.negzero TROCA	;r2<=r3 faz troca de posicao no array
-        nop
-CONT:
-        sub r6,r4,r1	;r6 nao e utilizado ...
-        jf.zero LOOP	;r4>r1 o array ainda nao foi todo percorrido continua o loop
-        nop
-        sub r6,r4,r0	;
-        deca r6,r6	;necessario para detectar se ja esta na penultima posicao do array na posicao final,nao sendo necessario prosseguir o teste
-        jt.zero FIM	;r4=r0 array ja esta todo ordenado pode terminar
-        nop
-        inca r0,r0	;actualiza ponteiro para o elemento a ser testado
-        load r2,r0	;le elemento seguinte do array 
-        passa r1,r0	;r1 passa a apontar para a posicao onde vai ser colocado o elemento ordenado
-        j LOOP
-        nop
-TROCA:
-        store r0,r3	;Troca a posicao dos elementos na memoria 
-        store r1,r2	;
-        passa r5,r2	;r5 serve apenas como registo temporario
-        passa r2,r3	;troca o conteudo dos registos, pois r2 tem o elemento a colocar na posicao final
-        passa r3,r5	;e r3 tem o elemento que vai ser testado se e menor q o elemento que se encontra na posicao final
-        j CONT		;conjtinua a ordenacao
-        nop
-FIM: j FIM
+main:
+     ; r0 points to the stack pointer
+     lcl r0, LOWBYTE STACK
+     lch r0, HIGHBYTE STACK
+     lcl r6, LOWBYTE DIV
+     lch r6, HIGHBYTE DIV
+     loadlit r5,30
+     ; Generate primes until 30. R5 is the limit
+     loadlit r4,2
+     ; Start at 2
+L1:  loadlit r2,2
+L2:  passa r1,r4
+     jal r6
+     nop
+     and r1,r1,r1
+     jt.zero SKIP
+     nop
+     inca r2,r2
+     sub r1,r4,r2
+     jf.zero L2
+     nop
+     ;;  Doesn't divide any number
+     store r0,r4
+     inca r0,r0
+SKIP:
+     inca r4,r4
+     sub r3,r4,r5
+     jf.zero L1
+     nop   
+     passa r5,r0
+     lcl r3, LOWBYTE STACK
+     lch r3, HIGHBYTE STACK
+L3:  load r1,r3
+     passb r2,r1
+     jal r6
+     nop
+     store r0,r1
+     inca  r0,r0
+     inca  r3,r3
+     sub   r7,r3,r5
+     jf.zero L3
+     nop
+HLT: j HLT
+     nop
+     ; Computes the remainder of R1 divided by R2, both positive
+     ; by doing successive subtractions.
+DIV: sub r1,r1,r2
+     jt.neg ADD
+     nop
+     jt.zero RET
+     nop
+     j DIV
+     nop
+ADD: add r1,r1,r2
+RET: jr r7
      nop
 .dseg
-
-ARR1:
-        .word   10
-                .word   -1
-                .word   6
-                .word   3
-                .word   -2
-                .word   4
-                .word   0
-                .word   -3
-                .word   5
-                .word   1
-                .word   2
-STACK:
+STACK:  
 .end

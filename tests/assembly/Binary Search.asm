@@ -39,9 +39,9 @@ FIM:
 		j FIM ;ao terminar o resultado está no registrador r6
 .dseg
 ARR1:
-	.word 7
+	.word -21
 	.word 10
-		.word 2
+		.word -21
 		.word 4
 		.word 5
 		.word 7

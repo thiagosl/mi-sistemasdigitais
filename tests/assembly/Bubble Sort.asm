@@ -42,14 +42,14 @@ FIM:
 .dseg
 ARR1:
 	.word 10
-		.word 3
-		.word 2
-		.word 10
-		.word 9
-		.word 1
-		.word 4
-		.word 7
-		.word 8
-		.word 5
-		.word 6
-.end
+		.word   -1
+            	.word   6
+                .word   3
+                .word   -2
+                .word   4
+                .word   0
+                .word   -3
+                .word   5
+                .word   1
+                .word   2
+	.end

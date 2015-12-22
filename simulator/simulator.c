@@ -526,7 +526,8 @@ void jump(int addr)
 {
     printf("JUMP: pc <-- %d\n", addr);
     if ((pc - 1) == addr) {
-        halt = true;
+        writeResult();
+        exit(0);
     }
     pc = addr;
 }
@@ -771,10 +772,6 @@ void writeResult()
     FILE *file_w = fopen("result.txt", "w");    // Abre o arquivo de escrita
 
     int i;
-    for (i = 0; i < 16; i++)      //Percorre os 16 registradores
-    {
-        fprintf(file_w, "gpr%d: %d\n", i, gpr[i]);    //Imprime cada um no arquivo de saida
-    }
     for (i = 0; i < mem_lenth; i++)     //Percorre a memoria utilezada
     {
         fprintf(file_w, "mem(%d): %d\n", i, mem[i]);  //Imprime cada valor no arquivo de saida
@@ -825,10 +822,6 @@ int main(int argc, char *argv[])
             printf("IR=%d <--> PC=%d \n", ir, pc);
             pc++;                               //Incrementa o ponteiro de instruções
             decode_and_run_instruction();       //Decodifica e executa a instrução
-            writeResult();
-            if (halt)
-                //system("pause");
-            getchar();
         }
     }
 
