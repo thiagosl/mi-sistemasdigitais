@@ -763,15 +763,14 @@ int main(int argc, char *argv[])
     else
         fileName = "teste.asm"; // Nome default do arquivo de entrada
 
-    setNumInstructions();       // Escreve no arquivo de saida o codigo binario da instrucao
+    setNumInstructions();       // Identifica o numero de instrucoes do arquivo de entrada
     createRegisters();          // Cria e salva os registradores na hashmap
     createLabels(fileName);     // Identifica os labels e seus respectivos enderecos e salva-os na hashmap
 
     char *instruction;
     char line[300];
-    FILE *fileR = fopen(fileName, "r");           // Abre o arquivo de leitura
-    //fileWName = changeExtention(fileName);
-    fileWName = "result.bin";
+    FILE *fileR = fopen(fileName, "r");     // Abre o arquivo de leitura
+    fileWName = "result.bin";               //fileWName = changeExtention(fileName);
     FILE *fileW = fopen(fileWName, "w");    // Abre o arquivo de escrita
 
     if (fileR == NULL)
@@ -783,12 +782,11 @@ int main(int argc, char *argv[])
         bool pseg = false;
         bool dseg = false;
         bool module = false;
-
         while(fgets(line, sizeof(line), fileR) != NULL)         // Le cada linha do arquivo
         {
             instruction = removeLast(line);                     // Remove o '\n' da string
             instruction = ignoreLabelsAndComents(instruction);    // Retira o label e o comentario da string, se tiver
-            printf("%s\n", instruction);
+            printf("\n'%s'", instruction);
             if (instruction != NULL && instruction[0] == '.')       // Se a linha nao tiver vazia (era somente espacos e comentario) e for uma diretiva
             {
                 char directive[100];

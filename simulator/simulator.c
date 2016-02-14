@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef int bool;
 #define true 1
@@ -523,6 +524,18 @@ void mem_store(int addr, int reg1)
         printf("mem_length = %u", mem_lenth);
 }
 
+void writeResult()
+{
+    FILE *file_w = fopen("result.txt", "w");    // Abre o arquivo de escrita
+
+    int i;
+    for (i = 0; i <= mem_lenth; i++)     //Percorre a memoria utilezada
+    {
+        fprintf(file_w, "mem(%d): %d\n", i, mem[i]);  //Imprime cada valor no arquivo de saida
+    }
+    fclose(file_w);
+}
+
 void jump(int addr)
 {
     printf("JUMP: pc <-- %d\n", addr);
@@ -559,7 +572,7 @@ void jump_false(int flag, int addr)
 void jump_and_link(int reg1)
 {
     printf("JAL: pc <-- %d ; 7 <-- pc %d\n", gpr[reg1], reg1);
-    gpr[7] = pc;
+    gpr[15] = pc;
     pc = gpr[reg1];
 }
 
@@ -766,18 +779,6 @@ void decode_and_run_instruction()
             jump_register(reg1);
         }
     }
-}
-
-void writeResult()
-{
-    FILE *file_w = fopen("result.txt", "w");    // Abre o arquivo de escrita
-
-    int i;
-    for (i = 0; i <= mem_lenth; i++)     //Percorre a memoria utilezada
-    {
-        fprintf(file_w, "mem(%d): %d\n", i, mem[i]);  //Imprime cada valor no arquivo de saida
-    }
-    fclose(file_w);
 }
 
 int main(int argc, char *argv[])

@@ -22,7 +22,7 @@ LOOP2:
 		sub r5, r4, r6 ;r5 não é utilizado
 		jt.zero INC ;se j for igual a zero, pula para INC
 		;se j for maior que zero, continua
-		deca r7, r4;r7 = j - 1
+		deca r7, r4 ;r7 = j - 1
 		add r7, r7, r0 ;endereço (j-1)+base
 		add r11, r4, r0 ;endereço j+base
 		load r9, r7 ;carrega valor que está na posição (j-1)+base
