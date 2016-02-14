@@ -1,0 +1,50 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/Users/Thiago/Documents/MISistemasDigitais
+valu_32b
+Z0 !s110 1455490608
+!i10b 1
+!s100 E8YS==8aO?XoUeb3K:N<I1
+IV5e7QLK6j3I7R_9I^@WC20
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+Z2 dC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog
+w1455460974
+8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
+FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
+L0 1
+Z3 OV;L;10.4b;61
+r1
+!s85 0
+31
+Z4 !s108 1455490608.000000
+!s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v|
+!i113 1
+Z5 o-work work
+valu_32b_tb
+R0
+!i10b 1
+!s100 Eo__PU99IF0jzT6;j8[J?3
+In83[KLdmi9Y=TfKc@50jN3
+R1
+R2
+w1455460940
+8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
+FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v|
+!i113 1
+R5
