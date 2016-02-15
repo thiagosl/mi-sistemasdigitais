@@ -14,13 +14,13 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	mux3_32b_tb
 
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module signal_extend
--- Compiling module signal_extend_tb
+-- Compiling module adress_extend
+-- Compiling module adress_extend_tb
 
 Top level modules:
-	signal_extend_tb
+	adress_extend_tb
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
@@ -30,12 +30,12 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	mux3_32b_PC_tb
 
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module adress_extend
--- Compiling module adress_extend_tb
+-- Compiling module signal_extend
+-- Compiling module signal_extend_tb
 
 Top level modules:
-	adress_extend_tb
+	signal_extend_tb
 
 } {} {}}
