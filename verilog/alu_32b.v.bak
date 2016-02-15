@@ -16,8 +16,8 @@ module alu_32b (operandA, operandB, operation, result);
 			6'b000101:	result = operandA - operandB - 1;	//SUB DEC
 			6'b000110:	result = operandA - 1;	//DECA
 			6'b001001:	result = operandA;	//PASSB
-			6'b001101:	result = operandA <<< 1;	//ASL
-			6'b001110:	result = operandA >>> 1;	//ASR
+			6'b001101:	result = operandA << 1;	//ASL
+			6'b001110:	result = operandA >> 1;	//ASR
 			6'b001111:	result = 0;	//ZEROS
 			6'b010000:	result = 1;	//ONES
 			6'b010001:	result = operandA;	//PASSA
