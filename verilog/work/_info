@@ -8,37 +8,37 @@ z2
 !i10f 100
 cModel Technology
 dC:/Users/Thiago/Documents/MISistemasDigitais
-vadress_extend
-Z0 !s110 1455571274
+vadd_4
+Z0 !s110 1455663316
 !i10b 1
-!s100 i[]a=eLCPim0PaDMJBdjW1
-I8aK[dW<noQmfM9]eIk4<_1
+!s100 IAC5CQ68:Q2J8[F=OBSJJ2
+I_Jk3=;K>cS]XG0aWhfRA90
 Z1 VDg1SIo80bB@j0V0VzS_@n1
 Z2 dC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog
-Z3 w1455493209
-Z4 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
-Z5 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
+Z3 w1455651852
+Z4 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v
+Z5 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v
 L0 1
 Z6 OV;L;10.4b;61
 r1
 !s85 0
 31
-Z7 !s108 1455571274.000000
-Z8 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v|
-Z9 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v|
+Z7 !s108 1455663315.000000
+Z8 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v|
+Z9 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v|
 !i113 1
 Z10 o-work work
-vadress_extend_tb
+vadd_4_tb
 R0
 !i10b 1
-!s100 :mD@3I;jTQgNo<iIzLg[V2
-I<Jm1C^7@]Ozg4[bYV7k>Z2
+!s100 lBJ4=59fV1h9Nl4Gek4BZ3
+I^DDoWlRioLV;S=WfI[34H3
 R1
 R2
 R3
 R4
 R5
-L0 13
+Z11 L0 13
 R6
 r1
 !s85 0
@@ -48,14 +48,54 @@ R8
 R9
 !i113 1
 R10
+vadress_extend
+Z12 !s110 1455663314
+!i10b 1
+!s100 i[]a=eLCPim0PaDMJBdjW1
+I8aK[dW<noQmfM9]eIk4<_1
+R1
+R2
+Z13 w1455493209
+Z14 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
+Z15 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
+L0 1
+R6
+r1
+!s85 0
+31
+Z16 !s108 1455663314.000000
+Z17 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v|
+Z18 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v|
+!i113 1
+R10
+vadress_extend_tb
+R12
+!i10b 1
+!s100 :mD@3I;jTQgNo<iIzLg[V2
+I<Jm1C^7@]Ozg4[bYV7k>Z2
+R1
+R2
+R13
+R14
+R15
+R11
+R6
+r1
+!s85 0
+31
+R16
+R17
+R18
+!i113 1
+R10
 valu_32b
-Z11 !s110 1455571275
+Z19 !s110 1455663315
 !i10b 1
 !s100 9>c]Fjch9SbHE]mN2m0MV1
 Ia4>kRXeoiPN7R??;1gMe21
 R1
 R2
-Z12 w1455507382
+Z20 w1455507382
 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
 L0 1
@@ -63,19 +103,19 @@ R6
 r1
 !s85 0
 31
-Z13 !s108 1455571275.000000
+R7
 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v|
 !i113 1
 R10
 valu_32b_tb
-R11
+R19
 !i10b 1
 !s100 Eo__PU99IF0jzT6;j8[J?3
 IN1?NYcd4R=FdG0gfImNXf1
 R1
 R2
-R12
+R20
 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
 L0 1
@@ -83,170 +123,290 @@ R6
 r1
 !s85 0
 31
-R13
+R7
 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v|
 !i113 1
 R10
-vmux2_32b
+vcomparador
 R0
+!i10b 1
+!s100 m^Bn^GKaAaFf7=K3BABO21
+IZ>PZ?DhiRBmI>j_IL5nm>0
+R1
+R2
+Z21 w1455653088
+Z22 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v
+Z23 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v
+L0 2
+R6
+r1
+!s85 0
+31
+Z24 !s108 1455663316.000000
+Z25 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v|
+Z26 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v|
+!i113 1
+R10
+vcomparador_tb
+R0
+!i10b 1
+!s100 j49CCmki4zU4lZ9kHo>ic2
+I`d`C^_Fe`]>87fF`c`zT63
+R1
+R2
+R21
+R22
+R23
+L0 34
+R6
+r1
+!s85 0
+31
+R24
+R25
+R26
+!i113 1
+R10
+vmux2_32b
+R12
 !i10b 1
 !s100 lh9<<A>4mPQFJEE]E<:zW3
 I`DPmC[RcNz=3zO4kmcG>e3
 R1
 R2
-Z14 w1455493258
-Z15 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
-Z16 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
+Z27 w1455493258
+Z28 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
+Z29 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
 L0 1
 R6
 r1
 !s85 0
 31
-R7
-Z17 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v|
-Z18 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v|
+R16
+Z30 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v|
+Z31 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v|
 !i113 1
 R10
 vmux2_32b_tb
-R0
+R12
 !i10b 1
 !s100 8M[]F>njEhlFAR`l@iM<T0
 Ih]1l0[TF[B7m9BgN^EiS02
 R1
 R2
-R14
-R15
-R16
+R27
+R28
+R29
 L0 17
 R6
 r1
 !s85 0
 31
-R7
-R17
-R18
+R16
+R30
+R31
 !i113 1
 R10
 vmux3_32b
-R0
+R19
 !i10b 1
 !s100 b?9FG^@jZ[YSgi53We3L41
 I80?Jhhj=T^Rc[V4F29Xk[3
 R1
 R2
-Z19 w1455493243
-Z20 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
-Z21 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
+Z32 w1455493243
+Z33 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
+Z34 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
 L0 1
 R6
 r1
 !s85 0
 31
-R7
-Z22 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v|
-Z23 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v|
+R16
+Z35 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v|
+Z36 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v|
 !i113 1
 R10
 vmux3_32b_PC
-R0
+R19
 !i10b 1
 !s100 GWF:7N;hlY`6KbI8Ko:_G3
 I><JO9@KmhUO=;Uo=n=QN31
 R1
 R2
-Z24 w1455493705
-Z25 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
-Z26 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
+Z37 w1455493705
+Z38 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
+Z39 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
 L0 1
 R6
 r1
 !s85 0
 31
 R7
-Z27 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v|
-Z28 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v|
+Z40 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v|
+Z41 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v|
 !i113 1
 R10
 nmux3_32b_@p@c
 vmux3_32b_PC_tb
-R0
+R19
 !i10b 1
 !s100 IG;QJ33@dkI0[gVNgfXa^0
 IL04MAeX^oKEg;oIzJ4Hn[2
 R1
 R2
-R24
-R25
-R26
-L0 21
+R37
+R38
+R39
+Z42 L0 21
 R6
 r1
 !s85 0
 31
 R7
-R27
-R28
+R40
+R41
 !i113 1
 R10
 nmux3_32b_@p@c_tb
 vmux3_32b_tb
-R0
+R19
 !i10b 1
 !s100 ;=[3Mzbg8aJW7^zW1UfGP3
 IcJ2T=`J68hYbN;STO?SC31
 R1
 R2
-R19
-R20
-R21
+R32
+R33
+R34
 L0 18
 R6
 r1
 !s85 0
 31
-R7
-R22
-R23
+R16
+R35
+R36
+!i113 1
+R10
+vpc
+R0
+!i10b 1
+!s100 _:8z4B3d`m47YF1E^KfL^1
+IY?7VZ;E?P?HRm0WZNYPUS0
+R1
+R2
+Z43 w1455650197
+Z44 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
+Z45 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
+L0 1
+R6
+r1
+!s85 0
+31
+R24
+Z46 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v|
+Z47 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v|
+!i113 1
+R10
+vpc_tb
+R0
+!i10b 1
+!s100 6n[VLVCcG^I5?f5[^ja[93
+I^ll^n7@Rj160N`k>AUMYA1
+R1
+R2
+R43
+R44
+R45
+R11
+R6
+r1
+!s85 0
+31
+R24
+R46
+R47
+!i113 1
+R10
+vreg_flags
+R0
+!i10b 1
+!s100 FQnJeROb?Lhg3zd5Kh>2S3
+IPYF?fR2EGQOcKTz:gH]7U2
+R1
+R2
+w1455653045
+8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v
+FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v
+L0 1
+R6
+r1
+!s85 0
+31
+R24
+!s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v|
+!i113 1
+R10
+vreg_flags_tb
+R0
+!i10b 1
+!s100 @23@gX8e6X8o_em@?`[@j3
+IU9C83Y7of=zTl8L31LkoS3
+R1
+R2
+w1455653480
+8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v
+FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v
+R42
+R6
+r1
+!s85 0
+31
+R24
+!s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v|
 !i113 1
 R10
 vsignal_extend
-R11
+R19
 !i10b 1
 !s100 TX`ol2HnZ@>RQZn<mbcn82
 Id1mcP<IXZ0f4ThHKF]agd1
 R1
 R2
-Z29 w1455493227
-Z30 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
-Z31 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
+Z48 w1455493227
+Z49 8C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
+Z50 FC:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
 L0 1
 R6
 r1
 !s85 0
 31
 R7
-Z32 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v|
-Z33 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v|
+Z51 !s107 C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v|
+Z52 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v|
 !i113 1
 R10
 vsignal_extend_tb
-R11
+R19
 !i10b 1
 !s100 K`5V7XSW:S`LU<C>j0SbM2
 IfoK`nI_iM8BRHYUgU;^P:3
 R1
 R2
-R29
-R30
-R31
+R48
+R49
+R50
 L0 16
 R6
 r1
 !s85 0
 31
 R7
-R32
-R33
+R51
+R52
 !i113 1
 R10
