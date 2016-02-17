@@ -1,4 +1,43 @@
-C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
+C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module mux3_32b_PC
+-- Compiling module mux3_32b_PC_tb
+
+Top level modules:
+	mux3_32b_PC_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module alu_32b
+
+Top level modules:
+	alu_32b
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module comparador
+-- Compiling module comparador_tb
+
+Top level modules:
+	comparador_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_estagio.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_estagio.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module reg_estagio
+-- Compiling module reg_estagio_tb
+
+Top level modules:
+	reg_estagio_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module adress_extend
+-- Compiling module adress_extend_tb
+
+Top level modules:
+	adress_extend_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module mux2_32b
 -- Compiling module mux2_32b_tb
@@ -6,13 +45,13 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	mux2_32b_tb
 
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module pc
--- Compiling module pc_tb
+-- Compiling module reg_flags
+-- Compiling module reg_flags_tb
 
 Top level modules:
-	pc_tb
+	reg_flags_tb
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
@@ -22,6 +61,14 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	mux3_32b_tb
 
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module pc
+-- Compiling module pc_tb
+
+Top level modules:
+	pc_tb
+
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module add_4
@@ -29,20 +76,6 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 
 Top level modules:
 	add_4_tb
-
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
-Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module alu_32b
-
-Top level modules:
-	alu_32b
-
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
-Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module alu_32b_tb
-
-Top level modules:
-	alu_32b_tb
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
@@ -52,20 +85,11 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	signal_extend_tb
 
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module mux3_32b_PC
--- Compiling module mux3_32b_PC_tb
+-- Compiling module alu_32b_tb
 
 Top level modules:
-	mux3_32b_PC_tb
-
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
-Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module adress_extend
--- Compiling module adress_extend_tb
-
-Top level modules:
-	adress_extend_tb
+	alu_32b_tb
 
 } {} {}}

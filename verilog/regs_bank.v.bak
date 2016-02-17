@@ -1,49 +1,50 @@
-module reg_flags (inpA, inpB, inpC, control, data, outA, outB, outC);
+module reg_bank (inpA, inpB, inpC, clk, control, data, outA, outB);
 
-	input [3:0] inpA;
-	input [3:0] inpB;
-	input [3:0] inpC;
+	input [3:0] inpA, inpB, inpC;
+	input clk;
 	input [1:0] control;
 	input [31:0] data;
-	output reg [31:0] outA;
-	output reg [31:0] outB;
-	output reg [31:0] outC;
-	reg [31:0] reg1;
-	reg [31:0] reg2;
-	reg [31:0] reg3;
-	reg [31:0] reg4;
-	reg [31:0] reg5;
-	reg [31:0] reg6;
-	reg [31:0] reg7;
-	reg [31:0] reg8;
-	reg [31:0] reg9;
-	reg [31:0] reg10;
-	reg [31:0] reg11;
-	reg [31:0] reg12;
-	reg [31:0] reg13;
-	reg [31:0] reg14;
-	reg [31:0] reg15;
-	reg [31:0] reg16;
+	output reg [31:0] outA, outB;
+	reg [31:0] regBank[15:0], temp;
 	
-	always @(inp or control) begin
-		if (control) begin
-			out = inp;
-		end
+	always @(posedge clk) begin
+		case (control)
+			2'b01: regBank[inpC] = data;
+			2'b10: begin 
+				temp = regBank[inpC];
+				regBank[inpC] = {temp[31:16], data[15:0]};
+			end
+			2'b11: begin
+				temp = regBank[inpC];
+				regBank[inpC] = {data[15:0], temp[15:0]};
+			end
+		endcase
+	end
+	always @(negedge clk) begin
+		case (control)
+			2'b01: outA = regBank[inpA];
+			2'b01: outB = regBank[inpB];
+		endcase
 	end
 
 endmodule
 
 
-module reg_flags_tb;
+module reg_bank_tb;
 
-	reg [6:0] inp;
-	reg control;
-	wire [6:0] out;
+	reg [3:0] inpA, inpB, inpC;
+	reg clk;
+	reg [1:0] control;
+	reg [31:0] data;
+	wire [31:0] outA, outB;
 
-	reg_flags DUT(inp, control, out);
+	reg_bank DUT(inpA, inpB, inpC, clk, control, data, outA, outB);
 
 	initial begin
-		control = 1;
+		inpA = 4'b0101;
+		inpB = 4'b0011;
+		inpC = 4'b0100;
+		control = 2'b01;
 		inp = 6'b010101;
 		#20;
 		inp = 6'b111111;
@@ -55,5 +56,7 @@ module reg_flags_tb;
 		#20;
 		$finish;
 	end
+
+	always #5 clk = ~clk;
 
 endmodule
