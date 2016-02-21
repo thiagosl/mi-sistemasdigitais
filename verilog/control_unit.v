@@ -1,13 +1,13 @@
-module reg_bank (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_mem, alu, reg_flags, comparator);
+module control_unit (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_mem, alu, reg_flags, comparator);
 
 	input [23:0] code;
 	input clk;
-	output reg [1:0] mux1, mux5, mux6, reg_bank;
+	output reg [2:0] mux1, mux5, mux6, reg_bank;
 	output reg mux2, mux3, mux4, data_mem, comparator, reg_flags;
 	output reg [5:0] alu;
 	reg mux2_temp, mux3_temp, mux4_temp, data_mem_temp, reg_flags_temp;
 	reg [5:0] alu_temp;
-	reg [1:0] reg_bank_temp, reg_bank_temp2;
+	reg [2:0] reg_bank_temp, reg_bank_temp2;
 	
 	always @(posedge clk) begin
 		mux2 = mux2_temp;
@@ -30,7 +30,7 @@ module reg_bank (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_m
 				data_mem_temp = 1'b0;
 				reg_flags_temp = 1'b1;
 				alu_temp = code[9:4];
-				reg_bank_temp2 = 2'b00;
+				reg_bank_temp2 = 3'b000;
 			end
 			2'b01: begin 
 				mux1 = 2'b11;
@@ -43,7 +43,7 @@ module reg_bank (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_m
 				data_mem_temp = 1'b0;
 				reg_flags_temp = 1'b0;
 				alu_temp = 6'b111111;
-				reg_bank_temp2 = code[13:12];
+				reg_bank_temp2 = {1'b0, code[13:12]};
 			end
 			2'b10: begin
 				mux1 = 2'b10;
@@ -56,7 +56,7 @@ module reg_bank (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_m
 				data_mem_temp = code[0];
 				reg_flags_temp = 1'b0;
 				alu_temp = 6'b111111;
-				reg_bank_temp2 = {2{code[0]}};
+				reg_bank_temp2 = {3{code[0]}};
 			end
 			2'b11: begin
 				mux1 = 2'b00;
@@ -68,7 +68,11 @@ module reg_bank (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_m
 				data_mem_temp = 1'b0;
 				reg_flags_temp = 1'b0;
 				alu_temp = 6'b111111;
-				reg_bank_temp2 = 2'b11;
+				if (code[14:12] == 3'b011) begin
+					reg_bank_temp2 = 3'b011;
+				end else begin
+					reg_bank_temp2 = 3'b111;
+				end
 				if (code[14:12] == 3'b011 || code[14:12] == 3'b100) begin
 					mux6 = 2'b10;
 				end else begin
@@ -80,31 +84,41 @@ module reg_bank (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_m
 endmodule
 
 
-module reg_bank_tb;
+module control_unit_tb;
 
-	reg [3:0] inpA, inpB, inpC;
+	reg [23:0] code;
 	reg clk;
-	reg [1:0] control;
-	reg [31:0] data;
-	wire [31:0] outA, outB;
+	wire [2:0] mux1, mux5, mux6, reg_bank;
+	wire mux2, mux3, mux4, data_mem, comparator, reg_flags;
+	wire [5:0] alu;
 
-	reg_bank DUT(inpA, inpB, inpC, clk, control, data, outA, outB);
+	control_unit DUT(inpA, inpB, inpC, clk, control, data, outA, outB);
 
 	initial begin
-		inpA = 4'b0100;
-		inpB = 4'b0100;
-		inpC = 4'b0100;
-		data = 32'b01010101010101010101010101010101;
-		control = 2'b01;
+		code = 24'b000000000000000100110000;
 		#20;
-		data = 32'b11111111111111111111111111111111;
-		control = 2'b10;
+		code = 24'b000000000000000010010000;
 		#20;
-		control = 2'b00;
+		code = 24'b010000000000000000000000;
 		#20;
-		control = 2'b11;
+		code = 24'b010000000001000000000000;
 		#20;
-		control = 2'b00;
+		code = 24'b010000000010000000000000;
+		#20;
+		code = 24'b100000000000000000000000;
+		#20;
+		code = 24'b100000000000000000000001;
+		#20;
+		code = 24'b110000000000000000000000;
+		#20;
+		code = 24'b110000000001000000000000;
+		#20;
+		code = 24'b110000000010000000000000;
+		#20;
+		code = 24'b110000000011000000000000;
+		#20;
+		code = 24'b110000000100000000000000;
+		#20;
 		$finish;
 	end
 

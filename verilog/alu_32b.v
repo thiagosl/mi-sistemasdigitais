@@ -1,10 +1,10 @@
-module alu_32b (operandA, operandB, operation, result);
+module alu_32b (operandA, operandB, operation, result, flags);
 
-	input[31:0] operandA;
-	input[31:0] operandB;
-	input[5:0] operation;
-	output[31:0] result;
-	reg[31:0] result;
+	input [31:0] operandA;
+	input [31:0] operandB;
+	input [5:0] operation;
+	output reg [31:0] result;
+	output reg [5:0] flags;
 
 	always@(operation or operandA or operandB)
 	begin

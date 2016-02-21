@@ -1,4 +1,20 @@
-C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
+C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module control_unit
+-- Compiling module control_unit_tb
+
+Top level modules:
+	control_unit_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module reg_bank
+-- Compiling module reg_bank_tb
+
+Top level modules:
+	reg_bank_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module mux3_32b_PC
 -- Compiling module mux3_32b_PC_tb
@@ -53,14 +69,6 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	reg_flags_tb
 
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
-Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module mux3_32b
--- Compiling module mux3_32b_tb
-
-Top level modules:
-	mux3_32b_tb
-
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module pc
@@ -68,6 +76,14 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 
 Top level modules:
 	pc_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module mux3_32b
+-- Compiling module mux3_32b_tb
+
+Top level modules:
+	mux3_32b_tb
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
