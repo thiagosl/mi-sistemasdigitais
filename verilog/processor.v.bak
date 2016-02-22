@@ -10,7 +10,7 @@ module processor (clk);
 	pc pc0(mux6_out, clk, pc_out);
 	add_4 add(pc_out, add_4_out);
 	ram instruction_memory(1'b0, clk, pc_out, {32{1'b0}}, operation);
-	reg_estagio reg_estagio0(pc_out, reg_estagio0_out);
+	reg_estagio reg_estagio0(mux6_out, reg_estagio0_out);
 	control_unit control_unit0(operation[31:8], clk, mux1_control, mux2_control, mux3_control, mux4_control, mux5_control, mux6_control, reg_bank_control, data_memory_control, alu_control, reg_flags_control, comparator_control);
 	signal_extend signal_extend0(operation[15:0], signal_extend_out);
 	mux3_32b mux1(operation[15:12], operation[7:4], operation[3:0], mux1_control, mux1_out);
