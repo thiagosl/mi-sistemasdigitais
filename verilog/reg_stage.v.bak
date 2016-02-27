@@ -1,4 +1,4 @@
-module reg_estagio (inp, clk, out);
+module reg_stage (inp, clk, out);
 
 	input [31:0] inp;
 	input clk;
@@ -11,7 +11,7 @@ module reg_estagio (inp, clk, out);
 endmodule
 
 
-module reg_estagio_tb;
+module reg_stage_tb;
 
 	reg [31:0] inp;
 	reg clk;

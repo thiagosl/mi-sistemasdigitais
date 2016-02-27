@@ -92,9 +92,10 @@ module control_unit_tb;
 	wire mux2, mux3, mux4, data_mem, comparator, reg_flags;
 	wire [5:0] alu;
 
-	control_unit DUT(inpA, inpB, inpC, clk, control, data, outA, outB);
+	control_unit DUT(code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_mem, alu, reg_flags, comparator);
 
 	initial begin
+		clk = 1'b0;
 		code = 24'b000000000000000100110000;
 		#20;
 		code = 24'b000000000000000010010000;

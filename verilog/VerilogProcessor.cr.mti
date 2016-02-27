@@ -1,10 +1,49 @@
-C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
+C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module control_unit
+-- Compiling module control_unit_tb
+
+Top level modules:
+	control_unit_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/processor.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/processor.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module processor
+
+Top level modules:
+	processor
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_stage.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_stage.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module reg_stage
+-- Compiling module reg_stage_tb
+
+Top level modules:
+	reg_stage
+	reg_stage_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module regs_bank
+-- Compiling module regs_bank_tb
+
+Top level modules:
+	regs_bank_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module mux3_32b_PC
 -- Compiling module mux3_32b_PC_tb
 
 Top level modules:
 	mux3_32b_PC_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module alu_32b
+
+Top level modules:
+	alu_32b
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
@@ -13,14 +52,6 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 
 Top level modules:
 	comparador_tb
-
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_estagio.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/reg_estagio.v
-Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module reg_estagio
--- Compiling module reg_estagio_tb
-
-Top level modules:
-	reg_estagio_tb
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
@@ -46,6 +77,14 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	reg_flags_tb
 
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module pc
+-- Compiling module pc_tb
+
+Top level modules:
+	pc_tb
+
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module mux3_32b
@@ -53,6 +92,27 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 
 Top level modules:
 	mux3_32b_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd {2 {vcom -work work -2002 -explicit -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd
+Model Technology ModelSim ALTERA vcom 10.4b Compiler 2015.05 May 27 2015
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package std_logic_arith
+-- Loading package STD_LOGIC_UNSIGNED
+-- Loading package std_logic_textio
+-- Compiling entity ram
+-- Compiling architecture ram_arch of ram
+** Warning: C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd(72): (vcom-1194) FILE declaration was written using VHDL 1987 syntax.
+
+** Warning: C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd(93): (vcom-1194) FILE declaration was written using VHDL 1987 syntax.
+
+-- Compiling entity ram_tb
+-- Compiling architecture TB_ARCHITECTURE of ram_tb
+-- Compiling configuration TESTBENCH_FOR_ram
+-- Loading entity ram_tb
+-- Loading architecture TB_ARCHITECTURE of ram_tb
+-- Loading entity ram
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/add_4.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
@@ -62,6 +122,13 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	add_4_tb
 
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module alu_32b_tb
+
+Top level modules:
+	alu_32b_tb
+
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module signal_extend
@@ -69,12 +136,5 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 
 Top level modules:
 	signal_extend_tb
-
-} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b_tb.v
-Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
--- Compiling module alu_32b_tb
-
-Top level modules:
-	alu_32b_tb
 
 } {} {}}

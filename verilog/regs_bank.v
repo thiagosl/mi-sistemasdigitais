@@ -1,8 +1,8 @@
-module reg_bank (inpA, inpB, inpC, clk, data, pc, control, outA, outB);
+module regs_bank (inpA, inpB, inpC, clk, data, pc, control, outA, outB);
 
 	input [3:0] inpA, inpB, inpC;
 	input clk;
-	input [1:0] control;
+	input [2:0] control;
 	input [31:0] data;
 	input [31:0] pc;
 	output reg [31:0] outA, outB;
@@ -25,40 +25,42 @@ module reg_bank (inpA, inpB, inpC, clk, data, pc, control, outA, outB);
 		endcase
 	end
 	always @(negedge clk) begin
-		case (control)
-			2'b01: outA = regBank[inpA];
-			2'b01: outB = regBank[inpB];
-		endcase
+		outA = regBank[inpA];
+		outB = regBank[inpB];
 	end
 
 endmodule
 
 
-module reg_bank_tb;
+module regs_bank_tb;
 
 	reg [3:0] inpA, inpB, inpC;
 	reg clk;
-	reg [1:0] control;
+	reg [2:0] control;
 	reg [31:0] data;
+	reg [31:0] pc;
 	wire [31:0] outA, outB;
 
-	reg_bank DUT(inpA, inpB, inpC, clk, control, data, outA, outB);
+	regs_bank DUT(inpA, inpB, inpC, clk, data, pc, control, outA, outB);
 
 	initial begin
-		inpA = 4'b0100;
-		inpB = 4'b0100;
-		inpC = 4'b0100;
+		clk = 1'b0;
+		inpA = 4'b1111;
+		inpB = 4'b1111;
+		inpC = 4'b1111;
 		data = 32'b01010101010101010101010101010101;
-		control = 2'b01;
-		#20;
+		control = 3'b000;
+		#15;
 		data = 32'b11111111111111111111111111111111;
-		control = 2'b10;
-		#20;
-		control = 2'b00;
-		#20;
-		control = 2'b11;
-		#20;
-		control = 2'b00;
+		control = 3'b001;
+		#17;
+		control = 3'b010;
+		#10;
+		control = 3'b011;
+		pc = 32'b00110011001100110011001100110011;
+		#20
+		control = 3'b111;
+		#20
 		$finish;
 	end
 

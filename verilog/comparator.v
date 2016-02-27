@@ -55,7 +55,6 @@ module comparador_tb;
 		#10;
 		condicao = 4'b0101;
 		#10;
-		control = 1'b1;
 		flags = 6'b111000;
 		condicao = 4'b0000;
 		#10;
@@ -69,6 +68,8 @@ module comparador_tb;
 		#10;
 		condicao = 4'b0101;
 		#10;
+		control = 1'b0;
+		#10
 		$finish;
 	end
 

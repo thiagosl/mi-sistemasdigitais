@@ -17,7 +17,7 @@ module pc_tb;
 	reg clk;
 	wire [31:0] out;
 
-	pc DUT(inp, out);
+	pc DUT(inp, clk, out);
 
 	initial begin
 		inp = 32'b01010101010101010101010101010101;

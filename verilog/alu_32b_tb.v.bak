@@ -138,6 +138,7 @@ module alu_32b_tb ();
 		operandA = 32'b10000000000000000000000000000000;
 		operation = 6;
 		#20
+		$finish;
 		
 		//PASSB TEST
 		operandA = 4;

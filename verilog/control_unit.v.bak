@@ -69,7 +69,7 @@ module control_unit (code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, da
 				reg_flags_temp = 1'b0;
 				alu_temp = 6'b111111;
 				if (code[14:12] == 3'b011) begin
-					reg_bank_temp2 = 2'b011;
+					reg_bank_temp2 = 3'b011;
 				end else begin
 					reg_bank_temp2 = 3'b111;
 				end
@@ -92,9 +92,10 @@ module control_unit_tb;
 	wire mux2, mux3, mux4, data_mem, comparator, reg_flags;
 	wire [5:0] alu;
 
-	control_unit DUT(inpA, inpB, inpC, clk, control, data, outA, outB);
+	control_unit DUT(code, clk, mux1, mux2, mux3, mux4, mux5, mux6, reg_bank, data_mem, alu, reg_flags, comparator);
 
 	initial begin
+		clk = 0;
 		code = 24'b000000000000000100110000;
 		#20;
 		code = 24'b000000000000000010010000;
