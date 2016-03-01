@@ -1,12 +1,15 @@
 module alu_32b_tb ();
 	reg[31:0] operandA, operandB;
 	reg[5:0] operation;
+	reg clk;
 	wire[31:0] result;
 	wire[5:0] flags;
 
-	alu_32b DUT(operandA, operandB, operation, result, flags);
+	alu_32b DUT(operandA, operandB, operation, clk, result, flags);
 
 	initial begin
+		clk = 0;
+
 		//ADD TEST
 		operandA = 4;
 		operandB = 4;
@@ -138,7 +141,6 @@ module alu_32b_tb ();
 		operandA = 32'b10000000000000000000000000000000;
 		operation = 6;
 		#20
-		$finish;
 		
 		//PASSB TEST
 		operandA = 4;
@@ -409,4 +411,6 @@ module alu_32b_tb ();
 		#20
 		$finish;
 	end
+	
+	always #8 clk = ~clk;
 endmodule

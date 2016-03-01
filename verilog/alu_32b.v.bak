@@ -9,7 +9,7 @@ module alu_32b (operandA, operandB, operation, result, flags);
 	reg[31:0] max = 32'b01111111111111111111111111111111;
 	reg[31:0] min = 32'b10000000000000000000000000000000;
 
-	always@(operation or operandA or operandB) begin
+	always@(operandA or operandB or operation) begin
 		case(operation)
 			6'b000000:	result = operandA + operandB;	//ADD
 			6'b000010:	result = operandA + operandB + 1;	//ADD INC
@@ -85,7 +85,7 @@ module alu_32b (operandA, operandB, operation, result, flags);
 					if ((operandA[31] != operandB[31]) && (operandA[31] != result[31]))  begin
 						flags[0] = 1;	//OVERFLOW
 					end
-					else if (((operandA == min) && (operandB == 0)) || ((operandB = min) && (operandA = 0))) begin
+					else if (((operandA == min) && (operandB == 0)) || ((operandB == min) && (operandA == 0))) begin
 						flags[0] = 1;	//OVERFLOW
 					end
 				end

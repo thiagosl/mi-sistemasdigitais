@@ -1,5 +1,5 @@
 
-module comparador (condicao, flags, control, salto);
+module comparator (condicao, flags, control, salto);
 
 	input [3:0] condicao;
 	input [5:0] flags;
@@ -31,14 +31,14 @@ module comparador (condicao, flags, control, salto);
 endmodule
 
 
-module comparador_tb;
+module comparator_tb;
 
 	reg [3:0] condicao;
 	reg [5:0] flags;
 	reg control;
 	wire salto;
 
-	comparador DUT(condicao, flags, control, salto);
+	comparator DUT(condicao, flags, control, salto);
 
 	initial begin
 		control = 1'b1;

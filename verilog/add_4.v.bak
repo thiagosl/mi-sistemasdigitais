@@ -1,9 +1,11 @@
 module add_4 (inp, out);
 
 	input [31:0] inp;
-	output [31:0] out;
+	output reg [31:0] out;
 
-	out <= inp + 4;
+	always @(inp) begin
+		out = inp + 4;
+	end
 
 endmodule
 

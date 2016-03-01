@@ -1,8 +1,8 @@
 
 module comparador (condicao, flags, control, salto);
 
-	input [4:0] condicao;
-	input [6:0] flags;
+	input [3:0] condicao;
+	input [5:0] flags;
 	input control;
 	output reg salto;
 	
@@ -33,8 +33,8 @@ endmodule
 
 module comparador_tb;
 
-	reg [4:0] condicao;
-	reg [6:0] flags;
+	reg [3:0] condicao;
+	reg [5:0] flags;
 	reg control;
 	wire salto;
 
@@ -55,7 +55,6 @@ module comparador_tb;
 		#10;
 		condicao = 4'b0101;
 		#10;
-		control = 1'b1;
 		flags = 6'b111000;
 		condicao = 4'b0000;
 		#10;
@@ -69,6 +68,8 @@ module comparador_tb;
 		#10;
 		condicao = 4'b0101;
 		#10;
+		control = 1'b0;
+		#10
 		$finish;
 	end
 

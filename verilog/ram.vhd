@@ -69,7 +69,7 @@ Q <= ram_mem(CONV_INTEGER(ADRESS));
 --quando read_file transita para '1' o arquivo rom.out e escrito na memoria--
 -----------------------------------------------------------------------------
 le: process(read_file)
-file INFILE : TEXT  is in ".../rom.out"; -- utilize o caminho absoluto para o arquivo
+file INFILE : TEXT  is in "C:\Users\Matheus\Documents\GitHub\mi-sistemasdigitais\verilog\rom.out"; -- utilize o caminho absoluto para o arquivo
 variable DATA_TEMP : STD_LOGIC_VECTOR(31 downto 0);	
 variable IN_LINE: LINE;  		
 variable index :integer;
@@ -77,8 +77,8 @@ begin
 	if((read_file'event) and (read_file='1')) then
 	  index := 0;
 	  while NOT(endfile(INFILE)) loop
-		readline(INFILE,IN_LINE);	
-		hread(IN_LINE, DATA_TEMP);	
+		readline(INFILE,IN_LINE);
+		hread(IN_LINE, DATA_TEMP);
 		ram_mem2(index) <= DATA_TEMP;
 		index := index + 1;
 	  end loop;
@@ -90,7 +90,7 @@ end process le;
 --quando write_file transita para '1' a memoria e escrita no arquivo data.out--
 -------------------------------------------------------------------------------
 esc: process( write_file)	
-file OUTFILE : TEXT  is out ".../data.out"; -- utilize o caminho absoluto para o arquivo
+file OUTFILE : TEXT  is out "C:\Users\Matheus\Documents\GitHub\mi-sistemasdigitais\verilog\data.out"; -- utilize o caminho absoluto para o arquivo
 variable OUT_LINE : LINE;
 variable index :integer;
 begin

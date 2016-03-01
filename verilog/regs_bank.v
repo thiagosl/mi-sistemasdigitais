@@ -24,7 +24,7 @@ module regs_bank (inpA, inpB, inpC, clk, data, pc, control, outA, outB);
 			end
 		endcase
 	end
-	always @(negedge clk) begin
+	always @(inpA or inpB or inpC or control) begin
 		outA = regBank[inpA];
 		outB = regBank[inpB];
 	end

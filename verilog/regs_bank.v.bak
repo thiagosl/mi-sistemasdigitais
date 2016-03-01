@@ -38,7 +38,7 @@ module regs_bank_tb;
 	reg clk;
 	reg [2:0] control;
 	reg [31:0] data;
-	input [31:0] pc;
+	reg [31:0] pc;
 	wire [31:0] outA, outB;
 
 	regs_bank DUT(inpA, inpB, inpC, clk, data, pc, control, outA, outB);

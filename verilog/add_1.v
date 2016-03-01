@@ -1,21 +1,21 @@
-module add_4 (inp, out);
+module add_1 (inp, out);
 
 	input [31:0] inp;
 	output reg [31:0] out;
 
 	always @(inp) begin
-		out = inp + 4;
+		out = inp + 1;
 	end
 
 endmodule
 
 
-module add_4_tb;
+module add_1_tb;
 
 	reg [31:0] inp;
 	wire [31:0] out;
 
-	add_4 DUT(inp, out);
+	add_1 DUT(inp, out);
 
 	initial begin
 		inp = 32'b00000000000000000000000000000001;
