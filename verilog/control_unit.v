@@ -1,8 +1,9 @@
-module control_unit (code, mux1, mux2, mux3, mux4, mux5, mux6, regs_bank, data_mem, alu, reg_flags, comparator);
+module control_unit (code, mux1, mux2, mux4, mux5, mux6, regs_bank, data_mem, alu, reg_flags, comparator);
 
 	input [23:0] code;
-	output reg [2:0] mux1, mux5, mux6, regs_bank;
-	output reg mux2, mux3, mux4, data_mem, comparator, reg_flags;
+	output reg [1:0] mux1, mux5, mux6;
+	output reg [2:0] regs_bank;
+	output reg mux2, mux4, data_mem, comparator, reg_flags;
 	output reg [5:0] alu;
 	
 	always @(code) begin
@@ -12,7 +13,6 @@ module control_unit (code, mux1, mux2, mux3, mux4, mux5, mux6, regs_bank, data_m
 				mux5 = 2'b00;
 				mux6 = 2'b00;
 				comparator = 1'b0;
-				mux3 = 1'b0;
 				data_mem = 1'b0;
 				alu = code[9:4];
 				
@@ -26,7 +26,6 @@ module control_unit (code, mux1, mux2, mux3, mux4, mux5, mux6, regs_bank, data_m
 				mux5 = 2'b11;
 				mux6 = 2'b00;
 				comparator = 1'b0;
-				mux3 = 1'b0;
 				data_mem = 1'b0;
 				alu = 6'b111111;
 				
@@ -36,11 +35,9 @@ module control_unit (code, mux1, mux2, mux3, mux4, mux5, mux6, regs_bank, data_m
 				regs_bank = {1'b0, code[13:12]};
 			end
 			2'b10: begin
-				mux1 = 2'b10;
 				mux5 = 2'b01;
 				mux6 = 2'b00;
 				comparator = 1'b0;
-				mux3 = code[0];
 				data_mem = code[0];
 				alu = 6'b111111;
 
@@ -48,12 +45,16 @@ module control_unit (code, mux1, mux2, mux3, mux4, mux5, mux6, regs_bank, data_m
 				mux4 = 1'b1;
 				reg_flags = 1'b0;
 				regs_bank = {3{code[0]}};
+				if (code[0] == 0) begin
+					mux1 = 2'b10;
+				end else begin
+					mux1 = 2'b01;
+				end
 			end
 			2'b11: begin
 				mux1 = 2'b00;
 				mux5 = 2'b11;
 				comparator = ~code[12];
-				mux3 = 1'b0;
 				data_mem = 1'b0;
 				alu = 6'b111111;
 				if (code[14:12] == 3'b011 || code[14:12] == 3'b100) begin
@@ -79,11 +80,12 @@ endmodule
 module control_unit_tb;
 
 	reg [23:0] code;
-	wire [2:0] mux1, mux5, mux6, regs_bank;
-	wire mux2, mux3, mux4, data_mem, comparator, reg_flags;
+	wire [1:0] mux1, mux5, mux6;
+	wire [2:0] regs_bank;
+	wire mux2, mux4, data_mem, comparator, reg_flags;
 	wire [5:0] alu;
 
-	control_unit DUT(code, mux1, mux2, mux3, mux4, mux5, mux6, regs_bank, data_mem, alu, reg_flags, comparator);
+	control_unit DUT(code, mux1, mux2, mux4, mux5, mux6, regs_bank, data_mem, alu, reg_flags, comparator);
 
 	initial begin
 		code = 24'b000000000000000100110000;

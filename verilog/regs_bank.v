@@ -11,7 +11,7 @@ module regs_bank (inpA, inpB, inpC, clk, data, pc, control, outA, outB);
 	always @(posedge clk) begin
 		case (control)
 			3'b000: regBank[inpC] = data;
-			3'b001: begin 
+			3'b001: begin
 				temp = regBank[inpC];
 				regBank[inpC] = {temp[31:16], data[15:0]};
 			end
@@ -24,7 +24,7 @@ module regs_bank (inpA, inpB, inpC, clk, data, pc, control, outA, outB);
 			end
 		endcase
 	end
-	always @(inpA or inpB or inpC or control) begin
+	always @(inpA or inpB) begin
 		outA = regBank[inpA];
 		outB = regBank[inpB];
 	end

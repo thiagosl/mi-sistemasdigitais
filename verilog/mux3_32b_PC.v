@@ -5,13 +5,18 @@ module mux3_32b_PC (input0, input1, input2, control, out);
 	output reg [31:0] out;
 	
 	always @(control or input0 or input1 or input2) begin
-		case(control)
-			3'b000: out = input0;
-			3'b001: out = input0;
-			3'b010: out = input0;
-			3'b011: out = input1;
-			3'b100: out = input2;
-			3'b101: out = input2;
+		case(control[2:1])
+			2'b00: out = input0;
+			2'b00: out = input0;
+			2'b10: out = input2;
+			2'b10: out = input2;
+			2'b01: begin
+				if (control[0] == 0) begin
+					out = input0;
+				end else begin
+					out = input1;
+				end
+			end
 		endcase
 	end
 

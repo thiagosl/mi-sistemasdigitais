@@ -1,8 +1,8 @@
 module mux3_32b (input0, input1, input2, control, out);
 
-	input [31:0] input0, input1, input2;
+	input [3:0] input0, input1, input2;
 	input [1:0] control;
-	output reg [31:0] out;
+	output reg [3:0] out;
 	
 	always @(control or input0 or input1 or input2) begin
 		case(control)
@@ -17,16 +17,16 @@ endmodule
 
 module mux3_32b_tb;
 
-	reg [31:0] input0, input1, input2;
+	reg [3:0] input0, input1, input2;
 	reg [1:0] control;
-	wire [31:0] out;
+	wire [3:0] out;
 
 	mux3_32b DUT(input0, input1, input2, control, out);
 
 	initial begin
-		input0 = 32'b00000000000000000000000000000000;
-		input1 = 32'b01010101010101010101010101010101;
-		input2 = 32'b11111111111111110000000000000000;
+		input0 = 32'b0000;
+		input1 = 32'b0101;
+		input2 = 32'b1111;
 		control = 2'b00;
 		#20;
 		control = 2'b01;

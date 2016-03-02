@@ -24,32 +24,61 @@ char *fileWName;                 // Nome do arquivo de saida
 /* Inverte a string */
 char *strrev(char *str)
 {
-      char *p1, *p2;
+    char *p1, *p2;
 
-      if (! str || ! *str)
-            return str;
-      for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
-      {
-            *p1 ^= *p2;
-            *p2 ^= *p1;
-            *p1 ^= *p2;
-      }
-      return str;
+    if (! str || ! *str)
+        return str;
+    for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
+    {
+        *p1 ^= *p2;
+        *p2 ^= *p1;
+        *p1 ^= *p2;
+    }
+    return str;
 }
 
 /* Escreve em binário no arquivo o inteiro recebido */
 void writeOnFile(FILE *file, unsigned int bin)
 {
     int i;
-    for (i = 0; i < 32; i++)        // Para cada bit da palavra
+    for (i = 0; i < 8; i++)        // Para cada bit da palavra
     {
-        if (bin >= 0x80000000)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
+        if (bin >= 0xF0000000)      // Verifica se o bit e 1 ou 0 e esqueve no arquivo
+            fprintf(file, "%c", 'f');
+        else if (bin >= 0xE0000000)
+            fprintf(file, "%c", 'e');
+        else if (bin >= 0xD0000000)
+            fprintf(file, "%c", 'd');
+        else if (bin >= 0xC0000000)
+            fprintf(file, "%c", 'c');
+        else if (bin >= 0xB0000000)
+            fprintf(file, "%c", 'b');
+        else if (bin >= 0xA0000000)
+            fprintf(file, "%c", 'a');
+        else if (bin >= 0x90000000)
+            fprintf(file, "%c", '9');
+        else if (bin >= 0x80000000)
+            fprintf(file, "%c", '8');
+        else if (bin >= 0x70000000)
+            fprintf(file, "%c", '7');
+        else if (bin >= 0x60000000)
+            fprintf(file, "%c", '6');
+        else if (bin >= 0x50000000)
+            fprintf(file, "%c", '5');
+        else if (bin >= 0x40000000)
+            fprintf(file, "%c", '4');
+        else if (bin >= 0x30000000)
+            fprintf(file, "%c", '3');
+        else if (bin >= 0x20000000)
+            fprintf(file, "%c", '2');
+        else if (bin >= 0x10000000)
             fprintf(file, "%c", '1');
-        else
+        else if (bin >= 0x00000000)
             fprintf(file, "%c", '0');
-        bin = (bin << 1);           // Desloca bits para esquerda (pega o proximo bit)
+
+        bin = (bin << 4);           // Desloca bits para esquerda (pega o proximo bit)
     }
-    //fprintf(file, "\n");
+    fprintf(file, "\n");
 }
 
 /* Adiciona registrador (nome, codigo) na hashmap */
@@ -739,7 +768,8 @@ void readWords(FILE *fileW)
     }
 }
 
-char* changeExtention(char *fileName) {
+char* changeExtention(char *fileName)
+{
     static char result[100];
     int i = 0;
     do
