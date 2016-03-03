@@ -39,38 +39,4 @@ module processor (clk, reset, read_file, write_file, instruction, regA_adress, r
 	mux2_32b mux4(alu_result, data_memory_out, mux4_control, mux4_out);
 	alu_32b alu0(regA, regB, alu_control, alu_result, alu_flags);
 	ram data_memory(read_file, write_file, data_memory_control, clk, regA[9:0], regB, data_memory_out);
-
-endmodule
-
-module processor_tb;
-
-	reg clk, reset, read_file, write_file;
-	wire [31:0] instruction;
-	wire [3:0] regA_adress;
-	wire [3:0] regC_adress;
-	wire [31:0] regA_out;
-	wire [2:0] control_regs_bank;
-	wire [31:0] data_regs_bank;
-	wire [5:0] flags;
-
-	processor DUT(clk, reset, read_file, write_file, instruction, regA_adress, regC_adress, regA_out, control_regs_bank, data_regs_bank, flags);
-
-	initial begin
-		clk = 0;
-		reset = 0;
-		read_file = 1;
-		write_file = 0;
-		#2;
-		read_file = 0;
-		reset = 1;
-		#2;
-		reset = 0;
-		#20000;
-		write_file = 1;
-		#2;
-		$finish;
-	end
-
-	always #1 clk = ~clk;
-
 endmodule
