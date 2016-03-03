@@ -1,64 +1,59 @@
-.module test
-
-; escreve o tamanho do array na posicao 27 (decimal) da memoria, e a partir dai o array inicial 
-; escrevendo o array ordenado por ordem inversa por cima do mesmo
-
-
+.module binarysearch
 .pseg
-
-main:		;Implementacao do algoritmo selection sort aplicado a um array
-                ;r2 elemento a ordenar ficando na sua posicao final
-                ;r3 para varrer todos os elementos do array
-
-        lcl r0,LOWBYTE ARR1
-        lch r0,HIGHBYTE ARR1
-        load r4,r0	;r4 tem o numero de elementos que constituem o array
-        add r4,r0,r4	;r4 tem o endereco final,aponta para a ultima posicao do array a ordenar
-        inca r0,r0	;r0 aponta para o primeiro elemento do array a ordenar
-        passa r1,r0	;r1	"	"	"		"	"	"
-        load r2,r0	;r2 contem primeiro elemento do array
-
-LOOP:   inca r1,r1	;
-        load r3,r1	;
-        sub r6,r2,r3	;r6 nao e utilizado apenas interessa o resultado presente à saida da ALU para as flags
-        jt.negzero TROCA	;r2<=r3 faz troca de posicao no array
-        nop
-CONT:
-        sub r6,r4,r1	;r6 nao e utilizado ...
-        jf.zero LOOP	;r4>r1 o array ainda nao foi todo percorrido continua o loop
-        nop
-        sub r6,r4,r0	;
-        deca r6,r6	;necessario para detectar se ja esta na penultima posicao do array na posicao final,nao sendo necessario prosseguir o teste
-        jt.zero FIM	;r4=r0 array ja esta todo ordenado pode terminar
-        nop
-        inca r0,r0	;actualiza ponteiro para o elemento a ser testado
-        load r2,r0	;le elemento seguinte do array 
-        passa r1,r0	;r1 passa a apontar para a posicao onde vai ser colocado o elemento ordenado
-        j LOOP
-        nop
-TROCA:
-        store r0,r3	;Troca a posicao dos elementos na memoria 
-        store r1,r2	;
-        passa r5,r2	;r5 serve apenas como registo temporario
-        passa r2,r3	;troca o conteudo dos registos, pois r2 tem o elemento a colocar na posicao final
-        passa r3,r5	;e r3 tem o elemento que vai ser testado se e menor q o elemento que se encontra na posicao final
-        j CONT		;conjtinua a ordenacao
-        nop
-FIM: j FIM
-     nop
+		;Algoritmo de Busca Binária iterativa aplicado a um vetor
+		;Os dois primeiros elementos do vetor são respectivamente o número buscado e o tamanho do vetor
+		;Estes dois valores não ficarão ordenados ao final do processo, somente os valores que de fato fazem parte do vetor de dados
+MAIN:
+		lcl r0, LOWBYTE ARR1
+		lch r0, HIGHBYTE ARR1 ;carrega endereço base do vetor
+		
+		loadlit r14, 12
+		add r7, r0, r14
+		
+		load r1, r0 ;r1 tem o elemento que será buscado
+		inca r0, r0 ;r0 aponta para a proxima palavra
+		load r2, r0 ;r2 tem o tamanho do array
+		inca r0, r0 ;r0 aponta para a proxima palavra
+		
+		zeros r3 ;r3 tem o limite inferior
+		deca r4, r2 ;r4 tem o limite superior
+		zeros r5 ;registrador da variável "meio"
+		loadlit r6, -1 ;resultado, -1 quer dizer que não foi encontrado
+		store r7, r6
+LOOP:
+		sub r8, r3, r4 ;r8 não é utilizado
+		jf.negzero FIM ;se o limite inferior for maior que o limite superior, termina
+		add r9, r3, r4 ;soma os limites superior e inferior
+		lsr r5, r9 ;faz um shift a direita (dividi por 2 e no caso de número impar também faz o floor do resultado)
+		add r10, r5, r0 ;adiciona o endereço base do vetor ao valor da variável meio (grava em r10 o endereço em que a posição "meio" do vetor está)
+		load r12, r10 ;carrega em r12 o valor que está na posição "meio" do vetor
+		sub r13, r1, r12 ;r13 não é utilizado
+		jt.zero IF1 ;se o elemento que está sendo buscado for igual ao valor que estava na posição "meio", pula para IF1
+		sub r13, r1, r12 ;r13 não é utilizado
+		jt.neg IF2 ;se o elemento que está sendo buscado for menor que o valor que estava na posição "meio", pula para IF2
+		inca r3, r5 ;se o elemento for maior do que o valor que estava na posição "meio", faz limite inferior receber (meio+1)
+		j LOOP ;volta ao loop
+IF1:
+		passa r6, r5 ;passa a posição em que esta o elemento buscado para o registrador que armazena o resultado
+		store r7, r6
+		j FIM ;termina
+IF2:
+		deca r4, r5 ;limite superior recebe (meio-1)
+		j LOOP ;volta ao loop
+FIM:
+		j FIM ;ao terminar o resultado está no registrador r6
 .dseg
-
 ARR1:
-        .word   10
-                .word   -1
-                .word   6
-                .word   3
-                .word   -2
-                .word   4
-                .word   0
-                .word   -3
-                .word   5
-                .word   1
-                .word   2
-STACK:
+	.word -21 ;item buscado
+	.word 10 ;tamanho do array
+		.word -21
+		.word 4
+		.word 5
+		.word 7
+		.word 8
+		.word 9
+		.word 11
+		.word 14
+		.word 15
+		.word 17
 .end
