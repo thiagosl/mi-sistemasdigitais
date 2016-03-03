@@ -637,7 +637,7 @@ unsigned int traduzir(char instruction[])
     }
     else if (!strcmp(mnemonic, "nop"))
     {
-        result = 0x00011000;      //passa r0, r0
+        result = 0x00009000;      //passa r0, r0
     }
     else
     {
@@ -800,7 +800,7 @@ int main(int argc, char *argv[])
     char *instruction;
     char line[300];
     FILE *fileR = fopen(fileName, "r");     // Abre o arquivo de leitura
-    fileWName = "result.bin";               //fileWName = changeExtention(fileName);
+    fileWName = "rom.out";               //fileWName = changeExtention(fileName);
     FILE *fileW = fopen(fileWName, "w");    // Abre o arquivo de escrita
 
     if (fileR == NULL)
