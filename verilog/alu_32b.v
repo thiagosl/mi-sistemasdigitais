@@ -19,7 +19,10 @@ module alu_32b (operandA, operandB, operation, result, flags);
 			6'b000110:	result = operandA - 1;	//DECA
 			6'b001001:	result = operandA;	//PASSB
 			6'b001101:	result = operandA <<< 1;	//ASL
-			6'b001110:	result = operandA >>> 1;	//ASR
+			6'b001110:	begin 
+						result = operandA >>> 1;	//ASR
+						result[31] = result[30];
+					end
 			6'b001111:	result = 0;	//ZEROS
 			6'b010000:	result = 1;	//ONES
 			6'b010001:	result = operandA;	//PASSA
@@ -41,12 +44,10 @@ module alu_32b (operandA, operandB, operation, result, flags);
 			flags[0] = 0;
 			flags[5] = 0;
 			if (result == 0) begin
-				flags[4:1] = 4'b0101;	//ZERO, NEGZERO
-			end
-			if (result < 0) begin
-				flags[4:1] = 4'b1110;	//NEG, NEGZERO, TRUE
-			end
-			if (result > 0) begin
+				flags[4:1] = 4'b0101;	//NEGZERO, ZERO
+			end else if (result[31] == 1) begin
+				flags[4:1] = 4'b1110;	//TRUE, NEGZERO, NEG
+			end else if (result[31] == 0) begin
 				flags[4:1] = 4'b1000;	//TRUE
 			end
 		end
@@ -64,21 +65,29 @@ module alu_32b (operandA, operandB, operation, result, flags);
 			end
 		end
 		else begin
-			flags[5] = 0;	//CARRY
 			case (operation)
 				0, 2:	begin
 					if ((operandA[31] == operandB[31]) && (operandA[31] != result[31])) begin
 						flags[0] = 1;	//OVERFLOW
+					end
+					if ((operandA[31] != operandB[31]) && (result[31] == 0)) begin
+						flags[5] = 1;	//CARRY
 					end
 				end
 				3: begin
 					if (operandA == max) begin
 						flags[0] = 1;	//OVERFLOW
 					end
+					if (operandA == 32'b11111111111111111111111111111111) begin
+						flags[5] = 1;	//CARRY
+					end
 				end
 				4: begin
 					if ((operandA[31] != operandB[31]) && (operandA[31] != result[31])) begin
 						flags[0] = 1;	//OVERFLOW
+					end
+					if ((operandA[31] == operandB[31]) && (result[31] == 0)) begin
+						flags[5] = 1;	//CARRY
 					end
 				end
 				5: begin
@@ -88,10 +97,16 @@ module alu_32b (operandA, operandB, operation, result, flags);
 					else if (((operandA == min) && (operandB == 0)) || ((operandB == min) && (operandA == 0))) begin
 						flags[0] = 1;	//OVERFLOW
 					end
+					if ((operandA[31] == operandB[31]) && (result[31] == 0)) begin
+						flags[5] = 1;	//CARRY
+					end
 				end
 				6: begin
 					if (operandA == min) begin
 						flags[0] = 1;	//OVERFLOW
+					end
+					if (operandA == 1) begin
+						flags[5] = 1;	//CARRY
 					end
 				end
 			endcase

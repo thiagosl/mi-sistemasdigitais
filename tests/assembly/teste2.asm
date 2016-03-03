@@ -39,7 +39,7 @@ L3:  load r1,r3
      store r0,r1
      inca  r0,r0
      inca  r3,r3
-     sub   r7,r3,r5
+     sub   r15,r3,r5
      jf.zero L3
      nop
 HLT: j HLT
@@ -54,7 +54,7 @@ DIV: sub r1,r1,r2
      j DIV
      nop
 ADD: add r1,r1,r2
-RET: jr r7
+RET: jr r15
      nop
 .dseg
 STACK:  

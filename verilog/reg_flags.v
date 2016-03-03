@@ -1,10 +1,10 @@
-module reg_flags (inp, control, out);
+module reg_flags (inp, control, clk, out);
 
 	input [5:0] inp;
-	input control;
+	input control, clk;
 	output reg [5:0] out;
 	
-	always @(inp or control) begin
+	always @(posedge clk) begin
 		if (control) begin
 			out = inp;
 		end
@@ -16,12 +16,13 @@ endmodule
 module reg_flags_tb;
 
 	reg [5:0] inp;
-	reg control;
+	reg control, clk;
 	wire [5:0] out;
 
-	reg_flags DUT(inp, control, out);
+	reg_flags DUT(inp, control, clk, out);
 
 	initial begin
+		clk = 0;
 		control = 1'b1;
 		inp = 6'b010101;
 		#20;
@@ -34,5 +35,7 @@ module reg_flags_tb;
 		#20;
 		$finish;
 	end
+
+	always #5 clk = ~clk;
 
 endmodule
