@@ -1,4 +1,4 @@
-module processor (clk, reset, read_file, write_file);
+module processor (clk, reset, read_file, write_file, instruction, regA_adress, regC_adress, regA_out, control_regs_bank, data_regs_bank, flags);
 
 	input clk, reset, read_file, write_file;
 	wire [3:0] mux1_out, mux5_out;
@@ -7,6 +7,21 @@ module processor (clk, reset, read_file, write_file);
 	wire [2:0] regs_bank_control;
 	wire [1:0] mux1_control, mux5_control, mux6_control;
 	wire mux2_control, mux4_control, comparator_control, reg_flags_control, data_memory_control, comparator_out;
+	output [31:0] instruction;
+	output [3:0] regA_adress, regC_adress;
+	output [31:0] regA_out;
+	output [2:0] control_regs_bank;
+	output [31:0] data_regs_bank;
+	output [5:0] flags;
+	
+
+	assign instruction = operation;
+	assign regA_adress = mux1_out;
+	assign regC_adress = mux5_out;
+	assign regA_out = regA;
+	assign control_regs_bank = regs_bank_control;
+	assign data_regs_bank = mux2_out;
+	assign flags = reg_flags_out;
 
 	pc pc0(mux6_out, clk, reset, pc_out);
 	add_1 add(pc_out, add_1_out);

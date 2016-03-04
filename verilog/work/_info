@@ -9,45 +9,45 @@ z2
 cModel Technology
 dC:/altera/15.1
 vadd_1
-Z0 !s110 1457036354
+Z0 !s110 1457054552
 !i10b 1
 !s100 GHW8A3ihNKan4:F1jO_bX2
 IAU8_NLAWcZBFT5iRR1;<72
 Z1 VDg1SIo80bB@j0V0VzS_@n1
 Z2 dC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog
-w1457035638
+Z3 w1457047655
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/add_1.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/add_1.v
 L0 1
-Z3 OV;L;10.4b;61
+Z4 OV;L;10.4b;61
 r1
 !s85 0
 31
-Z4 !s108 1457036354.000000
+Z5 !s108 1457054552.000000
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/add_1.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/add_1.v|
 !i113 1
-Z5 o-work work
+Z6 o-work work
 vadd_1_tb
-Z6 !s110 1457036357
+Z7 !s110 1457054554
 !i10b 1
 !s100 7NGLZFLSzoih]]H`UIHnk1
 I7POE]=i[FJHa9VigH0f<c3
 R1
 R2
-w1456970508
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/add_1_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/add_1_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-Z7 !s108 1457036357.000000
+Z8 !s108 1457054554.000000
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/add_1_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/add_1_tb.v|
 !i113 1
-R5
+R6
 vadress_extend
 R0
 !i10b 1
@@ -55,39 +55,39 @@ R0
 IzzO:XbbX7;^JhRaecAPG12
 R1
 R2
-w1457035674
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R4
+R5
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/adress_extend.v|
 !i113 1
-R5
-vadress_extend_tb
 R6
+vadress_extend_tb
+R7
 !i10b 1
 !s100 5Ec2E>@ohbPXiDOi9HAa53
 IzG<IY_Oooll=TX7@8:?ea2
 R1
 R2
-w1456970872
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/adress_extend_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/adress_extend_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R7
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/adress_extend_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/adress_extend_tb.v|
 !i113 1
-R5
+R6
 valu_32b
 R0
 !i10b 1
@@ -95,39 +95,39 @@ R0
 I]jmGi2l0iZ2gFFaE?_7K92
 R1
 R2
-w1457035934
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R4
+R5
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/alu_32b.v|
 !i113 1
-R5
+R6
 valu_32b_tb
-Z8 !s110 1457036358
+Z9 !s110 1457054555
 !i10b 1
 !s100 aGLoOEO]kH1aXS7JmhMg40
 IYcmHd28`QnH2PcNjMi2g@3
 R1
 R2
-w1456971748
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/alu_32b_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/alu_32b_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R7
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/alu_32b_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/alu_32b_tb.v|
 !i113 1
-R5
+R6
 vcomparator
 R0
 !i10b 1
@@ -135,119 +135,119 @@ R0
 IV:8W]kin1M`F4oGgI>74B1
 R1
 R2
-w1457035951
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R4
+R5
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/comparator.v|
 !i113 1
-R5
+R6
 vcomparator_tb
-R8
+R9
 !i10b 1
 !s100 8EB@=]6m7]7c46GIiFY9j1
 I6K?4UDTA<hzl[[V4H_[1R2
 R1
 R2
-w1456971814
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/comparator_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/comparator_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-Z9 !s108 1457036358.000000
+Z10 !s108 1457054555.000000
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/comparator_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/comparator_tb.v|
 !i113 1
-R5
+R6
 vcontrol_unit
-R0
+Z11 !s110 1457054553
 !i10b 1
 !s100 NLIMN69AXW>bRZR6hcdfF1
 I9M9FjDjWfW^_ccf9JdnP02
 R1
 R2
-w1457035965
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R4
+R5
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/control_unit.v|
 !i113 1
-R5
+R6
 vcontrol_unit_tb
-R8
+R9
 !i10b 1
 !s100 kfcaE2hh7;LN?gVLERUzR0
 I[;mYjLMi@=PEZ?_cQ@N[91
 R1
 R2
-w1456971870
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/control_unit_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/control_unit_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R9
+R10
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/control_unit_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/control_unit_tb.v|
 !i113 1
-R5
+R6
 vex_wb_register
-R0
+R11
 !i10b 1
 !s100 hYIbzVnCad;nkF?gGH?m=3
 I86=]_<I=;7^CDE1WjdfNh0
 R1
 R2
-Z10 w1457019547
+Z12 w1456854103
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ex_wb_register.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ex_wb_register.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R4
+Z13 !s108 1457054553.000000
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ex_wb_register.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ex_wb_register.v|
 !i113 1
-R5
+R6
 vfo_ex_register
-Z11 !s110 1457036355
+R11
 !i10b 1
 !s100 k[TLWZl>?TD6eC9?lFDSV0
 Ina:7ko2fg4]@?^4]RW8aV0
 R1
 R2
-R10
+R12
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/fo_ex_register.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/fo_ex_register.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-Z12 !s108 1457036355.000000
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/fo_ex_register.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/fo_ex_register.v|
 !i113 1
-R5
+R6
 vid_fo_register
 R11
 !i10b 1
@@ -255,19 +255,19 @@ R11
 Izg6TVdlX<IDBf?PU[LnjV2
 R1
 R2
-R10
+R12
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/id_fo_register.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/id_fo_register.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R12
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/id_fo_register.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/id_fo_register.v|
 !i113 1
-R5
+R6
 vif_id_register
 R11
 !i10b 1
@@ -275,19 +275,19 @@ R11
 ICa;nKSJklZ@::X6UWlDWQ3
 R1
 R2
-R10
+R12
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/if_id_register.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/if_id_register.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R12
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/if_id_register.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/if_id_register.v|
 !i113 1
-R5
+R6
 vmux2_32b
 R11
 !i10b 1
@@ -295,39 +295,39 @@ R11
 Ibb9``fiSInP;<G6k2_e]?0
 R1
 R2
-w1457035983
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R12
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux2_32b.v|
 !i113 1
-R5
+R6
 vmux2_32b_tb
-R8
+R9
 !i10b 1
 !s100 4K;2Do;dEAE=A:9Kn3?BJ2
 IXTZg_elnQD>O;l9]`8MVU2
 R1
 R2
-w1456971594
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux2_32b_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux2_32b_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R9
+R10
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux2_32b_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux2_32b_tb.v|
 !i113 1
-R5
+R6
 vmux3_32b_PC
 R11
 !i10b 1
@@ -335,61 +335,61 @@ R11
 Ic_PYf=<@m;CJSd6fj5Z7l2
 R1
 R2
-w1457036022
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R12
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_PC.v|
 !i113 1
-R5
+R6
 nmux3_32b_@p@c
 vmux3_32b_PC_tb
-Z13 !s110 1457036356
+R7
 !i10b 1
 !s100 :C056>ABfgNEcM?>ecQW=1
 IYzacVo1EJM5J4@nNIVXb>2
 R1
 R2
-w1456971432
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_PC_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_PC_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-Z14 !s108 1457036356.000000
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_PC_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_PC_tb.v|
 !i113 1
-R5
+R6
 nmux3_32b_@p@c_tb
 vmux3_32b_tb
-R13
+!s110 1457053349
 !i10b 1
 !s100 bb694<0nQPKR8lVZ_]D7`2
 IJ2B_g00n0zcN5`:EK7<5d0
 R1
 R2
-w1456971514
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R14
+!s108 1457053349.000000
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_32b_tb.v|
 !i113 1
-R5
+R6
 vmux3_4b
 R11
 !i10b 1
@@ -397,19 +397,39 @@ R11
 Idah329Wb`MTT`lej=j?hW0
 R1
 R2
-w1457036005
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_4b.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_4b.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R12
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_4b.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_4b.v|
 !i113 1
-R5
+R6
+vmux3_4b_tb
+R9
+!i10b 1
+!s100 h[ZNFo;2Img=M7^BbE;1[3
+IJDMJk4z4C<cQR9K2C<kSc3
+R1
+R2
+w1457054145
+8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_4b_tb.v
+FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_4b_tb.v
+L0 1
+R4
+r1
+!s85 0
+31
+R10
+!s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_4b_tb.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux3_4b_tb.v|
+!i113 1
+R6
 vpc
 R11
 !i10b 1
@@ -417,315 +437,315 @@ R11
 I6UF[6]WPQIB3WnmNDS;9l3
 R1
 R2
-w1457036038
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R12
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/pc.v|
 !i113 1
-R5
+R6
 vpc_tb
-R13
+R7
 !i10b 1
 !s100 8ff6olOcnP:O]a=ORJE[P2
 IlK24l4>0QOJVc2kUB;EaP1
 R1
 R2
-w1456971366
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/pc_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/pc_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R14
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/pc_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/pc_tb.v|
 !i113 1
-R5
+R6
 vprocessor
 R11
 !i10b 1
-!s100 _KmAQnP3NlU;7B2i@BfXh1
-I38a=TmUOKhEXBlczdY^lA0
+!s100 a6AT<AhPM]Ng@i1LjV_GC3
+I=78TAQ`XD]O[G4ieICoiX0
 R1
 R2
-w1457036057
+w1457054323
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/processor.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/processor.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R12
+R13
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/processor.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/processor.v|
 !i113 1
-R5
+R6
 vprocessor_tb
-R13
+R7
 !i10b 1
-!s100 Y@Z0GcTd`7fRR@_MDRD5R0
-Ik^30l@^Ra0XORO9[07F160
+!s100 0MTEG<F6jkgbedi1i?h6U0
+ISG;O2dNo8[aF3]KNF8OFP1
 R1
 R2
-w1456971318
+w1457054285
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/processor_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/processor_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R14
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/processor_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/processor_tb.v|
 !i113 1
-R5
+R6
 Eram
-Z15 w1457036084
-Z16 DPx4 ieee 16 std_logic_textio 0 22 V5TSK`;aJKC<l]CEg1>mz1
-Z17 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
-Z18 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
-Z19 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
-Z20 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z14 w1457054550
+Z15 DPx4 ieee 16 std_logic_textio 0 22 V5TSK`;aJKC<l]CEg1>mz1
+Z16 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z17 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+Z18 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z19 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
 R2
-Z21 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd
-Z22 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd
+Z20 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd
+Z21 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd
 l0
 L29
 V9^iE4SVERGAE0kZ0`;hii0
 !s100 8g4^R4mJO>iod1mX6nlP_3
-Z23 OV;C;10.4b;61
+Z22 OV;C;10.4b;61
 32
 R11
 !i10b 1
-R12
-Z24 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd|
-Z25 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd|
+R13
+Z23 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd|
+Z24 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/ram.vhd|
 !i113 1
-Z26 o-work work -2002 -explicit
-Z27 tExplicit 1
+Z25 o-work work -2002 -explicit
+Z26 tExplicit 1
 Aram_arch
+R15
 R16
 R17
 R18
 R19
-R20
-Z28 DEx4 work 3 ram 0 22 9^iE4SVERGAE0kZ0`;hii0
+Z27 DEx4 work 3 ram 0 22 9^iE4SVERGAE0kZ0`;hii0
 l47
 L44
-VZSTkgS7l__>2e4GNLNHkV3
-!s100 @GLa^D0BM6zT`A_gn1ImT3
-R23
+VKXCLB_OI6DQFRJ=6PK^dP1
+!s100 acG8bYDR7>S_8gSc:_7Kz0
+R22
 32
 R11
 !i10b 1
-R12
+R13
+R23
 R24
-R25
 !i113 1
+R25
 R26
-R27
 Eram_tb
-R10
-R18
+R3
 R17
-R20
 R16
 R19
+R15
+R18
 R2
-Z29 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd
-Z30 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd
+Z28 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd
+Z29 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd
 l0
 L19
 VPF_nU9O73d1f2kB@6B3_B0
 !s100 ]UloI[WS:IS=HVEnfP5SQ3
-R23
+R22
 32
-R6
-!i10b 1
 R7
-Z31 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd|
-Z32 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd|
+!i10b 1
+R8
+Z30 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd|
+Z31 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/ram_tb.vhd|
 !i113 1
+R25
 R26
-R27
 Atb_architecture
-R18
 R17
-R20
 R16
 R19
-Z33 DEx4 work 6 ram_tb 0 22 PF_nU9O73d1f2kB@6B3_B0
+R15
+R18
+Z32 DEx4 work 6 ram_tb 0 22 PF_nU9O73d1f2kB@6B3_B0
 l45
 L24
 VVfS4e6QaTLfJbKl;Tn4c@1
 !s100 m0XalXh7`X^Y8VKK[R?eh1
-R23
+R22
 32
-R6
-!i10b 1
 R7
+!i10b 1
+R8
+R30
 R31
-R32
 !i113 1
+R25
 R26
-R27
 vreg_flags
-R13
+R7
 !i10b 1
 !s100 VRPi:mbdQk>XaBZ>dOM4Z2
 IWH:mUa0AXV>f0=:<@LIL[1
 R1
 R2
-w1457036100
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R14
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/reg_flags.v|
 !i113 1
-R5
-vreg_flags_tb
 R6
+vreg_flags_tb
+R7
 !i10b 1
-!s100 >YhDB@kV>kR^gCQGPj2:20
-IPFo?ECVH^PP0AXhPUN9=V1
+!s100 zhTlgQWQ[S7BFj2QCBGcZ3
+IMEUjIO52R9lal<e_GFfol3
 R1
 R2
-w1456971244
+w1457054420
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/reg_flags_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/reg_flags_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R7
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/reg_flags_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/reg_flags_tb.v|
 !i113 1
-R5
+R6
 vregs_bank
-R13
+R7
 !i10b 1
 !s100 lH:80OzjhW0XcU<41Boj01
 Il9QklVlZWlTkOYgVJ[QmE0
 R1
 R2
-w1457036114
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R14
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/regs_bank.v|
 !i113 1
-R5
-vregs_bank_tb
 R6
+vregs_bank_tb
+R7
 !i10b 1
 !s100 >BETRndVB4PYQzg[0idVD1
 Ie0QBIecb=SHXZz=l[DWaZ0
 R1
 R2
-w1456971180
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/regs_bank_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/regs_bank_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R7
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/regs_bank_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/regs_bank_tb.v|
 !i113 1
-R5
+R6
 vsignal_extend
-R13
+R7
 !i10b 1
 !s100 DZ=PK^>IRWmI_1DZG23IE3
 I4:B6XLg@_Pcj0VoHdSZYk3
 R1
 R2
-w1457036144
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R14
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/signal_extend.v|
 !i113 1
-R5
-vsignal_extend_tb
 R6
+vsignal_extend_tb
+R7
 !i10b 1
 !s100 ^j0_FhHB7RH;?Gn[OAI0<3
 IPhhh8_Ja]>BmgTaR@7;l_0
 R1
 R2
-w1456971100
+R3
 8C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/signal_extend_tb.v
 FC:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/signal_extend_tb.v
 L0 1
-R3
+R4
 r1
 !s85 0
 31
-R7
+R8
 !s107 C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/signal_extend_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Thiago/Documents/GitHub/mi-sistemasdigitais/verilog/tests/signal_extend_tb.v|
 !i113 1
-R5
+R6
 Ctestbench_for_ram
 eram_tb
 aTB_ARCHITECTURE
-R28
+R27
 DAx4 work 6 ram_tb 15 tb_architecture 22 VfS4e6QaTLfJbKl;Tn4c@1
-R18
 R17
-R20
 R16
 R19
-R33
-R10
+R15
+R18
+R32
+R3
 R2
+R28
 R29
-R30
 l0
 L111
 VURd<ABDRD9;iGSoZIdn8Q3
 !s100 6b[o[`lAMj_Gz6EX1C0<D1
-R23
+R22
 32
-R6
-!i10b 1
 R7
+!i10b 1
+R8
+R30
 R31
-R32
 !i113 1
+R25
 R26
-R27
