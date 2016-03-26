@@ -36,7 +36,7 @@ module control_unit (code, mux1, mux4, mux5, mux6, regs_bank, data_mem, alu, com
 				mux6 = 2'b00;
 				comparator = 1'b0;
 				data_mem = code[0];
-				alu = 6'b100000;
+				alu = 6'b1000000;
 				mux4 = 1'b1;
 				regs_bank = {2{code[0]}};
 				if (code[0] == 0) begin

@@ -40,10 +40,18 @@ module alu_32b (operandA, operandB, operation, result, flags);
 			6'b011101:	result = operandA >> 1;	//LSR
 			6'b011110: 	result = {operandA[31:16], operandB[15:0]}; //LCL
 			6'b011111:	result = {operandB[15:0], operandA[15:0]};  //LCH
-			6'b100000:	result = operandB;  //LOADLIT
+
+				temp = regBank[inpC];
+				regBank[inpC] = {temp[31:16], data[15:0]};
+			end
+			3'b010: begin
+				temp = regBank[inpC];
+				regBank[inpC] = {data[15:0], temp[15:0]};
+			end
+			3'b011: begin
 		endcase
 		
-		if (operation != 6'b001001 && operation != 6'b011110 && operation != 6'b011111 && operation != 6'b100000) begin
+		if (operation != 6'b001001) begin
 			flags[0] = 0;
 			flags[5] = 0;
 			if (result == 0) begin

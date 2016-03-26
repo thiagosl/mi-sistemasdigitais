@@ -1,8 +1,8 @@
 module mux3_4b (input0, input1, input2, control, out);
 
-	input [3:0] input0, input1, input2;
+	input [31:0] input0, input1, input2;
 	input [1:0] control;
-	output reg [3:0] out;
+	output reg [31:0] out;
 	
 	always @(control or input0 or input1 or input2) begin
 		case(control)

@@ -1,59 +1,93 @@
-.module binarysearch
+.module flags
 .pseg
-		;Algoritmo de Busca Binária iterativa aplicado a um vetor
-		;Os dois primeiros elementos do vetor são respectivamente o número buscado e o tamanho do vetor
-		;Estes dois valores não ficarão ordenados ao final do processo, somente os valores que de fato fazem parte do vetor de dados
-MAIN:
-		lcl r0, LOWBYTE ARR1
-		lch r0, HIGHBYTE ARR1 ;carrega endereço base do vetor
-		
-		loadlit r14, 12
-		add r7, r0, r14
-		
-		load r1, r0 ;r1 tem o elemento que será buscado
-		inca r0, r0 ;r0 aponta para a proxima palavra
-		load r2, r0 ;r2 tem o tamanho do array
-		inca r0, r0 ;r0 aponta para a proxima palavra
-		
-		zeros r3 ;r3 tem o limite inferior
-		deca r4, r2 ;r4 tem o limite superior
-		zeros r5 ;registrador da variável "meio"
-		loadlit r6, -1 ;resultado, -1 quer dizer que não foi encontrado
-		store r7, r6
-LOOP:
-		sub r8, r3, r4 ;r8 não é utilizado
-		jf.negzero FIM ;se o limite inferior for maior que o limite superior, termina
-		add r9, r3, r4 ;soma os limites superior e inferior
-		lsr r5, r9 ;faz um shift a direita (dividi por 2 e no caso de número impar também faz o floor do resultado)
-		add r10, r5, r0 ;adiciona o endereço base do vetor ao valor da variável meio (grava em r10 o endereço em que a posição "meio" do vetor está)
-		load r12, r10 ;carrega em r12 o valor que está na posição "meio" do vetor
-		sub r13, r1, r12 ;r13 não é utilizado
-		jt.zero IF1 ;se o elemento que está sendo buscado for igual ao valor que estava na posição "meio", pula para IF1
-		sub r13, r1, r12 ;r13 não é utilizado
-		jt.neg IF2 ;se o elemento que está sendo buscado for menor que o valor que estava na posição "meio", pula para IF2
-		inca r3, r5 ;se o elemento for maior do que o valor que estava na posição "meio", faz limite inferior receber (meio+1)
-		j LOOP ;volta ao loop
-IF1:
-		passa r6, r5 ;passa a posição em que esta o elemento buscado para o registrador que armazena o resultado
-		store r7, r6
-		j FIM ;termina
-IF2:
-		deca r4, r5 ;limite superior recebe (meio-1)
-		j LOOP ;volta ao loop
-FIM:
-		j FIM ;ao terminar o resultado está no registrador r6
+        ; Testa flags
+        ;       
+	; r0 points to ARR1
+        lcl	r0, LOWBYTE ARR1
+        lch	r0, HIGHBYTE ARR1
+	zeros	r1
+	deca	r2,r1
+	store	r0,r2
+	inca    r0,r0
+	store	r0,r2
+	inca    r0,r0
+	store	r0,r2
+	inca    r0,r0
+	store	r0,r2
+	inca    r0,r0
+	store	r0,r2
+	inca    r0,r0
+	store	r0,r2
+	inca    r0,r0
+	store	r0,r2
+	inca    r0,r0
+	store	r0,r2
+	deca	r0,r0
+	deca	r0,r0
+	deca	r0,r0
+	deca	r0,r0
+	deca	r0,r0
+	deca	r0,r0
+	deca	r0,r0
+	passa	r3,r1
+	jt.zero L1
+	nop
+	store	r0,r1
+L1:	inca	r0,r0
+	passb	r3,r1
+	jf.zero L2
+	nop
+	store	r0,r1
+L2:	inca	r0,r0		
+	zeros	r3
+	deca	r3,r3
+	inca	r3,r3
+	jt.carry L31
+	nop
+	store	r0,r1
+L31:	jf.overflow L3
+	nop
+	inca	r0,r0
+	store	r0,r1	
+	deca	r0,r0
+L3:	inca	r0,r0
+	inca	r0,r0
+	lcl	r3,-1
+	lch	r3,32767
+	inca	r3,r3
+	jt.overflow L4
+	nop
+	store	r0,r1
+L4:	inca	r0,r0
+	asr	r2,r2
+        inca    r2,r2
+	jt.zero L5
+	nop
+	store	r0,r1
+L5:	inca	r0,r0
+        deca    r2,r2
+	lcl	r3,0
+	lch	r3,-32768
+        subdec  r3,r3,r1
+	jt.overflow L6
+	nop
+	store	r0,r1
+L6:	inca	r0,r0
+        passnota r2,r2
+	jt.zero HALT
+	nop
+	store	r0,r1
+HALT:   j HALT
+        nop
+	;; 
 .dseg
 ARR1:
-	.word -21 ;item buscado
-	.word 10 ;tamanho do array
-		.word -21
-		.word 4
-		.word 5
-		.word 7
-		.word 8
-		.word 9
-		.word 11
-		.word 14
-		.word 15
-		.word 17
+        .word  0               ; errou flag ZERO 	passa 		(FFFF->0)
+        .word  0               ; errou flag ZERO 	passb 		(FFFF->0)
+        .word  0               ; errou flag CARRY 	inca 		(FFFF->0)
+        .word  0               ; errou flag OVERFLOW 	inca 		(FFFF->0)
+        .word  0               ; errou flag OVERFLOW 	inca 		(FFFF->0)
+        .word  0               ; errou flag ZERO 	asr+ inca  	(FFFF->0)
+        .word  0               ; errou flag OVERFLOW 	subdeca  	(FFFF->0)
+        .word  0               ; errou flag ZERO 	passnota  	(FFFF->0)
 .end
