@@ -416,13 +416,13 @@ module alu_32b_tb ();
 		//LCH TEST
 		operandA = 7;
 		operandB = -1;
-		operation = 31;
+		operation = 30;
 		#20
 
 		//LCL TEST
 		operandA = 15;
 		operandB = -1;
-		operation = 32;
+		operation = 30;
 		#20
 
 		$finish;

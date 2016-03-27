@@ -6,7 +6,7 @@ module control_unit_tb;
 	wire mux4, data_mem, comparator, write_inst;
 	wire [5:0] alu;
 
-	control_unit DUT(code, mux1, mux4, mux5, mux6, regs_bank, data_mem, alu, comparator, write_inst);
+	control_unit DUT(code, mux1, mux4, mux5, mux6, regs_bank, data_mem, alu, comparator);
 
 	initial begin
 		code = 24'b000000000000000100110000;

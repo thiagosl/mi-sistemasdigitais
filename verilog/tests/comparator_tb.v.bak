@@ -1,0 +1,43 @@
+module comparator_tb;
+
+	reg [3:0] condicao;
+	reg [5:0] flags;
+	reg [1:0] control;
+	wire salto;
+
+	comparator DUT(condicao, flags, control, salto);
+
+	initial begin
+		control = 2'b11;
+		flags = 6'b010101;
+		condicao = 4'b0000;
+		#10;
+		condicao = 4'b0001;
+		#10;
+		condicao = 4'b0010;
+		#10;
+		condicao = 4'b0011;
+		#10;
+		condicao = 4'b0100;
+		#10;
+		condicao = 4'b0101;
+		#10;
+		flags = 6'b111000;
+		condicao = 4'b0000;
+		#10;
+		condicao = 4'b0001;
+		#10;
+		condicao = 4'b0010;
+		#10;
+		condicao = 4'b0011;
+		#10;
+		condicao = 4'b0100;
+		#10;
+		condicao = 4'b0101;
+		#10;
+		control = 2'b10;
+		#10
+		$finish;
+	end
+
+endmodule

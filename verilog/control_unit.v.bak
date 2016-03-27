@@ -1,8 +1,8 @@
 module control_unit (code, mux1, mux4, mux5, mux6, regs_bank, data_mem, alu, comparator, write_inst);
 
 	input [23:0] code;
-	output reg [1:0] mux1, mux5, mux6, regs_bank;
-	output reg mux4, data_mem, comparator, write_inst;
+	output reg [1:0] mux1, mux5, mux6, regs_bank, comparator;
+	output reg mux4, data_mem, write_inst;
 	output reg [5:0] alu;
 	
 	always @(code) begin
@@ -36,7 +36,7 @@ module control_unit (code, mux1, mux4, mux5, mux6, regs_bank, data_mem, alu, com
 				mux6 = 2'b00;
 				comparator = 1'b0;
 				data_mem = code[0];
-				alu = 6'b1000000;
+				alu = 6'b100000;
 				mux4 = 1'b1;
 				regs_bank = {2{code[0]}};
 				if (code[0] == 0) begin

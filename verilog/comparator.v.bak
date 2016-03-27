@@ -2,11 +2,11 @@ module comparator (condicao, flags, control, salto);
 
 	input [3:0] condicao;
 	input [5:0] flags;
-	input control;
+	input [1:0] control;
 	output reg salto;
 	
 	always @(condicao or flags or control) begin
-		if (control == 1) begin
+		if (control == 11) begin
 			case (condicao)
 				4'b0001: salto = flags[0];
 				4'b0010: salto = flags[1];
@@ -15,7 +15,7 @@ module comparator (condicao, flags, control, salto);
 				4'b0101: salto = flags[4];
 				4'b0110: salto = flags[5];
 			endcase
-		end else if (control == 0) begin
+		end else if (control == 10) begin
 			case (condicao)
 				4'b0001: salto = ~flags[0];
 				4'b0010: salto = ~flags[1];
