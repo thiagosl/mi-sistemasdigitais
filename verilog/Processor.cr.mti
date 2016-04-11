@@ -230,6 +230,15 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 Top level modules:
 	mux3_4b_tb
 
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/control_unit_tb_auto.v {2 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/control_unit_tb_auto.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module control_unit_tb
+** Warning: C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/control_unit_tb_auto.v(64): (vlog-2283) Extra semicolon in $unit (global) scope.
+
+
+Top level modules:
+	control_unit_tb
+
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux2_32b_tb.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/mux2_32b_tb.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 -- Compiling module mux2_32b_tb
@@ -434,6 +443,15 @@ Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
 
 Top level modules:
 	ex_wb_register_tb
+
+} {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/alu_32b_tb_auto.v {2 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/alu_32b_tb_auto.v
+Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015
+-- Compiling module alu_32b_tb
+** Warning: C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/tests/alu_32b_tb_auto.v(482): (vlog-2283) Extra semicolon in $unit (global) scope.
+
+
+Top level modules:
+	alu_32b_tb
 
 } {} {}} C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_tb.v {1 {vlog -work work -stats=none C:/Users/Matheus/Documents/GitHub/mi-sistemasdigitais/verilog/mux3_32b_tb.v
 Model Technology ModelSim ALTERA vlog 10.4b Compiler 2015.05 May 27 2015

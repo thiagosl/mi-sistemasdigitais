@@ -1,49 +1,57 @@
-.module bubblesort
+.module test
+
+; escreve o tamanho do array na posicao 27 (decimal) da memoria, e a partir dai o array inicial 
+; escrevendo o array ordenado por ordem inversa por cima do mesmo
+
+
 .pseg
-		;Algoritmo de ordenação Bubble Sort aplicado a um vetor
-		;O primeiro elemento do vetor é o tamanho do mesmo e não estará ordenado ao final do processo
-		;Somente estarão ordenados os valores que de fato fazem parte do vetor de dados
-MAIN:
-		lcl r0, LOWBYTE ARR1
-		lch r0, HIGHBYTE ARR1 ;r0 tem o endereço base do array
-		load r1, r0 ;r1 passa a armazenar o tamanho do array
-		inca r0, r0 ;faz r0 apontar uma palavra adiante, não considera o tamanho do array durante a ordenação
-		zeros r2 ;i = 0
-		zeros r6
-LOOP:
-		passa r4, r2; j = i
-		sub r3, r2, r1 ;r3 não é utilizado
-		jt.neg LOOP2 ;se i for menor que o tamanho do array vai para o LOOP2
-		j FIM ;se i for maior igual que o tamanho do array termina a ordenação
-INC:
-		inca r2, r2 ;i++
-		j LOOP ;volta para o LOOP1
-LOOP2:
-		sub r5, r4, r6 ;r5 não é utilizado
-		jt.zero INC ;se j for igual a zero, pula para INC
-		;se j for maior que zero, continua
-		deca r7, r4 ;r7 = j - 1
-		add r7, r7, r0 ;endereço (j-1)+base
-		add r11, r4, r0 ;endereço j+base
-		load r9, r7 ;carrega valor que está na posição (j-1)+base
-		load r10, r11 ;carrega valor que está na posição j+base
-		sub r12, r9, r10 ;r12 não é utilizado
-		jf.neg TROCA ;se valor da posição (j-1) for maior que o da posição j do vetor, pula para TROCA
-		;se não, continua
-DEC:
-		deca r4, r4 ;j--
-		j LOOP2 ;volta para o LOOP2
+
+main:		;Implementacao do algoritmo selection sort aplicado a um array
+                ;r2 elemento a ordenar ficando na sua posicao final
+                ;r3 para varrer todos os elementos do array
+
+        lcl r0,LOWBYTE ARR1
+        lch r0,HIGHBYTE ARR1
+        load r4,r0	;r4 tem o numero de elementos que constituem o array
+        add r4,r0,r4	;r4 tem o endereco final,aponta para a ultima posicao do array a ordenar
+        inca r0,r0	;r0 aponta para o primeiro elemento do array a ordenar
+        passa r1,r0	;r1	"	"	"		"	"	"
+        load r2,r0	;r2 contem primeiro elemento do array
+
+LOOP:   inca r1,r1	;
+        load r3,r1	;
+        sub r6,r2,r3	;r6 nao e utilizado apenas interessa o resultado presente à saida da ALU para as flags
+        jt.negzero TROCA	;r2<=r3 faz troca de posicao no array
+        nop
+CONT:
+        sub r6,r4,r1	;r6 nao e utilizado ...
+        jf.zero LOOP	;r4>r1 o array ainda nao foi todo percorrido continua o loop
+        nop
+        sub r6,r4,r0	;
+        deca r6,r6	;necessario para detectar se ja esta na penultima posicao do array na posicao final,nao sendo necessario prosseguir o teste
+        jt.zero FIM	;r4=r0 array ja esta todo ordenado pode terminar
+        nop
+        inca r0,r0	;actualiza ponteiro para o elemento a ser testado
+        load r2,r0	;le elemento seguinte do array 
+        passa r1,r0	;r1 passa a apontar para a posicao onde vai ser colocado o elemento ordenado
+        j LOOP
+        nop
 TROCA:
-		store r11, r9 ;grava valor que estava na posição (j-1) na posição j do array
-		store r7, r10 ;grava valor que estava na posição j na posição (j-1) do array
-		j DEC
-FIM:
-		j FIM
+        store r0,r3	;Troca a posicao dos elementos na memoria 
+        store r1,r2	;
+        passa r5,r2	;r5 serve apenas como registo temporario
+        passa r2,r3	;troca o conteudo dos registos, pois r2 tem o elemento a colocar na posicao final
+        passa r3,r5	;e r3 tem o elemento que vai ser testado se e menor q o elemento que se encontra na posicao final
+        j CONT		;conjtinua a ordenacao
+        nop
+FIM: j FIM
+     nop
 .dseg
+
 ARR1:
-	.word 10
-		.word   -1
-            	.word   6
+        .word   10
+                .word   -1
+                .word   6
                 .word   3
                 .word   -2
                 .word   4
@@ -52,4 +60,5 @@ ARR1:
                 .word   5
                 .word   1
                 .word   2
-	.end
+STACK:
+.end
